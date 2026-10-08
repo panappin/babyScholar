@@ -1,0 +1,51 @@
+{
+  "format": "ai-research-assistant/integration-check-evidence/v2",
+  "sanitized": true,
+  "runs": [
+    {
+      "id": "c07cc225-80e5-4820-9f13-e8e22fcfd166",
+      "startedAt": "2026-10-08T17:49:07.877Z",
+      "finishedAt": "2026-10-08T17:49:14.351Z",
+      "result": "passed_with_openai_skipped",
+      "localChecks": {
+        "migrationApplied": true,
+        "healthAndStorageDirect": true,
+        "healthAndStorageViaFrontendProxy": true,
+        "integrationRoutesDisabledByDefault": true,
+        "ownedProcessesCleanedUp": true
+      },
+      "arxiv": {
+        "query": "all:electron",
+        "title": "The electronic structure of cuprates from high energy spectroscopy",
+        "link": "https://arxiv.org/abs/cond-mat/0011267v1"
+      },
+      "openai": {
+        "status": "skipped_missing_configuration",
+        "model": "gpt-6-luna"
+      }
+    },
+    {
+      "id": "4d91d328-87d3-4552-929c-a3bee2188791",
+      "startedAt": "2026-10-08T18:03:20.560Z",
+      "finishedAt": "2026-10-08T18:03:29.719Z",
+      "result": "passed",
+      "localChecks": {
+        "migrationApplied": true,
+        "healthAndStorageDirect": true,
+        "healthAndStorageViaFrontendProxy": true,
+        "integrationRoutesDisabledByDefault": true,
+        "ownedProcessesCleanedUp": true
+      },
+      "arxiv": {
+        "query": "all:electron",
+        "title": "The electronic structure of cuprates from high energy spectroscopy",
+        "link": "https://arxiv.org/abs/cond-mat/0011267v1"
+      },
+      "openai": {
+        "status": "completed",
+        "model": "gpt-6-luna",
+        "text": "OK"
+      }
+    }
+  ]
+}

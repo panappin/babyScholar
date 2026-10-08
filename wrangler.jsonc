@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "ai-research-assistant",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2025-09-01",
+  "vars": {
+    "OPENAI_MODEL": "gpt-6-luna"
+  },
+  // These identifiers are local labels, NOT provisioned Cloudflare resource IDs.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ai-research-assistant-local",
+      "database_id": "local-ai-research-assistant",
+      "migrations_dir": "drizzle",
+      "remote": false
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PAPER_BUCKET",
+      "bucket_name": "ai-research-assistant-papers-local",
+      "remote": false
+    }
+  ]
+}
