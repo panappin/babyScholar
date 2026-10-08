@@ -279,3 +279,84 @@ The live check used its own state directory `.wrangler/integration-check/c07cc22
   repeated because the frontend remains intentionally blank; the local Worker
   route, built Worker, Sites artifact, and Vite proxy were covered by the
   scripted checks.
+
+## 2026-10-08 — Hosted OpenAI status correction
+
+- This corrects the now-stale Phase 1A/hosting handoff wording that said hosted
+  `OPENAI_API_KEY` setup was pending. The owner confirmed the existing private
+  Site already has that secret and was redeployed during Phase 0B.2. Historical
+  entries above retain the state recorded when they were written. This correction
+  did not read, create, change, or expose a secret; it did not make an OpenAI
+  request or deploy a Site.
+
+## 2026-10-08 — Phase 1B: research-paper search frontend
+
+### Scope and implementation
+
+- Inspected the current checkout, Git state/HEAD, package scripts, README,
+  development log, frontend, Phase 1A response/error contract, and verification
+  scripts before edits. No `AGENTS.md` exists in or above the project. Preserved
+  the real ignored environment file, runtime state, storage/migrations/bindings,
+  hosted project configuration, and the pre-existing untracked Phase 0B.2 ZIP
+  and extracted folder.
+- Added a labeled React topic/keywords form in `src/App.tsx`. It sends only on
+  button click or Enter, uses `URLSearchParams` with the relative
+  `/api/papers/search` URL, mirrors the backend's whitespace/Unicode/empty/
+  letter-or-number/200-character validation, and never calls OpenAI. Search does
+  not run on mount or while typing; the pending button is disabled and duplicate
+  submission is ignored.
+- Added clear initial, loading, results, empty, and sanitized-error states.
+  The submitted query is stored with the response state, so later input edits
+  cannot relabel a pending or completed result. Requests have a 20-second
+  browser timeout, are aborted on unmount, and use request IDs so late responses
+  cannot overwrite a newer state.
+- Result cards render title, ordered authors, first-submission year, full
+  abstract, and a safe arXiv link when supplied. Missing metadata has explicit
+  unavailable text; no HTML injection is used. The page labels the year as first
+  submitted and explains that it comes from arXiv's first submission. Existing
+  Backend/D1/R2 indicators remain intact.
+- Moved the Phase 1A response/error declarations to the declaration-only
+  `src/worker/paper-search-types.ts` module and re-exported them from the
+  adapter. The React import is type-only; the backend's runtime behavior did not
+  change. A post-build scan found no arXiv adapter/runtime marker in
+  `dist/frontend/`.
+- Extended the existing visual style with responsive cards, keyboard focus,
+  form labels/status announcements, and a narrow layout. Browser visual review
+  caught a mobile input-height issue caused by the desktop flex basis after the
+  controls became a column; adding the mobile flex reset fixed it.
+- Added dependency-free `papers:ui:check`, using local headless Chrome through
+  its DevTools protocol. It owns isolated Worker/Vite/browser processes and
+  state, fixtures exceptional fetches in the real browser, and by default makes
+  one live search through the form/Vite proxy. `PAPERS_UI_CHECK_SKIP_LIVE=true`
+  runs the same fixture/browser check without an upstream call. No package or
+  lockfile change was needed; the audit baseline remains unchanged.
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build` | Exit 0; frontend, Worker ESM, and Sites staging built |
+| `npm.cmd run papers:check` | Exit 0; Phase 1A fixed-fixture adapter checks passed |
+| `npm.cmd run sites` | Exit 0; existing Sites artifact/binding/migration check passed |
+| `INTEGRATION_CHECK_OFFLINE=true; npm.cmd run integrations` | Exit 0 (`passed_offline`); local migration, direct/ proxied health/storage, disabled routes, and owned-process cleanup passed; the previous environment value was restored |
+| `npm.cmd run papers:ui:check` | Exit 0 after a keyboard-event correction; browser used fixture responses for exceptional states and made exactly one live arXiv search through the React form and Vite proxy. It asserted only a nonempty arXiv result, not a fixed title/count. |
+| `PAPERS_UI_CHECK_SKIP_LIVE=true; npm.cmd run papers:ui:check` | Final exit 0; no external request. Verified load/typing make no search, keyboard submission, loading, duplicate prevention, query association after editing, empty/API/malformed-JSON/network/timeout/blank states, all three connection indicators, and no narrow-layout horizontal overflow. |
+
+- The browser fixture result visually checked all five required fields: title,
+  ordered authors, year, complete abstract, and available paper link; it also
+  checked unavailable metadata fallbacks. Full desktop and 375px-wide mobile
+  screenshots were inspected at
+  `.wrangler/frontend-search-browser-check/d678ce57-b8d3-46a3-bde1-bc1b939de937/`
+  during the corrected-layout run; later equivalent ignored evidence is retained
+  in `.wrangler/frontend-search-browser-check/`.
+- The first browser-check attempt did not dispatch Enter correctly through CDP
+  and timed out before any paper-search request, so no provider call occurred.
+  The CDP key sequence was corrected. Two later fixture-only runs exposed
+  Windows cleanup races after Chrome had already exited; cleanup now verifies
+  the owned PID before treating `taskkill` codes as failure. The final browser
+  checks passed and stopped only owned processes.
+- No OpenAI request, hosted configuration change, deployment, push, storage
+  schema/migration/binding change, PDF download, or feature beyond the search UI
+  was performed. Storage persistence was unchanged, so its restart check was
+  not repeated.

@@ -1,4 +1,18 @@
 import { IntegrationError } from "./integration-errors.js";
+import type {
+  PaperSearchErrorPayload,
+  PaperSearchFailureKind,
+  PaperSearchResponse,
+  PaperSearchResult,
+} from "./paper-search-types.js";
+
+export type {
+  PaperSearchErrorPayload,
+  PaperSearchFailureKind,
+  PaperSearchFailureResponse,
+  PaperSearchResponse,
+  PaperSearchResult,
+} from "./paper-search-types.js";
 
 const ARXIV_ENDPOINT = "https://export.arxiv.org/api/query";
 const ARXIV_PROBE_QUERY = "all:electron";
@@ -18,35 +32,12 @@ interface XmlNode {
   text: string[];
 }
 
-export interface PaperSearchResult {
-  /** Stable arXiv identifier without a version suffix, for example `2401.01234` or `cond-mat/0011267`. */
-  id: string;
-  title: string;
-  authors: string[];
-  /** The year in Atom `published` (the paper's first submission), not Atom `updated`. */
-  year: number | null;
-  abstract: string;
-  /** Canonical HTTPS abstract URL when arXiv provided a trusted alternate link. */
-  url: string | null;
-  /** Canonical HTTPS PDF URL when arXiv provided a trusted PDF link. */
-  pdfUrl: string | null;
-}
-
-export interface PaperSearchResponse {
-  provider: "arxiv";
-  /** The normalized plain-text query supplied by the caller, not the arXiv query expression. */
-  query: string;
-  papers: PaperSearchResult[];
-}
-
 export interface ArxivProbeResult {
   provider: "arxiv";
   query: string;
   title: string;
   link: string;
 }
-
-export type PaperSearchFailureKind = "invalid_query" | "timeout" | "upstream";
 
 export class PaperSearchError extends Error {
   constructor(readonly kind: PaperSearchFailureKind, message: string) {
@@ -55,7 +46,7 @@ export class PaperSearchError extends Error {
   }
 }
 
-export function publicPaperSearchError(error: unknown) {
+export function publicPaperSearchError(error: unknown): PaperSearchErrorPayload {
   if (error instanceof PaperSearchError) {
     return { kind: error.kind, message: error.message };
   }

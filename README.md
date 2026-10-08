@@ -1,6 +1,6 @@
 # AI Research Assistant
 
-Phase 0A.3 retains the blank React/TypeScript frontend, persistent local D1/R2 checks, and Worker backend. It adds opt-in local connectivity probes for arXiv and OpenAI; paper features, saving, PDF processing, summaries, and Q&A remain later work.
+Phase 1B provides a React/TypeScript research-paper search page backed by arXiv, alongside persistent local D1/R2 checks and the Worker backend. Saving papers, PDF processing, summaries, and Q&A remain later work.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ npm.cmd run db:migrate:local
 npm.cmd run dev
 ```
 
-Then open <http://localhost:5173>. The blank screen shows backend, D1, and R2 connection indicators. It requests `/api/health` and `/api/storage/status` using relative URLs; Vite proxies `/api` to the local Worker at <http://127.0.0.1:8787>. Requests time out after 10 seconds and show failure states. A storage component can fail independently of the others.
+Then open <http://localhost:5173>. The page shows backend, D1, and R2 connection indicators plus an explicit research-topic/keywords search form. It requests `/api/health` and `/api/storage/status` using relative URLs; Vite proxies `/api` to the local Worker at <http://127.0.0.1:8787>. Requests time out after 10 seconds and show failure states. A storage component can fail independently of the others.
 
 Stop both development processes with `Ctrl+C`.
 
@@ -84,9 +84,8 @@ The Worker exports a default object with a callable `fetch(request, env)` handle
 
 ## arXiv paper search API
 
-`GET /api/papers/search?q=<plain-text-keywords>` is the Phase 1A backend-only
-paper-search endpoint. The blank frontend intentionally does not call or display
-it yet. For example, with the local Worker running:
+`GET /api/papers/search?q=<plain-text-keywords>` is the Phase 1A paper-search
+endpoint used by the Phase 1B frontend. For example, with the local Worker running:
 
 ```powershell
 Invoke-RestMethod 'http://127.0.0.1:8787/api/papers/search?q=graph%20neural%20networks'
@@ -151,6 +150,54 @@ authors, published-year selection, absent links, input validation with no fetch,
 empty/error/malformed feeds, HTTP/network errors, body-read timeout, response
 size limit, cache behavior, in-flight deduplication, and three-second spacing.
 
+## Research-paper search interface
+
+The local page has a labeled **Research topic or keywords** form and searches
+only when you select **Search** or press Enter. It uses a relative
+`/api/papers/search` URL with `URLSearchParams`; it does not call OpenAI, search
+on input changes, or run on page load. The browser repeats the endpoint's
+plain-text validation before sending: an input must contain letters or numbers,
+and is normalized/limited to 200 Unicode characters.
+
+While a request is pending the button is disabled, duplicate submissions are
+ignored, and the submitted query remains attached to its loading, result,
+empty, or error state even if the input is edited afterward. The browser aborts
+an in-flight search on unmount and has a 20-second client timeout to allow for
+the Worker's upstream timeout and local arXiv pacing.
+
+Each result renders its title, ordered authors, first-submission year, complete
+abstract, and an arXiv link when available. The year note is deliberate:
+arXiv's `published` value reflects the first submission. Missing authors, year,
+abstract, or link receive clear unavailable text rather than made-up metadata.
+Links open in a new tab with `noopener noreferrer`; provider and metadata are
+ordinary React text, never injected HTML.
+
+For a manual local check, start `npm.cmd run dev`, open <http://localhost:5173>,
+enter `graph neural networks`, and press Enter. Confirm the loading text, paper
+cards, full abstracts, link behavior, blank-input feedback, and the existing
+connection indicators. Do not expect a fixed paper title or count from arXiv.
+
+On this Windows setup, a dependency-free headless Chrome/Edge check is also
+available. It starts isolated Worker/Vite/browser processes; by default it uses
+fixtures for exceptional states and makes **one** live search through the actual
+React form and Vite proxy.
+
+```powershell
+npm.cmd run papers:ui:check
+
+# Fixture-only UI rendering check; explicitly makes no live arXiv request:
+$priorUiSkip = $env:PAPERS_UI_CHECK_SKIP_LIVE
+$env:PAPERS_UI_CHECK_SKIP_LIVE = "true"
+npm.cmd run papers:ui:check
+if ($null -eq $priorUiSkip) { Remove-Item Env:PAPERS_UI_CHECK_SKIP_LIVE } else { $env:PAPERS_UI_CHECK_SKIP_LIVE = $priorUiSkip }
+```
+
+The check covers keyboard Enter submission, loading, duplicate prevention,
+submitted-query association after editing, result cards and link safety, empty
+results, sanitized API errors, malformed JSON, network failure, browser timeout,
+blank input, and all existing connection indicators. Its ignored fixture
+screenshot and isolated state are retained below `.wrangler/` for inspection.
+
 ## Structure
 
 ```text
@@ -158,11 +205,12 @@ db/schema.ts                    Minimal Drizzle probe schema
 drizzle.config.ts               SQLite migration generation configuration
 drizzle/*.sql                   Committed schema-only migrations
 drizzle/meta/                   Committed Drizzle generation history
-src/App.tsx                     Blank screen and relative status requests
+src/App.tsx                     Search UI plus relative status/search requests
 src/worker/index.ts             Health/status/search routing and ESM fetch handler
 src/worker/storage.ts           Typed D1/R2 helpers
 src/worker/local-probe.ts       Explicitly gated local verification routes
 src/worker/arxiv.ts             Bounded, paced arXiv Atom search adapter and metadata parser
+src/worker/paper-search-types.ts  Shared declaration-only search response types
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
@@ -170,6 +218,7 @@ scripts/integration-check.mjs  Isolated live Worker connectivity verification
 scripts/integration-offline-check.mjs  Focused adapter failure-path checks
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/paper-search-live-check.mjs  One-request local Worker arXiv endpoint check
+scripts/frontend-search-browser-check.mjs  Isolated browser UI/proxy check
 worker-configuration.d.ts      Wrangler-generated binding/runtime types
 vite.config.ts                 Development proxy and frontend build output
 wrangler.jsonc                 Local D1/R2 bindings
