@@ -36,6 +36,11 @@ export default {
       return handleLocalIntegrationProbe(request, env);
     }
 
+    // Sites supplies static assets beside the Worker; local Vite serves them itself.
+    if (!url.pathname.startsWith("/api/") && env.ASSETS) {
+      return env.ASSETS.fetch(request);
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 };

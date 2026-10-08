@@ -156,3 +156,11 @@ The full Phase 0A.2 audit reports **3 high** findings already present through `w
 The new [esbuild advisory](https://github.com/advisories/GHSA-67mh-4wv8-2f99) concerns its development-server feature. The inspected loader uses transformation APIs, and the project's Drizzle command only generates migration files; no Drizzle Studio or vulnerable esbuild server is started. This assessment is specific to the current commands, not a claim that development dependencies are harmless. The audit dry run proposed no changes; its suggested Drizzle downgrade to 0.18.1 is marked breaking and was not applied. No forced fix or dependency override was introduced. See `DEVELOPMENT_LOG.md` for exact verification results.
 
 References: [Cloudflare local D1 development](https://developers.cloudflare.com/d1/best-practices/local-development/), [D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/), [R2 Worker binding API](https://developers.cloudflare.com/r2/api/workers/workers-api-usage/), [OpenAI GPT-6 Luna](https://developers.openai.com/api/docs/models/gpt-6-luna), [Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create), and the [arXiv API manual](https://info.arxiv.org/help/api/user-manual.html).
+
+# Sites hosting copy
+
+Phase 0B.2 hosting preparation retains the local application and adds the Sites
+manifest and reproducible build staging. See [docs/SITES_DEPLOYMENT.md](docs/SITES_DEPLOYMENT.md)
+for the output layout, runtime secret setup, verification, and Windows source
+synchronization. `npm.cmd run build` now also prepares Sites-compatible output;
+`npm.cmd run sites` checks the packaged Worker with binding fixtures.

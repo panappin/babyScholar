@@ -5,6 +5,7 @@ export type WorkerEnv = Omit<Partial<Env>, "OPENAI_MODEL"> & {
   LOCAL_INTEGRATION_PROBE?: string;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
+  ASSETS?: Fetcher;
 };
 
 export type ComponentStatus = {

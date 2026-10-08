@@ -140,3 +140,66 @@ The live check used its own state directory `.wrangler/integration-check/c07cc22
 - `gh` is not installed. `git credential-manager github list` failed because this runtime cannot persist/access the Windows `wincredman` store. A read-only `git -c credential.interactive=false ls-remote https://github.com/panappin/babyScholar.git` returned `Repository not found`; without a usable authenticated session that does not distinguish an absent private repository from unauthorized access. No GitHub repository, remote, visibility, or remote history was changed. The next user-side action is to authenticate Git Credential Manager or install/sign in to GitHub CLI as `panappin`; no token should be pasted into chat.
 - The known audit baseline remains 3 high and 4 moderate development-tool findings, with zero production-only findings. No package dependency change, audit suppression, force fix, or override was made in this phase.
 - A generated handoff ZIP was inspected before this final log commit to validate the handoff procedure: it contained the tracked source plus the clean-build `dist/frontend/` and complete `dist/worker/` directory (58 entries; 3 frontend files; 14 Worker files). Required source/migration/handoff files were present; `.git`, `node_modules`, `.wrangler`, `handoff`, real `.dev.vars`, real `.env*`, and credential-shaped values were absent. The archive is regenerated from the final commit after this entry so its source revision exactly matches the final checkpoint; its absolute path and SHA-256 are reported with the handoff.
+
+## Phase 0B.2 hosting preparation, October 8, 2026
+
+- Received the Phase 0B.1 ZIP and independently verified SHA-256
+  `f21fddc6f17b6d441515f5d87ac6982f5d246a01a9538509d46967491d6af015`,
+  all 58 entries, and the archive CRC. Normalized its Windows entry separators
+  during Linux extraction. No real environment files or credential-shaped
+  values were found by the bounded scan.
+- Retained the React/TypeScript application, full Worker modules, the original
+  Drizzle SQL/metadata, and the dependency lockfile. No dependency versions or
+  paper-assistant features were changed. Added a small book favicon.
+- Registered private Site `appgprj_6ac7edf4f7248191a1b330185e0df5e0` and
+  declared the existing logical bindings `DB` and `PAPER_BUCKET`. Sites owns
+  the production resources; local placeholder IDs are excluded from the
+  hosted Worker configuration.
+- Added `ASSETS` fallback for frontend requests, keeping `/api/*` routed to
+  the existing backend. The build retains `dist/frontend/` and the full
+  `dist/worker/`, then stages `dist/client/`, the full `dist/server/`, and
+  immutable migration metadata for publication.
+- `npm run build`, `npm run integrations:offline`, the full integration check
+  with `INTEGRATION_CHECK_OFFLINE=true`, and `npm run sites:check` passed in
+  the managed Linux hosting checkout. The artifact check uses binding fixtures;
+  the full offline check uses local Worker D1/R2 emulation and the Vite proxy.
+  No arXiv query or paid OpenAI request was repeated.
+- Set non-secret Sites runtime configuration `OPENAI_MODEL=gpt-6-luna`.
+  The existing local API key was not supplied in the ZIP. OpenAI Developers
+  was initially declined, then the user stated it was installed; a recheck
+  confirmed installation and available Personal/Default-project targets.
+  No new API key was created. Hosted secret configuration and authenticated
+  OpenAI connectivity remain pending.
+- Publication outcome and the complete interaction record belong in the
+  running AI Research Assistant Phase Journal. The Windows GitHub repository
+  has not received these hosting changes yet; synchronize the supplied handoff
+  through the next scoped Codex task without replacing Git history or secrets.
+
+### Windows source synchronization
+
+- Confirmed the local `main` HEAD was the required base checkpoint
+  `044ef6fb79f9f20b5471a9b43d87c75932c8da1f` and matched `origin/main` before
+  applying the handoff. The supplied `babyScholar-phase-0b2-hosting-changes.zip`
+  SHA-256 matched `462bf69cfc1c4acf83380d104a1b9453570c4923c1f7a89dc71d75581277311c`.
+  It was extracted to a fresh temporary directory and all 12 paths were
+  inspected before synchronization.
+- Preserved the real ignored `.dev.vars`, local `.wrangler` state, ignored
+  build output, `package-lock.json`, `db/schema.ts`, `drizzle/0000_storage_probe.sql`,
+  `drizzle/meta/**`, and `wrangler.jsonc`. The registered project ID remains
+  `appgprj_6ac7edf4f7248191a1b330185e0df5e0`; hosted bindings remain `DB` and
+  `PAPER_BUCKET`.
+- Dependencies were already present, so `npm.cmd ci` was not run. `npm.cmd run
+  build` passed: type checking, Vite, Worker ESM build, and Sites staging all
+  completed. The resulting `dist/client/`, full `dist/server/`, and
+  `dist/.openai/drizzle/` paths were checked locally.
+- Ran `npm.cmd run integrations` with `INTEGRATION_CHECK_OFFLINE=true` because
+  the preserved local key could otherwise send the deliberate paid OpenAI
+  probe. It passed local migration, direct Worker health/storage, Vite-proxied
+  health/storage, disabled-route 404s, and owned-process cleanup without
+  invoking arXiv or OpenAI. `npm.cmd run sites` passed the packaged Worker,
+  API/static routing, binding fixtures, disabled probes, and copied migration
+  metadata. The package adds a dependency-free `sites` alias to the supplied
+  `sites:check` script so the requested command is available.
+- This synchronization did not create another Site, redeploy, configure a
+  hosted secret, or change the private Site audience. Hosted `OPENAI_API_KEY`
+  setup and authenticated hosted OpenAI verification remain pending.

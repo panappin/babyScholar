@@ -18,7 +18,10 @@
     "integrations": "node scripts/integration-check.mjs",
     "integrations:offline": "node scripts/integration-offline-check.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.worker.json && tsc --noEmit --project tsconfig.vite.json",
-    "build": "npm run typecheck && npm run build:frontend && npm run build:worker",
+    "build": "npm run typecheck && npm run build:frontend && npm run build:worker && npm run build:sites",
+    "build:sites": "node scripts/prepare-sites-build.mjs",
+    "sites": "npm run sites:check",
+    "sites:check": "node scripts/sites-artifact-check.mjs",
     "build:frontend": "vite build",
     "build:worker": "tsc --project tsconfig.worker.json"
   },

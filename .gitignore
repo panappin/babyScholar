@@ -5,6 +5,7 @@ dist/
 # Local development runtime state
 .wrangler/
 .vite/
+.sites-runtime/
 coverage/
 
 # Editor-local state and generated transfer packages
