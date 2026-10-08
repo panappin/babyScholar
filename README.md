@@ -1,6 +1,6 @@
 # AI Research Assistant
 
-Phase 2A adds a persistent D1 paper-library API to the existing React/TypeScript arXiv search page and local D1/R2 checks. The frontend remains search-only; save/browse controls follow in Phase 2B. PDF processing, summaries, and Q&A remain later work.
+Phase 2B adds Save controls and a browsable Library UI to the existing React/TypeScript arXiv search page and Phase 2A persistent D1 paper-library API. PDF processing, summaries, and Q&A remain later work.
 
 ## Prerequisites
 
@@ -159,9 +159,10 @@ size limit, cache behavior, in-flight deduplication, and three-second spacing.
 ## Persistent paper-library API (Phase 2A)
 
 The existing `DB` binding stores library metadata; no external API or R2 request
-runs on either library route. This is backend-only: the current search page has
-no save/browse controls yet. The existing private Sites boundary is unchanged;
-there is no new authentication mechanism or permissive CORS policy.
+runs on either library route. Phase 2B consumes these routes from the local
+search/Library UI without changing their API contract. The existing private
+Sites boundary is unchanged; there is no new authentication mechanism or
+permissive CORS policy.
 
 `POST /api/library/papers` requires `Content-Type: application/json` and this
 exact envelope (all seven `PaperSearchResult` fields must be present):
@@ -289,11 +290,13 @@ sanitized proxy logs, and library snapshots below
 `.wrangler/transport-investigation/<UUID>/result.json`. The application byte
 limit, deadline, validation, and dependencies remain unchanged. The exact
 internal connection-pool mechanism is unconfirmed; hosted behavior is untested.
-Because fresh-client requests also fail, the Phase 2B readiness blocker remains
-open pending a scoped local-runtime fix. See the appended investigation in
-`DEVELOPMENT_LOG.md`; earlier failures and reports are retained there.
+Because fresh-client requests also fail, the local transport blocker remains
+open pending a scoped local-runtime fix. Phase 2B supports normal UI workflows
+but does not establish hosted behavior for that edge case. See the appended
+investigation in `DEVELOPMENT_LOG.md`; earlier failures and reports are retained
+there.
 
-## Research-paper search interface
+## Research-paper search and Library interface
 
 The local page has a labeled **Research topic or keywords** form and searches
 only when you select **Search** or press Enter. It uses a relative
@@ -315,31 +318,44 @@ abstract, or link receive clear unavailable text rather than made-up metadata.
 Links open in a new tab with `noopener noreferrer`; provider and metadata are
 ordinary React text, never injected HTML.
 
+Each search result has a **Save to library** control. It reports per-paper
+Saving, Saved, recoverable error, or an uncertain outcome while it reconciles a
+timed-out/interrupted request with the authoritative library. A source identity
+uses the canonical arXiv ID rather than a title or versioned URL, so an existing
+saved result is recognized after a refresh and cannot receive duplicate pending
+submissions. A successful save is merged into the Library immediately; no
+automatic POST retry occurs.
+
+Select **Library** to load the newest-first records from `/api/library/papers`.
+It has explicit initial, loading, empty, loaded, and error states and a
+**Reload library** action. Cards show the title, ordered authors, nullable
+first-submission year, complete abstract, safe paper link/fallback, saved time,
+the application record ID, and the distinct canonical arXiv ID. A failed reload
+retains any records already displayed.
+
 For a manual local check, start `npm.cmd run dev`, open <http://localhost:5173>,
 enter `graph neural networks`, and press Enter. Confirm the loading text, paper
-cards, full abstracts, link behavior, blank-input feedback, and the existing
-connection indicators. Do not expect a fixed paper title or count from arXiv.
+cards, full abstracts, link behavior, blank-input feedback, Save state, Library
+view, refresh persistence, and the existing connection indicators. Do not
+expect a fixed paper title or count from arXiv.
 
 On this Windows setup, a dependency-free headless Chrome/Edge check is also
-available. It starts isolated Worker/Vite/browser processes; by default it uses
-fixtures for exceptional states and makes **one** live search through the actual
-React form and Vite proxy.
+available. It starts isolated Worker/Vite/browser processes, uses fixtures for
+search/library exceptional states, and uses a disposable local D1 database for
+the Save, Library, browser-refresh, and duplicate-record flow. It makes no
+arXiv or OpenAI request.
 
 ```powershell
 npm.cmd run papers:ui:check
-
-# Fixture-only UI rendering check; explicitly makes no live arXiv request:
-$priorUiSkip = $env:PAPERS_UI_CHECK_SKIP_LIVE
-$env:PAPERS_UI_CHECK_SKIP_LIVE = "true"
-npm.cmd run papers:ui:check
-if ($null -eq $priorUiSkip) { Remove-Item Env:PAPERS_UI_CHECK_SKIP_LIVE } else { $env:PAPERS_UI_CHECK_SKIP_LIVE = $priorUiSkip }
 ```
 
 The check covers keyboard Enter submission, loading, duplicate prevention,
 submitted-query association after editing, result cards and link safety, empty
 results, sanitized API errors, malformed JSON, network failure, browser timeout,
-blank input, and all existing connection indicators. Its ignored fixture
-screenshot and isolated state are retained below `.wrangler/` for inspection.
+blank input, save/library loading and errors, existing saves, duplicate responses,
+an interrupted save reconciliation, browser refresh persistence, desktop/narrow
+layouts, and all existing connection indicators. Its ignored screenshots and
+isolated state are retained below `.wrangler/` for inspection.
 
 ## Structure
 
@@ -348,7 +364,8 @@ db/schema.ts                    Drizzle storage-probe and paper-library schema
 drizzle.config.ts               SQLite migration generation configuration
 drizzle/*.sql                   Committed schema-only migrations
 drizzle/meta/                   Committed Drizzle generation history
-src/App.tsx                     Search UI plus relative status/search requests
+src/App.tsx                     Search/Save/Library UI plus relative API requests
+src/paper-identity.ts           Browser-safe canonical arXiv identity and link helpers
 src/worker/index.ts             Health/status/search/library routing and ESM fetch handler
 src/worker/storage.ts           Typed D1/R2 helpers
 src/worker/local-probe.ts       Explicitly gated local verification routes
@@ -366,7 +383,7 @@ scripts/integration-offline-check.mjs  Focused adapter failure-path checks
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
 scripts/paper-search-live-check.mjs  One-request local Worker arXiv endpoint check
-scripts/frontend-search-browser-check.mjs  Isolated browser UI/proxy check
+scripts/frontend-search-browser-check.mjs  Isolated search/Library browser/proxy check
 worker-configuration.d.ts      Wrangler-generated binding/runtime types
 vite.config.ts                 Development proxy and frontend build output
 wrangler.jsonc                 Local D1/R2 bindings

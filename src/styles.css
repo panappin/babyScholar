@@ -34,7 +34,8 @@ input {
 
 .welcome,
 .search-panel,
-.results-panel {
+.results-panel,
+.workspace-tabs {
   border: 1px solid #e1e5ed;
   border-radius: 1rem;
   background: #ffffff;
@@ -48,6 +49,37 @@ input {
 
 .results-panel {
   padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.workspace-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 22px rgb(23 32 51 / 6%);
+}
+
+.workspace-tabs button,
+.save-button,
+.reload-button {
+  min-height: 2.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.workspace-tabs button {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid transparent;
+  color: #465166;
+  background: transparent;
+}
+
+.workspace-tabs button[aria-selected="true"] {
+  border-color: #b8d1ed;
+  color: #124f94;
+  background: #edf5ff;
 }
 
 .eyebrow {
@@ -197,6 +229,34 @@ h4 {
   font-weight: 700;
 }
 
+.save-area {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.875rem;
+  margin-top: 1.25rem;
+}
+
+.save-button,
+.reload-button {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #155daf;
+  color: #124f94;
+  background: #ffffff;
+}
+
+.save-button:hover:not(:disabled),
+.reload-button:hover:not(:disabled) {
+  color: #ffffff;
+  background: #155daf;
+}
+
+.save-button:disabled,
+.reload-button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
 .search-controls button:hover:not(:disabled) {
   background: #104a8a;
 }
@@ -217,7 +277,8 @@ a:focus-visible {
 .search-feedback,
 .results-note,
 .provider,
-.paper-link-unavailable {
+.paper-link-unavailable,
+.save-feedback {
   color: #59667a;
   font-size: 0.9375rem;
   line-height: 1.5;
@@ -237,6 +298,14 @@ a:focus-visible {
   border-radius: 0.25rem;
   color: #8d2020;
   background: #fff4f4;
+}
+
+.save-feedback {
+  margin: 0;
+}
+
+.save-feedback--error {
+  color: #8d2020;
 }
 
 .provider {
@@ -287,6 +356,11 @@ a:focus-visible {
   margin: 0.25rem 0 0;
   color: #2a3548;
   line-height: 1.5;
+}
+
+.paper-metadata code {
+  color: #364157;
+  font-size: 0.875em;
 }
 
 .paper-abstract {
@@ -354,6 +428,14 @@ a:focus-visible {
   }
 
   .search-controls button {
+    width: 100%;
+  }
+
+  .workspace-tabs button {
+    flex: 1 1 0;
+  }
+
+  .reload-button {
     width: 100%;
   }
 

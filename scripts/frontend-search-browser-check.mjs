@@ -4,11 +4,10 @@ import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
-import { dirname, resolve } from "node:path";
+import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
-import { fileURLToPath } from "node:url";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const root = resolve(import.meta.dirname, "..");
 const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
 const vite = resolve(root, "node_modules/vite/bin/vite.js");
 const state = resolve(root, ".wrangler/frontend-search-browser-check", randomUUID());
@@ -17,36 +16,57 @@ const browserCandidates = [
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
 ];
 const browserPath = browserCandidates.find(existsSync);
-const skipLiveSearch = process.env.PAPERS_UI_CHECK_SKIP_LIVE === "true";
 const children = new Set();
+const evidence = { startedAt: new Date().toISOString(), state, steps: [], result: "running" };
 let worker;
 let frontend;
 let browser;
 
-const fixtureResponse = {
-  provider: "arxiv",
-  query: "machine learning",
-  papers: [
-    {
-      id: "2401.01234",
-      title: "A fixture paper for the browser check",
-      authors: ["Ada Author", "Bea Researcher"],
-      year: 2024,
-      abstract: "This complete fixture abstract is deliberately long enough to verify that the UI renders all of its text without truncation.",
-      url: "https://arxiv.org/abs/2401.01234v2",
-      pdfUrl: "https://arxiv.org/pdf/2401.01234v2.pdf",
-    },
-    {
-      id: "cond-mat/0011267",
-      title: "A fixture paper without a link",
-      authors: [],
-      year: null,
-      abstract: "A second complete abstract verifies missing-metadata fallbacks.",
-      url: null,
-      pdfUrl: null,
-    },
-  ],
+const existingPaper = {
+  id: "11111111-1111-4111-8111-111111111111",
+  source: "arxiv",
+  arxivId: "2401.01234",
+  title: "Original saved metadata",
+  authors: ["Original Author"],
+  year: 2023,
+  abstract: "The original saved abstract stays authoritative for duplicate responses.",
+  url: "https://arxiv.org/abs/2401.01234v1",
+  pdfUrl: "https://arxiv.org/pdf/2401.01234v1.pdf",
+  savedAt: "2025-01-02T03:04:05.000Z",
 };
+const newlySavedPaper = {
+  id: "22222222-2222-4222-8222-222222222222",
+  source: "arxiv",
+  arxivId: "2401.01235",
+  title: "Newly saved fixture paper",
+  authors: ["Ada Author", "Bea Researcher"],
+  year: 2024,
+  abstract: "This complete fixture abstract is deliberately long enough to verify complete browser rendering, save feedback, and Library persistence.",
+  url: "https://arxiv.org/abs/2401.01235v2",
+  pdfUrl: "https://arxiv.org/pdf/2401.01235v2.pdf",
+  savedAt: "2026-02-03T04:05:06.000Z",
+};
+const duplicatePaper = {
+  ...existingPaper,
+  id: "33333333-3333-4333-8333-333333333333",
+  arxivId: "2401.01236",
+  title: "Original duplicate record",
+  savedAt: "2025-02-03T04:05:06.000Z",
+};
+const actualSearchPaper = {
+  id: "2401.01239",
+  title: "Actual browser proxy fixture",
+  authors: ["Browser Fixture Author", "Second Author"],
+  year: 2024,
+  abstract: "An offline fixture is saved through the real browser, relative Vite proxy, local Worker, and isolated D1 database.",
+  url: "https://arxiv.org/abs/2401.01239v3",
+  pdfUrl: "https://arxiv.org/pdf/2401.01239v3.pdf",
+};
+
+function record(step, details = {}) {
+  evidence.steps.push({ step, ...details });
+  console.log(JSON.stringify({ step, ...details }));
+}
 
 async function availablePort() {
   const server = createServer();
@@ -66,14 +86,10 @@ function launch(entry, args, extraEnv = {}) {
     stdio: ["pipe", "pipe", "pipe"],
     env: { ...process.env, WRANGLER_SEND_METRICS: "false", ...extraEnv },
   });
-  child.log = "";
   child.done = new Promise((resolveDone) => {
     child.once("error", (error) => { child.launchError = error; resolveDone(); });
-    child.once("close", () => resolveDone());
+    child.once("close", resolveDone);
   });
-  for (const stream of [child.stdout, child.stderr]) {
-    stream.on("data", (chunk) => { child.log = (child.log + chunk.toString()).slice(-24_000); });
-  }
   children.add(child);
   return child;
 }
@@ -81,51 +97,38 @@ function launch(entry, args, extraEnv = {}) {
 async function stop(child) {
   if (!child || !children.has(child)) return;
   if (child.exitCode === null && child.signalCode === null && !child.launchError) {
-    const killer = spawn("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "pipe" });
-    const killCode = await new Promise((resolveKill, reject) => {
-      killer.once("error", reject);
-      killer.once("exit", resolveKill);
-    });
-    // taskkill can report 128/255 if an owned process exits between the status
-    // check and the command. Verify the PID before calling that cleanup a failure.
+    const killer = spawn("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" });
+    const killCode = await new Promise((resolveKill, reject) => { killer.once("error", reject); killer.once("exit", resolveKill); });
     if (killCode !== 0 && child.exitCode === null && child.signalCode === null) {
-      await delay(100);
-      let stillRunning = true;
-      try { process.kill(child.pid, 0); } catch { stillRunning = false; }
-      if (stillRunning) throw new Error(`taskkill exited ${killCode}`);
+      let running = true;
+      try { process.kill(child.pid, 0); } catch (error) { if (error.code === "ESRCH") running = false; else throw error; }
+      if (running) throw new Error(`Could not stop owned process ${child.pid} (taskkill ${killCode}).`);
     }
-    await Promise.race([
-      child.done,
-      delay(10_000, undefined, { ref: false }).then(() => { throw new Error(`PID ${child.pid} did not stop`); }),
-    ]);
+    await Promise.race([child.done, delay(10_000, undefined, { ref: false }).then(() => { throw new Error(`Owned process ${child.pid} did not stop.`); })]);
   }
   children.delete(child);
+  record("stopped-owned-process", { pid: child.pid });
 }
 
 async function waitForServer(child, url) {
   const deadline = Date.now() + 45_000;
   while (Date.now() < deadline) {
-    if (child.launchError || child.exitCode !== null || child.signalCode !== null) {
-      throw new Error(`Server exited before becoming ready.\n${child.log}`);
-    }
+    if (child.launchError || child.exitCode !== null || child.signalCode !== null) throw new Error("An owned local server exited before readiness.");
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(1_500) });
-      if (response.ok) return;
-    } catch { /* The server may still be starting. */ }
-    await delay(200);
+      if ((await fetch(url, { signal: AbortSignal.timeout(1_500) })).ok) return;
+    } catch { /* The owned server may still be starting. */ }
+    await delay(150);
   }
-  throw new Error(`Timed out waiting for ${url}.\n${child.log}`);
+  throw new Error(`Timed out waiting for ${url}.`);
 }
 
 async function migrate() {
   const child = launch(process.execPath, [wrangler, "d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state]);
   child.stdin.end();
-  await Promise.race([
-    child.done,
-    delay(45_000, undefined, { ref: false }).then(() => { throw new Error("Local migration timed out"); }),
-  ]);
-  if (child.launchError || child.exitCode !== 0) throw new Error(child.log || String(child.launchError));
+  await Promise.race([child.done, delay(45_000, undefined, { ref: false }).then(() => { throw new Error("Isolated local migration timed out."); })]);
+  assert.equal(child.exitCode, 0, "Isolated local migration failed.");
   children.delete(child);
+  record("migration-applied", { exitCode: child.exitCode });
 }
 
 class CdpConnection {
@@ -179,13 +182,14 @@ async function browserDebuggerUrl(port) {
       const response = await fetch(`http://127.0.0.1:${port}/json/version`);
       const body = await response.json();
       if (typeof body.webSocketDebuggerUrl === "string") return body.webSocketDebuggerUrl;
-    } catch { /* Chrome may still be starting. */ }
+    } catch { /* The owned browser may still be starting. */ }
     await delay(150);
   }
   throw new Error("Timed out waiting for the browser debugging endpoint.");
 }
 
 async function main() {
+  try {
   assert.ok(browserPath, "A supported local Chrome or Edge executable is required for this browser check.");
   await mkdir(state, { recursive: true });
   const workerPort = await availablePort();
@@ -198,10 +202,9 @@ async function main() {
   worker = launch(process.execPath, [wrangler, "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
     "--ip", "127.0.0.1", "--port", String(workerPort), "--inspector-port", "0", "--show-interactive-dev-session=false"]);
   await waitForServer(worker, `${workerOrigin}/api/health`);
-  frontend = launch(process.execPath, [vite, "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], {
-    LOCAL_WORKER_ORIGIN: workerOrigin,
-  });
+  frontend = launch(process.execPath, [vite, "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], { LOCAL_WORKER_ORIGIN: workerOrigin });
   await waitForServer(frontend, viteOrigin);
+  record("local-worker-and-vite-started", { workerPid: worker.pid, frontendPid: frontend.pid, workerOrigin, viteOrigin });
 
   browser = launch(browserPath, ["--headless=new", `--remote-debugging-port=${debuggerPort}`, "--remote-allow-origins=*",
     `--user-data-dir=${resolve(state, "browser-profile")}`, "--no-first-run", "--no-default-browser-check", "about:blank"]);
@@ -212,11 +215,12 @@ async function main() {
   const sessionId = attached.sessionId;
   await cdp.send("Page.enable", {}, sessionId);
   await cdp.send("Runtime.enable", {}, sessionId);
-  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/papers/search*" }] }, sessionId);
-
-  const pausedRequests = [];
+  const paused = [];
+  const allPaused = [];
   cdp.on("Fetch.requestPaused", (params, eventSessionId) => {
-    if (eventSessionId === sessionId) pausedRequests.push(params);
+    if (eventSessionId !== sessionId) return;
+    paused.push(params);
+    allPaused.push({ method: params.request.method, url: params.request.url, postData: params.request.postData });
   });
 
   const evaluate = async (expression) => {
@@ -225,157 +229,275 @@ async function main() {
     return result.result.value;
   };
   const waitFor = async (expression, description) => {
-    const deadline = Date.now() + 10_000;
+    const deadline = Date.now() + 12_000;
     while (Date.now() < deadline) {
-      if (await evaluate(expression)) return;
-      await delay(50);
+      if (await evaluate(`Boolean(${expression})`)) return;
+      await delay(40);
     }
     throw new Error(`Timed out waiting for ${description}.`);
   };
-  const nextPaused = async () => {
-    const deadline = Date.now() + 10_000;
-    while (Date.now() < deadline) {
-      const request = pausedRequests.shift();
-      if (request) return request;
-      await delay(25);
-    }
-    throw new Error("Timed out waiting for a paper-search request.");
-  };
-  const fillInput = async (value) => evaluate(`(() => {
+  const click = (selector) => evaluate(`(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!(element instanceof HTMLElement)) return false; element.click(); return true; })()`);
+  const fillInput = (value) => evaluate(`(() => {
     const input = document.querySelector('#paper-search-query');
+    if (!(input instanceof HTMLInputElement)) return false;
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
     setter.call(input, ${JSON.stringify(value)});
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.focus();
-    return input.value;
+    return true;
   })()`);
   const pressEnter = async () => {
-    await cdp.send("Input.dispatchKeyEvent", {
-      type: "rawKeyDown",
-      key: "Enter",
-      code: "Enter",
-      windowsVirtualKeyCode: 13,
-      nativeVirtualKeyCode: 13,
-    }, sessionId);
+    await cdp.send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 }, sessionId);
     await cdp.send("Input.dispatchKeyEvent", { type: "char", text: "\r", unmodifiedText: "\r" }, sessionId);
     await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 }, sessionId);
   };
-  const fulfillJson = (request, status, body) => cdp.send("Fetch.fulfillRequest", {
-    requestId: request.requestId,
-    responseCode: status,
-    responseHeaders: [{ name: "content-type", value: "application/json; charset=utf-8" }],
-    body: Buffer.from(JSON.stringify(body)).toString("base64"),
-  }, sessionId);
+  const nextPaused = async (predicate, description) => {
+    const deadline = Date.now() + 12_000;
+    while (Date.now() < deadline) {
+      const index = paused.findIndex(predicate);
+      if (index !== -1) return paused.splice(index, 1)[0];
+      await delay(25);
+    }
+    throw new Error(`Timed out waiting for ${description}.`);
+  };
+  const newestPaused = async (predicate, description) => {
+    const deadline = Date.now() + 12_000;
+    while (Date.now() < deadline) {
+      const matches = paused.map((request, index) => ({ request, index })).filter(({ request }) => predicate(request));
+      if (matches.length) {
+        // React StrictMode intentionally mounts/effect-cleans up/mounts in
+        // development. The final request is the one still owned by the page;
+        // earlier aborted interception IDs must never be fulfilled.
+        await delay(100);
+        const current = paused.map((request, index) => ({ request, index })).filter(({ request }) => predicate(request));
+        const selected = current.at(-1);
+        if (selected) {
+          for (let index = paused.length - 1; index >= 0; index--) if (predicate(paused[index])) paused.splice(index, 1);
+          return selected.request;
+        }
+      }
+      await delay(25);
+    }
+    throw new Error(`Timed out waiting for ${description}.`);
+  };
+  const isSearch = (request) => request.request.method === "GET" && request.request.url.includes("/api/papers/search");
+  const isLibraryGet = (request) => request.request.method === "GET" && request.request.url.includes("/api/library/papers");
+  const isLibraryPost = (request) => request.request.method === "POST" && request.request.url.includes("/api/library/papers");
+  const fulfillJson = async (request, status, body) => {
+    record("mock-response", { method: request.request.method, path: new URL(request.request.url).pathname, status });
+    return cdp.send("Fetch.fulfillRequest", {
+      requestId: request.requestId,
+      responseCode: status,
+      responseHeaders: [{ name: "content-type", value: "application/json; charset=utf-8" }],
+      body: Buffer.from(JSON.stringify(body)).toString("base64"),
+    }, sessionId);
+  };
+  const navigate = async () => {
+    await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+    await waitFor("document.querySelector('#paper-search-query')", "the initial page");
+    await waitFor("document.body.innerText.includes('Backend connected') && document.body.innerText.includes('D1 connected') && document.body.innerText.includes('R2 connected')", "connection indicators");
+  };
+  const mockSearch = async (query, body, status = 200) => {
+    assert.equal(await fillInput(query), true);
+    await pressEnter();
+    const request = await nextPaused(isSearch, `search request for ${query}`);
+    await fulfillJson(request, status, body);
+  };
+  const resolveInitialLibrary = async (papers) => {
+    const request = await newestPaused(isLibraryGet, "active initial library request");
+    assert.equal(await click("#library-tab"), true);
+    await waitFor("document.body.innerText.includes('Loading saved papers')", "initial library loading state");
+    await fulfillJson(request, 200, { papers });
+    if (papers.length) await waitFor(`document.body.innerText.includes(${JSON.stringify(papers[0].id)})`, "rendered saved library record");
+    else await waitFor("document.body.innerText.includes('No saved papers yet')", "empty library state");
+  };
 
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
-  await waitFor("document.querySelector('#paper-search-query') && document.body.innerText.includes('Search only runs when you submit')", "the initial search UI");
-  await waitFor("document.body.innerText.includes('Backend connected') && document.body.innerText.includes('D1 connected') && document.body.innerText.includes('R2 connected')", "the existing connection indicators");
-  assert.equal(pausedRequests.length, 0, "page load must not start a paper search");
+  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/papers/search*" }, { urlPattern: "*/api/library/papers*" }] }, sessionId);
+  await navigate();
+  await resolveInitialLibrary([existingPaper]);
+  assert.ok((await evaluate("document.body.innerText")).includes("Original saved metadata"));
+  assert.equal(await click("#search-tab"), true);
 
-  await fillInput("machine learning");
-  assert.equal(pausedRequests.length, 0, "typing must not start a paper search");
+  const searchResponse = {
+    provider: "arxiv",
+    query: "machine learning",
+    papers: [
+      { id: "2401.01234", title: "Changed search title", authors: ["Search Author"], year: 2024, abstract: "Search metadata must not replace an existing record.", url: "https://arxiv.org/abs/2401.01234v9", pdfUrl: null },
+      { id: "2401.01235", title: newlySavedPaper.title, authors: newlySavedPaper.authors, year: newlySavedPaper.year, abstract: newlySavedPaper.abstract, url: newlySavedPaper.url, pdfUrl: newlySavedPaper.pdfUrl },
+    ],
+  };
+  assert.equal(await fillInput("machine learning"), true);
   await pressEnter();
-  const firstRequest = await nextPaused();
-  assert.match(firstRequest.request.url, /[?&]q=machine(?:%20|\+)learning/u);
-  await waitFor("document.body.innerText.includes('Searching arXiv for') && document.querySelector('button[type=submit]').disabled", "the loading state");
+  const fixtureSearchRequest = await nextPaused(isSearch, "fixture search request");
+  await waitFor("document.body.innerText.includes('Searching arXiv for') && document.querySelector('button[type=submit]').disabled", "search loading state");
   await pressEnter();
-  await delay(100);
-  assert.equal(pausedRequests.length, 0, "duplicate keyboard submission must not create another request while pending");
-  await fillInput("a later edit");
-  await fulfillJson(firstRequest, 200, fixtureResponse);
-  await waitFor("document.querySelectorAll('.paper-card').length === 2", "fixture results");
-  const resultDetails = await evaluate(`JSON.stringify({
-    text: document.body.innerText,
-    heading: document.querySelector('#search-results-title').textContent,
-    provider: document.querySelector('.provider').textContent,
-    link: document.querySelector('.paper-link')?.href,
-    target: document.querySelector('.paper-link')?.target,
-    rel: document.querySelector('.paper-link')?.rel
-  })`);
-  const rendered = JSON.parse(resultDetails);
-  for (const value of [fixtureResponse.papers[0].title, "Ada Author, Bea Researcher", "2024", fixtureResponse.papers[0].abstract, "Paper link unavailable"]) {
-    assert.ok(rendered.text.includes(value), `Expected rendered result text: ${value}`);
-  }
-  assert.match(rendered.heading, /machine learning/u, "results must remain associated with the submitted query");
-  assert.equal(rendered.provider, "Provider: arxiv");
-  assert.equal(rendered.link, fixtureResponse.papers[0].url);
-  assert.equal(rendered.target, "_blank");
-  assert.match(rendered.rel, /noopener/u);
-  const screenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true }, sessionId);
-  const screenshotPath = resolve(state, "fixture-results.png");
-  await writeFile(screenshotPath, Buffer.from(screenshot.data, "base64"));
+  await delay(75);
+  assert.equal(paused.filter(isSearch).length, 0, "pending search must not be submitted twice");
+  await fulfillJson(fixtureSearchRequest, 200, searchResponse);
+  await waitFor("document.querySelectorAll('.paper-card').length === 2", "fixture search results");
+  assert.equal(await evaluate("document.querySelector('[data-save-paper=\"2401.01234\"]').disabled"), true, "existing source identity must be recognized as saved");
+  assert.equal(await evaluate("document.querySelector('[data-save-paper=\"2401.01234\"]').textContent"), "Saved");
+  assert.equal(await click('[data-save-paper="2401.01235"]'), true);
+  const saveRequest = await nextPaused(isLibraryPost, "fixture save request");
+  assert.deepEqual(JSON.parse(saveRequest.request.postData), { paper: searchResponse.papers[1] });
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01235\"]').textContent === 'Saving...'", "per-paper saving state");
+  await fulfillJson(saveRequest, 201, { paper: newlySavedPaper, created: true });
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01235\"]').textContent === 'Saved'", "saved feedback");
+  assert.equal(await click("#library-tab"), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(newlySavedPaper.id)}) && document.body.innerText.includes(${JSON.stringify(existingPaper.id)})`, "newly saved library record");
+  assert.match(await evaluate("document.body.innerText"), /Newly saved fixture paper[\s\S]*Original saved metadata/u);
+  record("mocked-existing-save-and-library-passed", { existingId: existingPaper.id, createdId: newlySavedPaper.id });
+
+  const desktopScreenshotPath = resolve(state, "library-desktop.png");
+  const desktopScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true }, sessionId);
+  await writeFile(desktopScreenshotPath, Buffer.from(desktopScreenshot.data, "base64"));
   await cdp.send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }, sessionId);
   await delay(50);
   const mobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
-  assert.ok(mobileMetrics.scrollWidth <= mobileMetrics.width, "the narrow layout must not require horizontal scrolling");
+  assert.ok(mobileMetrics.scrollWidth <= mobileMetrics.width, "narrow Library layout must not require horizontal scrolling");
+  const mobileScreenshotPath = resolve(state, "library-mobile.png");
   const mobileScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true }, sessionId);
-  const mobileScreenshotPath = resolve(state, "fixture-results-mobile.png");
   await writeFile(mobileScreenshotPath, Buffer.from(mobileScreenshot.data, "base64"));
+  await cdp.send("Emulation.clearDeviceMetricsOverride", {}, sessionId);
 
-  await fillInput("no results topic");
+  assert.equal(await click(".reload-button"), true);
+  const libraryErrorRequest = await nextPaused(isLibraryGet, "library error reload");
+  await fulfillJson(libraryErrorRequest, 503, { error: { kind: "database_failure", message: "The paper library database operation failed." } });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('database operation failed')", "library API error");
+  assert.ok((await evaluate("document.body.innerText")).includes(newlySavedPaper.id), "failed library reads must retain visible records");
+  assert.equal(await click(".reload-button"), true);
+  const malformedLibrary = await nextPaused(isLibraryGet, "malformed library reload");
+  await fulfillJson(malformedLibrary, 200, { unexpected: true });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('unexpected response')", "malformed library error");
+  assert.ok((await evaluate("document.body.innerText")).includes(existingPaper.id), "malformed library reads must retain visible records");
+  record("mocked-library-errors-retain-records-passed");
+
+  // Abort an initial load with a browser refresh, then fulfill the newer one.
+  // The superseded response must not erase the current page's records.
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#paper-search-query')", "first stale-library page");
+  const staleLibrary = await newestPaused(isLibraryGet, "superseded library request");
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#paper-search-query')", "replacement stale-library page");
+  const currentLibrary = await newestPaused(isLibraryGet, "replacement library request");
+  await fulfillJson(currentLibrary, 200, { papers: [newlySavedPaper] });
+  await cdp.send("Fetch.failRequest", { requestId: staleLibrary.requestId, errorReason: "Aborted" }).catch(() => undefined);
+  assert.equal(await click("#library-tab"), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(newlySavedPaper.id)})`, "current library after stale load");
+  assert.equal((await evaluate("document.body.innerText")).includes("No saved papers yet"), false);
+  record("mocked-stale-library-response-ignored");
+
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#paper-search-query')", "empty-library page");
+  await resolveInitialLibrary([]);
+  record("mocked-empty-library-passed");
+  assert.equal(await click("#search-tab"), true);
+  const duplicateSearch = { provider: "arxiv", query: "duplicate fixture", papers: [{ id: "2401.01236", title: "Duplicate search metadata", authors: ["Different Author"], year: null, abstract: "The response must use the original saved record.", url: "https://arxiv.org/abs/2401.01236v7", pdfUrl: null }] };
+  await mockSearch("duplicate fixture", duplicateSearch);
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01236\"]')", "duplicate search result");
+  assert.equal(await click('[data-save-paper="2401.01236"]'), true);
+  const duplicateSave = await nextPaused(isLibraryPost, "duplicate save request");
+  await fulfillJson(duplicateSave, 200, { paper: duplicatePaper, created: false });
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01236\"]').textContent === 'Saved'", "duplicate save feedback");
+  assert.equal(await click("#library-tab"), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(duplicatePaper.id)}) && document.querySelector('#library-view time')?.dateTime === ${JSON.stringify(duplicatePaper.savedAt)}`, "original duplicate record in library");
+  assert.ok((await evaluate("document.body.innerText")).includes("Original duplicate record"));
+  record("mocked-duplicate-preserves-id-and-timestamp", { id: duplicatePaper.id, savedAt: duplicatePaper.savedAt });
+
+  assert.equal(await click("#search-tab"), true);
+  await mockSearch("search api error", { error: { kind: "upstream", message: "arXiv could not provide a valid paper search response." } }, 502);
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('arXiv could not provide')", "sanitized search error");
+  await mockSearch("unexpected search", { unexpected: true });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('unexpected response')", "unexpected search JSON error");
+  assert.equal(await fillInput("network search"), true);
   await pressEnter();
-  await fulfillJson(await nextPaused(), 200, { provider: "arxiv", query: "no results topic", papers: [] });
-  await waitFor("document.body.innerText.includes('No papers found for')", "the no-results state");
+  await cdp.send("Fetch.failRequest", { requestId: (await nextPaused(isSearch, "network search request")).requestId, errorReason: "Failed" }, sessionId);
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('could not be completed')", "search network error");
+  await mockSearch("no results fixture", { provider: "arxiv", query: "no results fixture", papers: [] });
+  await waitFor("document.body.innerText.includes('No papers found for')", "search empty state");
+  record("mocked-search-empty-errors-and-unexpected-json-passed");
 
-  await fillInput("upstream failure");
-  await pressEnter();
-  await fulfillJson(await nextPaused(), 502, { error: { kind: "upstream", message: "arXiv could not provide a valid paper search response." } });
-  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('arXiv could not provide')", "a sanitized API error");
-
-  await fillInput("unexpected response");
-  await pressEnter();
-  await fulfillJson(await nextPaused(), 200, { unexpected: true });
-  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('unexpected response')", "an unexpected JSON error");
-
-  await fillInput("network failure");
-  await pressEnter();
-  await cdp.send("Fetch.failRequest", { requestId: (await nextPaused()).requestId, errorReason: "Failed" }, sessionId);
-  await waitFor("Boolean(document.querySelector('[role=alert]'))", "a network error");
-
-  const requestsBeforeBlank = pausedRequests.length;
-  await fillInput("   ");
-  await pressEnter();
-  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('Enter a research topic')", "blank-input validation");
-  assert.equal(pausedRequests.length, requestsBeforeBlank, "blank input must not make a request");
-
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#paper-search-query')", "interrupted-save page");
+  await resolveInitialLibrary([]);
+  assert.equal(await click("#search-tab"), true);
+  const interruptedSearch = { provider: "arxiv", query: "interrupted save", papers: [{ id: "2401.01237", title: "Interrupted fixture", authors: ["Interrupted Author"], year: 2024, abstract: "This must not be retried automatically.", url: "https://arxiv.org/abs/2401.01237v1", pdfUrl: null }] };
+  await mockSearch("interrupted save", interruptedSearch);
   await evaluate(`(() => {
-    window.__phaseOneOriginalSetTimeout = window.setTimeout;
-    window.setTimeout = (callback, milliseconds, ...args) => window.__phaseOneOriginalSetTimeout(callback, milliseconds === 20000 ? 25 : milliseconds, ...args);
+    window.__libraryOriginalSetTimeout = window.setTimeout;
+    window.setTimeout = (callback, milliseconds, ...args) => window.__libraryOriginalSetTimeout(callback, milliseconds === 15000 ? 25 : milliseconds, ...args);
   })()`);
-  await fillInput("timeout fixture");
-  await pressEnter();
-  const timeoutRequest = await nextPaused();
-  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('took too long')", "the browser timeout state");
-  await cdp.send("Fetch.failRequest", { requestId: timeoutRequest.requestId, errorReason: "Aborted" }, sessionId).catch(() => undefined);
-  await evaluate("window.setTimeout = window.__phaseOneOriginalSetTimeout");
+  assert.equal(await click('[data-save-paper="2401.01237"]'), true);
+  const interruptedPost = await nextPaused(isLibraryPost, "interrupted save POST");
+  await waitFor("document.body.innerText.includes('Checking the library before another save')", "uncertain save feedback");
+  await cdp.send("Fetch.failRequest", { requestId: interruptedPost.requestId, errorReason: "Aborted" }, sessionId).catch(() => undefined);
+  const reconciliation = await nextPaused(isLibraryGet, "uncertain-save reconciliation GET");
+  await fulfillJson(reconciliation, 200, { papers: [] });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('could not be confirmed')", "reconciled uncertain save error");
+  await evaluate("window.setTimeout = window.__libraryOriginalSetTimeout");
+  assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.includes("/api/library/papers") && request.postData?.includes("2401.01237")).length, 1, "interrupted POST must not retry automatically");
+  record("mocked-interrupted-save-reconciles-without-post-retry");
 
-  let liveSearch = "not_invoked";
-  if (!skipLiveSearch) {
-    await cdp.send("Fetch.disable", {}, sessionId);
-    await fillInput("graph neural networks");
-    await pressEnter();
-    await waitFor("document.querySelectorAll('.paper-card').length > 0 && document.querySelector('.provider')?.textContent === 'Provider: arxiv'", "one live search through the Vite proxy");
-    liveSearch = "passed";
-  }
-  console.log(JSON.stringify({
-    result: "passed",
-    browser: browserPath,
-    viteOrigin,
-    workerOrigin,
-    mockSearchStates: ["loading", "results", "no-results", "API error", "unexpected JSON", "network error", "blank input", "timeout"],
-    liveSearch,
-    screenshotPath,
-    mobileScreenshotPath,
-    state,
-  }));
+  // Real isolated D1 flow: only the search route is mocked. Save/list/refresh
+  // use relative browser requests through Vite to the owned local Worker.
+  await cdp.send("Fetch.disable", {}, sessionId);
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#paper-search-query')", "actual-flow page");
+  assert.equal(await click("#library-tab"), true);
+  await waitFor("document.body.innerText.includes('No saved papers yet')", "actual empty library");
+  assert.equal(await click("#search-tab"), true);
+  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/papers/search*" }] }, sessionId);
+  await mockSearch("actual browser fixture", { provider: "arxiv", query: "actual browser fixture", papers: [actualSearchPaper] });
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01239\"]')", "actual search fixture");
+  assert.equal(await click('[data-save-paper="2401.01239"]'), true);
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01239\"]').textContent === 'Saved'", "real D1 save through Vite proxy");
+  assert.equal(await click("#library-tab"), true);
+  assert.equal(await click(".reload-button"), true);
+  await waitFor("document.querySelector('#library-view code')", "real D1 library record");
+  const firstRecord = JSON.parse(await evaluate("JSON.stringify({ codes: [...document.querySelectorAll('#library-view code')].map((node) => node.textContent), saved: document.querySelector('#library-view time')?.dateTime })"));
+  assert.equal(firstRecord.codes[0], actualSearchPaper.id);
+  assert.ok(typeof firstRecord.codes[1] === "string" && firstRecord.codes[1] !== actualSearchPaper.id);
+  assert.match(firstRecord.saved, /^\d{4}-\d{2}-\d{2}T/u);
+  const actualRecordId = firstRecord.codes[1];
+  const actualSavedAt = firstRecord.saved;
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#paper-search-query')", "browser refresh");
+  assert.equal(await click("#library-tab"), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(actualRecordId)})`, "record after browser refresh");
+  assert.equal(await evaluate("document.querySelector('[data-save-paper=\"2401.01239\"]')?.disabled ?? true"), true, "not searched after refresh; saved UI state is reconciled from the library");
+  const duplicateActual = await evaluate(`fetch('/api/library/papers', {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: ${JSON.stringify(JSON.stringify({ paper: actualSearchPaper }))}
+  }).then(async (response) => ({ status: response.status, body: await response.json() }))`);
+  assert.equal(duplicateActual.status, 200);
+  assert.equal(duplicateActual.body.created, false);
+  assert.equal(duplicateActual.body.paper.id, actualRecordId);
+  assert.equal(duplicateActual.body.paper.savedAt, actualSavedAt);
+  assert.equal(await click(".reload-button"), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(actualRecordId)})`, "unchanged record after real duplicate");
+  record("actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed", { id: actualRecordId, savedAt: actualSavedAt });
+
   cdp.close();
-}
-
-try {
-  await main();
+  evidence.result = "passed";
+  evidence.browser = browserPath;
+  evidence.workerOrigin = workerOrigin;
+  evidence.viteOrigin = viteOrigin;
+  evidence.desktopScreenshotPath = desktopScreenshotPath;
+  evidence.mobileScreenshotPath = mobileScreenshotPath;
+} catch (error) {
+  evidence.result = "failed";
+  evidence.error = String(error.stack ?? error);
+  console.error(evidence.error);
+  process.exitCode = 1;
 } finally {
   for (const child of [...children]) {
-    try { await stop(child); }
-    catch (error) { console.error(`Process cleanup failed for owned PID ${child.pid}: ${error}`); process.exitCode = 1; }
+    try { await stop(child); } catch (error) { console.error(`Owned process cleanup failed: ${error}`); process.exitCode = 1; }
   }
+  evidence.finishedAt = new Date().toISOString();
+  await mkdir(state, { recursive: true });
+  await writeFile(resolve(state, "result.json"), JSON.stringify(evidence, null, 2) + "\n");
+  console.log(JSON.stringify({ result: evidence.result, evidence: resolve(state, "result.json") }));
 }
+}
+
+await main();

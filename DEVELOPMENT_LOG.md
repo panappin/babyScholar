@@ -658,3 +658,87 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   dependencies/lockfile, migrations/schema, secrets, real bindings, cloud
   resources, push, deployment, arXiv, or OpenAI operations changed. The audit
   baseline remains 3 high and 4 moderate development findings, zero production-only.
+
+## 2026-10-08 — Phase 2B: Save controls and browsable Library UI
+
+### Scope and implementation
+
+- Inspected the project instructions, Git state, README, development history,
+  shared search/library declarations and error contracts, frontend, Vite proxy,
+  and the existing dependency-free browser verifier before editing. No
+  `AGENTS.md` applies. Work began from `f26546c9f418ddaa37cdbf57cc966940ef39098f`
+  on `main`; the pre-existing untracked Phase 0B.2 ZIP and folder were left
+  untouched.
+- Added `src/paper-identity.ts`, a browser-only canonical arXiv source-identity
+  and safe-link helper. The React bundle imports only declaration-only types
+  from `src/worker/paper-search-types.ts` and `src/worker/library-types.ts`; it
+  does not import Worker runtime code.
+- Updated `src/App.tsx` and `src/styles.css` with Search/Library tabs and
+  per-result Save controls. The UI POSTs the exact `{ "paper": PaperSearchResult }`
+  envelope to the relative `/api/library/papers` path. Both `201 {created:true}`
+  and `200 {created:false}` retain the returned original `SavedPaper`; pending
+  submissions are deduplicated by canonical arXiv source identity, not title or
+  versioned URL. A successful response immediately merges into the local
+  newest-first Library view.
+- The Library loads from the authoritative relative GET endpoint, presents
+  initial/loading/empty/loaded/error states and an explicit reload action, and
+  preserves existing records after a read failure. Cards show the distinct
+  application ID and canonical arXiv ID, ordered authors, nullable first-year,
+  complete abstract, safe link/fallback, and saved time. Search and the
+  Backend/D1/R2 indicators remain in place.
+- Search, Library, and per-save requests have bounded browser timeouts, request
+  IDs, and unmount cleanup. A late response cannot overwrite newer state. A
+  timed-out or interrupted POST is reported as uncertain and reconciled with a
+  GET before another save attempt; the client never automatically retries POST.
+  Unexpected JSON, sanitized API errors, and network failures remain
+  user-readable without exposing raw error details.
+- Extended the existing no-dependency Chrome DevTools verifier rather than
+  adding a test framework. It owns a UUID-scoped D1/Worker/Vite/Chrome setup,
+  intercepts fixture search/library cases, and uses the actual Vite proxy plus
+  isolated D1 for the final save/refresh/duplicate flow. It makes no arXiv or
+  OpenAI request.
+
+### Verification
+
+| Command/check | Result |
+| --- | --- |
+| `npm.cmd run typecheck` | Exit 0 |
+| `node --check scripts/frontend-search-browser-check.mjs` | Exit 0 |
+| `npm.cmd run papers:ui:check` | Exit 0; isolated browser/UI/proxy check passed |
+| `npm.cmd run build` | Exit 0; type checks, Vite frontend, Worker ESM, and Sites staging passed |
+| `npm.cmd run sites` | Exit 0; existing Sites artifact/binding/migration check passed |
+| Built frontend scan | Exit 0; no Worker runtime/binding markers found in `dist/frontend` |
+
+- The final browser evidence is
+  `.wrangler/frontend-search-browser-check/507ccde6-d3e6-4cdd-a0a4-86a607958d98/result.json`.
+  It recorded fixture loading/empty/error/malformed/stale states, an existing
+  save, a 200 duplicate response preserving ID/timestamp, and an interrupted
+  POST that reconciled by GET without an automatic retry. It also completed the
+  actual browser flow through the relative Vite proxy and isolated local D1:
+  fixture result, Save, Library, browser refresh, then duplicate POST. The
+  record ID remained `08a41d1d-ed79-4a41-9013-a2447136548a` with saved time
+  `2026-10-08T23:47:08.197Z`. The verifier stopped only its Worker, Vite, and
+  Chrome child PIDs.
+- Desktop and 375px narrow screenshots from that evidence were inspected. The
+  Search/Library controls and cards remain readable, and the narrow layout had
+  no horizontal overflow.
+- The browser harness initially exposed a DevTools object-serialization issue
+  in a selector wait and React Strict Mode's aborted first Library load. The
+  verifier now waits on Boolean predicates and services the newest live paused
+  Library request; it does not manufacture a response for an already-aborted
+  interception. The final run above is the passing result.
+- Phase 2A's normal `library-check.mjs`, restart-persistence evidence, paper
+  checks, offline integrations, and backend/API behavior were reused rather
+  than rerun: no Worker, schema, migration, binding, dependency, lockfile, or
+  API source changed. No live arXiv/OpenAI request, normal user-state migration,
+  runtime experiment, push, deployment, or hosted configuration change occurred.
+
+### Remaining limitation
+
+- The documented local Wrangler/Miniflare transport failure after an oversized
+  chunked upload remains deliberately unresolved and its failing diagnostic is
+  retained. The minimal Worker reproduces the failure before handler entry,
+  including fresh-client requests. This normal UI work does not establish that
+  hosted production is unaffected; no retry, dependency upgrade, runtime change,
+  or masking of the diagnostic was added. The audit baseline remains 3 high and
+  4 moderate development-tool findings, with zero production-only findings.
