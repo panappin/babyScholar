@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import worker from "../dist/server/index.js";
 
@@ -27,7 +27,11 @@ for (const path of ["/api/unknown", "/api/__local/storage-probe/status", "/api/_
 assert.equal(assetRequests, 0);
 assert.match(await (await worker.fetch(request("/"), env)).text(), /AI Research Assistant/);
 assert.equal(assetRequests, 1);
-for (const name of ["0000_storage_probe.sql", "meta/0000_snapshot.json", "meta/_journal.json"]) {
+const migrationFiles = (await readdir(resolve(root, "drizzle"), { recursive: true, withFileTypes: true }))
+  .filter((entry) => entry.isFile())
+  .map((entry) => resolve(entry.parentPath, entry.name));
+for (const source of migrationFiles) {
+  const name = source.slice(resolve(root, "drizzle").length + 1);
   assert.deepEqual(await readFile(resolve(root, "dist/.openai/drizzle", name)), await readFile(resolve(root, "drizzle", name)));
 }
 console.log("Sites artifact: callable Worker, API/static routing, disabled probes, declared bindings, and unchanged migration metadata: PASS (binding fixtures).");

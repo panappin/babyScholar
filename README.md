@@ -1,6 +1,6 @@
 # AI Research Assistant
 
-Phase 1B provides a React/TypeScript research-paper search page backed by arXiv, alongside persistent local D1/R2 checks and the Worker backend. Saving papers, PDF processing, summaries, and Q&A remain later work.
+Phase 2A adds a persistent D1 paper-library API to the existing React/TypeScript arXiv search page and local D1/R2 checks. The frontend remains search-only; save/browse controls follow in Phase 2B. PDF processing, summaries, and Q&A remain later work.
 
 ## Prerequisites
 
@@ -34,6 +34,12 @@ No Cloudflare login, hosted resource, or S3 credential is needed. These commands
 `wrangler.jsonc` explicitly sets both bindings to `remote: false`. The development Worker and `db:migrate:local` both use **`.wrangler/state`** via `--persist-to`; Wrangler stores D1 under `v3/d1` and R2 under `v3/r2` below it. Restarting the Worker preserves this data. The entire `.wrangler/` directory is ignored by Git.
 
 `db/schema.ts` defines `storage_probes(id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)`. Drizzle Kit generates SQL into `drizzle/*.sql` and generation history into `drizzle/meta/**`. The initial migration is `drizzle/0000_storage_probe.sql`; it contains only schema DDL. Wrangler separately tracks applied migrations in its D1 migration table. Probe inserts are never part of a migration or runtime initialization.
+
+The same schema now also defines `papers`. The additive
+`drizzle/0001_paper_library.sql` creates that table and its unique
+`(source, arxiv_id)` index. It does not alter the probe table or rewrite the
+initial migration/snapshot. Run `npm.cmd run db:migrate:local` before ordinary
+development to apply any pending migrations to your persistent local database.
 
 ```powershell
 # After a deliberate schema change, generate a NEW migration and inspect its SQL:
@@ -150,6 +156,126 @@ authors, published-year selection, absent links, input validation with no fetch,
 empty/error/malformed feeds, HTTP/network errors, body-read timeout, response
 size limit, cache behavior, in-flight deduplication, and three-second spacing.
 
+## Persistent paper-library API (Phase 2A)
+
+The existing `DB` binding stores library metadata; no external API or R2 request
+runs on either library route. This is backend-only: the current search page has
+no save/browse controls yet. The existing private Sites boundary is unchanged;
+there is no new authentication mechanism or permissive CORS policy.
+
+`POST /api/library/papers` requires `Content-Type: application/json` and this
+exact envelope (all seven `PaperSearchResult` fields must be present):
+
+```json
+{"paper":{"id":"2401.01234","title":"Example title","authors":["First Author","Second Author"],"year":2024,"abstract":"The complete abstract.","url":"https://arxiv.org/abs/2401.01234v2","pdfUrl":null}}
+```
+
+A new save is HTTP **201** with `{"paper": SavedPaper, "created": true}`.
+An existing identity is HTTP **200** with `{"paper": SavedPaper, "created": false}`.
+The declaration-only contract is in `src/worker/library-types.ts`:
+
+```typescript
+interface SavedPaper {
+  id: string;           // independent application UUID
+  source: "arxiv";
+  arxivId: string;      // source identifier without vN, not the application ID
+  title: string;
+  authors: string[];    // original order
+  year: number | null;
+  abstract: string;     // complete supplied text
+  url: string | null;
+  pdfUrl: string | null;
+  savedAt: string;      // server-assigned UTC ISO 8601 timestamp
+}
+```
+
+`GET /api/library/papers` is HTTP **200** with `{"papers": SavedPaper[]}` (or
+`{"papers":[]}` initially). It returns all records, ordered by `savedAt` descending
+then application `id` descending for a stable tie-break. Authors are stored as
+JSON; text and nullable metadata round-trip without truncation. Titles do not
+identify records. A database unique index on `(source, arxiv_id)` and a
+parameterized transactional insert/read batch resolve simultaneous first saves.
+Duplicates, including versioned IDs/links, return the first record's complete
+metadata, UUID, and timestamp without overwriting anything.
+
+Input is uncompressed UTF-8 JSON, limited to **262,144 received bytes (256 KiB)**
+and a **10-second body-read deadline**; bytes are counted while streaming, not
+trusted from `Content-Length`. Field limits are Unicode code points: ID 64,
+title 2,000, abstract 100,000, each author 512, each link 2,048; there may be up to
+2,000 ordered authors. Empty title/abstract and an empty author array are allowed
+for unavailable search metadata; individual authors cannot be blank. Year is
+`null` or an integer 1–9999; links are explicitly `null` or valid arXiv links.
+NUL characters, unknown fields, missing fields, and incorrect types are rejected.
+The overall byte limit also applies when individual fields are within their limits.
+
+Modern and legacy arXiv IDs use the existing search rules. A `vN` suffix is
+removed from identity only. Supplied links must identify that same paper and
+use HTTP(S) on exactly `arxiv.org` or `www.arxiv.org`, without credentials or a
+nonstandard port. The shared search helper canonicalizes them to HTTPS on
+`arxiv.org`, retaining the version/path and discarding query/fragment data.
+Client input cannot assign the saved record's UUID, source, or timestamp.
+
+Every library response uses `Cache-Control: no-store`. Errors are sanitized
+`{"error":{"kind":"...","message":"..."}}` JSON, without submitted content,
+SQL details, or secrets:
+
+| Status | `error.kind` |
+| --- | --- |
+| 400 | `invalid_request` |
+| 408 | `request_timeout` |
+| 413 | `body_too_large` |
+| 415 | `unsupported_media_type` |
+| 405 | `method_not_allowed` (with `Allow: GET, POST`) |
+| 503 | `storage_unavailable` or `database_failure` |
+
+Apply migrations before normal startup, then use the same relative `/api` path
+through Vite (5173) or directly on the Worker (8787):
+
+```powershell
+npm.cmd run db:migrate:local
+npm.cmd run dev
+# In another terminal, an empty or previously saved library:
+Invoke-RestMethod 'http://127.0.0.1:8787/api/library/papers'
+Invoke-RestMethod 'http://localhost:5173/api/library/papers'
+```
+
+The reproducible library check is a plain Node command to keep `package.json`
+and the lockfile unchanged:
+
+```powershell
+npm.cmd run build
+node scripts/library-check.mjs
+```
+
+It uses real local Wrangler/D1, available ports, and one unique
+`.wrangler/library-check/<UUID>/state` directory. It verifies empty/all-record
+lists, full/nullable metadata, concurrent first saves, immutable versioned
+duplicates, stable ordering, validation and actual body bounds without writes,
+and sanitized failure paths against the built Worker. It stops and restarts
+its own Worker against the same state and **GETs before any further POST**,
+then reapplies migrations and compares the same records again. It never calls
+arXiv/OpenAI. It stops only owned processes, removes only its generated state
+after success, and retains sanitized `result.json` evidence. Failed state is
+retained for diagnosis. Normal `.wrangler/state` and user servers are untouched.
+
+Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
+5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked
+upload can receive a proxy-generated `500 Network connection lost`, outside
+the application's sanitized response handler. The default check verifies the
+413 response and then GETs the unchanged library; a subsequent duplicate save
+also passes. That is not proof that the immediate-write edge case is fixed.
+This separate reproduction deliberately fails if the proxy issue occurs; it
+does not retry or hide it:
+
+```powershell
+node scripts/library-check.mjs --transport-stress
+```
+
+No dependency update/override or hosted verification was performed. A scoped
+local-tool follow-up is needed for that edge case. Related upstream reports
+describe local proxy connection failures, but do not establish the exact cause
+of this reproduction: [workers-sdk #15002](https://github.com/cloudflare/workers-sdk/issues/15002).
+
 ## Research-paper search interface
 
 The local page has a labeled **Research topic or keywords** form and searches
@@ -201,22 +327,27 @@ screenshot and isolated state are retained below `.wrangler/` for inspection.
 ## Structure
 
 ```text
-db/schema.ts                    Minimal Drizzle probe schema
+db/schema.ts                    Drizzle storage-probe and paper-library schema
 drizzle.config.ts               SQLite migration generation configuration
 drizzle/*.sql                   Committed schema-only migrations
 drizzle/meta/                   Committed Drizzle generation history
 src/App.tsx                     Search UI plus relative status/search requests
-src/worker/index.ts             Health/status/search routing and ESM fetch handler
+src/worker/index.ts             Health/status/search/library routing and ESM fetch handler
 src/worker/storage.ts           Typed D1/R2 helpers
 src/worker/local-probe.ts       Explicitly gated local verification routes
 src/worker/arxiv.ts             Bounded, paced arXiv Atom search adapter and metadata parser
 src/worker/paper-search-types.ts  Shared declaration-only search response types
+src/worker/arxiv-identity.ts    Shared arXiv identity and safe-link rules
+src/worker/library-types.ts     Declaration-only save/list/error contracts
+src/worker/library-validation.ts  Bounded body reading and runtime validation
+src/worker/library.ts           Parameterized D1 save/list API
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
 scripts/integration-check.mjs  Isolated live Worker connectivity verification
 scripts/integration-offline-check.mjs  Focused adapter failure-path checks
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
+scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
 scripts/paper-search-live-check.mjs  One-request local Worker arXiv endpoint check
 scripts/frontend-search-browser-check.mjs  Isolated browser UI/proxy check
 worker-configuration.d.ts      Wrangler-generated binding/runtime types
@@ -249,9 +380,17 @@ npm.cmd run integrations
 For a clean-copy reproducibility check that must make **no external calls**, use the same command in explicit offline mode. It still starts the local Worker and Vite proxy and checks health/storage and disabled routes, but it does not invoke either upstream probe:
 
 ```powershell
-$env:INTEGRATION_CHECK_OFFLINE = "true"
-npm.cmd run integrations
-Remove-Item Env:INTEGRATION_CHECK_OFFLINE
+$priorIntegrationOffline = $env:INTEGRATION_CHECK_OFFLINE
+try {
+  $env:INTEGRATION_CHECK_OFFLINE = "true"
+  npm.cmd run integrations
+} finally {
+  if ($null -eq $priorIntegrationOffline) {
+    Remove-Item Env:INTEGRATION_CHECK_OFFLINE -ErrorAction SilentlyContinue
+  } else {
+    $env:INTEGRATION_CHECK_OFFLINE = $priorIntegrationOffline
+  }
+}
 ```
 
 The test-only `/api/__local/integrations/arxiv` and `/api/__local/integrations/openai` routes require `LOCAL_INTEGRATION_PROBE=true` plus a loopback hostname. The committed configuration has no such flag, so the routes are 404 in normal development and hosted use.

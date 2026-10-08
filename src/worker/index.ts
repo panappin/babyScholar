@@ -2,6 +2,7 @@ import { bucketStatus, databaseStatus, type WorkerEnv } from "./storage.js";
 import { handleLocalProbe } from "./local-probe.js";
 import { handleLocalIntegrationProbe } from "./local-integration-probe.js";
 import { paperSearchFailureStatus, publicPaperSearchError, searchArxivPapers } from "./arxiv.js";
+import { handleLibrary } from "./library.js";
 
 const healthResponse = () =>
   new Response(JSON.stringify({ status: "ok" }), {
@@ -51,6 +52,10 @@ export default {
 
     if (url.pathname === "/api/papers/search") {
       return handlePaperSearchRequest(request);
+    }
+
+    if (url.pathname === "/api/library/papers") {
+      return handleLibrary(request, env);
     }
 
     if (url.pathname.startsWith("/api/__local/storage-probe/")) {

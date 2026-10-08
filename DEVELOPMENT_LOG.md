@@ -360,3 +360,147 @@ The live check used its own state directory `.wrangler/integration-check/c07cc22
   schema/migration/binding change, PDF download, or feature beyond the search UI
   was performed. Storage persistence was unchanged, so its restart check was
   not repeated.
+
+## 2026-10-08 — Phase 2A: persistent paper-library backend
+
+### Scope and contracts
+
+- Inspected the attachment request, repository/ancestor instructions, README,
+  development log, schema/configuration, migration history, Worker routing,
+  search types/helpers, and verification scripts. No applicable `AGENTS.md`
+  was found. Starting `main` was `32c64eb5f725baabd3418638fd43a2eaa34aa9df`,
+  with no tracked changes; the existing untracked Phase 0B.2 ZIP/folder were
+  preserved. Tooling: Windows PowerShell, Node v24.11.1, npm 11.6.2, installed
+  Wrangler 4.148.0 and Miniflare 5.20261006.0-alpha. No installation or upgrade.
+- Added `papers` to `db/schema.ts` and generated additive
+  `drizzle/0001_paper_library.sql`, `drizzle/meta/0001_snapshot.json`, and the
+  appended journal entry. The initial migration and historical snapshot are
+  unchanged. Columns retain an independent application UUID, source, normalized
+  arXiv ID, title, ordered authors as JSON, nullable year, full abstract, nullable
+  links, and UTC first-save timestamp. A database unique index on
+  `(source, arxiv_id)` prevents races and version-link duplicates.
+- Added declaration-only `SavePaperRequest`, `SavedPaper`, `SavePaperResponse`,
+  `ListPapersResponse`, and error types. `SavedPaper.id` is the application UUID;
+  `SavedPaper.arxivId` is the normalized provider identifier, and `source` is
+  `arxiv`. A parameterized transactional insert/read batch uses
+  `ON CONFLICT (source, arxiv_id) DO NOTHING`, returning the original metadata,
+  ID, and timestamp on duplicates without overwriting them. Consulted the
+  [official D1 prepared-statement](https://developers.cloudflare.com/d1/worker-api/prepared-statements/)
+  and [batch API documentation](https://developers.cloudflare.com/d1/worker-api/d1-database/).
+- `POST /api/library/papers` accepts `{"paper": PaperSearchResult}`: new saves
+  return 201 `{"paper": SavedPaper, "created": true}`; duplicates return 200
+  with the original record and `created: false`. `GET` returns 200
+  `{"papers": SavedPaper[]}`, all records ordered by `saved_at DESC, id DESC`,
+  including `[]` for an empty library. All application library responses are
+  JSON with `Cache-Control: no-store`; no permissive CORS or new auth was added.
+- Runtime validation precedes database access. Uncompressed UTF-8 JSON is
+  measured during streaming, capped at 262,144 bytes with a 10-second deadline.
+  The reader is cancelled/released on failure within that same deadline. Field
+  limits, nullable/empty metadata policy, and sanitized 400/408/413/415/405/503
+  error contracts are documented in README. Shared identity/safe-link helpers
+  were extracted without changing the search adapter's rules. URLs must match
+  the source identity and normalize only valid exact-host arXiv HTTP(S) links.
+- Added dependency-free `node scripts/library-check.mjs`; no package script,
+  dependency, or lockfile changed. Extended the existing Sites artifact check
+  to compare every Drizzle SQL/meta file, including the newly generated ones.
+  Full Worker output and Sites migration staging remain intact.
+
+### Windows commands and actual results
+
+| Command | Result |
+| --- | --- |
+| `npm.cmd run db:generate -- --name=paper_library` | Exit 0; generated the additive table/index migration and metadata |
+| `npm.cmd run typecheck` | Initial exit 1 for two Worker runtime typing details; corrected `TextDecoder` options and guarded timer cleanup, then exit 0 |
+| `npm.cmd run build` | Final exit 0; type checking, frontend, Worker ESM, and complete Sites staging passed |
+| `node scripts/library-check.mjs` | Final exit 0; real local D1 save/list, concurrency, input validation, restart/reapply, and owned-state/process cleanup passed |
+| `npm.cmd run papers:check` | Exit 0; existing offline search fixtures passed after helper extraction |
+| `npm.cmd run sites` | Exit 0; packaged Worker/bindings/static routing and all migration artifacts passed |
+| `npm.cmd run integrations` with `INTEGRATION_CHECK_OFFLINE=true` | Final exit 0, `passed_offline`; direct/proxied health/storage, disabled probes, and owned-process cleanup passed; no external probes invoked |
+| `node scripts/library-check.mjs --transport-stress` | Exit 1; reproducible remaining local-proxy edge case described below, not suppressed |
+
+The full integration command was run in PowerShell with this environment guard
+(README also documents it):
+
+```powershell
+$priorIntegrationOffline = $env:INTEGRATION_CHECK_OFFLINE
+try {
+  $env:INTEGRATION_CHECK_OFFLINE = 'true'
+  npm.cmd run integrations
+  $integrationExit = $LASTEXITCODE
+} finally {
+  if ($null -eq $priorIntegrationOffline) {
+    Remove-Item Env:INTEGRATION_CHECK_OFFLINE -ErrorAction SilentlyContinue
+  } else {
+    $env:INTEGRATION_CHECK_OFFLINE = $priorIntegrationOffline
+  }
+}
+exit $integrationExit
+```
+
+- Successful library evidence:
+  `.wrangler/library-check/65bb04d4-6f9d-4d16-8d6b-3b26ec83f602/result.json`.
+  Two simultaneous FIRST saves returned `[201, 200]`, one row, the same UUID
+  `2e2645fd-8d48-4627-a654-ae142d7eba67`, and the same timestamp
+  `2026-10-08T22:51:42.083Z`. Full metadata round-tripped three ordered authors
+  and a 52,500-character abstract, including quotes, Unicode, and line breaks.
+  Repeated/versioned saves preserved the winner; nullable and legacy-ID records
+  produced three total rows in stable order. Twenty-six invalid paper cases,
+  malformed JSON, invalid UTF-8/media types, unknown fields, unsafe links,
+  length-declared and chunked oversized bodies made no writes. Built-Worker
+  checks covered missing DB, database errors, dishonest length, and stalled body.
+- The successful run stopped PID 122680, restarted PID 120624 on the same
+  isolated state, and GET the identical three records before any further POST.
+  After stopping it, reapplying migrations, and starting PID 123176, GET again
+  returned the same records, UUID, and timestamp. All owned processes stopped.
+  Only this run's generated `state` directory was removed; `result.json` remains.
+- Final full offline integration evidence:
+  `.wrangler/integration-check/10733905-9506-4c33-a8ee-7a18b32eedb9/result.json`.
+  Worker health/storage passed at port 49623, the Vite proxy at 49730, and all
+  check-owned processes stopped. Earlier offline integration also passed at
+  `.wrangler/integration-check/e127a151-9e9e-423e-b7cf-a81084406774/result.json`.
+
+### Failures, remaining limitation, and next phase
+
+- Git inspection under the restricted sandbox could not see the repository;
+  normal authorized repository access succeeded. Build/local Wrangler commands
+  used normal authorized access for project configuration and Wrangler logs.
+- Early library-check runs exposed a local transport failure immediately after
+  rejecting oversized chunked uploads: a following POST/PUT could return HTTP
+  500 `Network connection lost` from Miniflare's core proxy, outside the Worker
+  handler. Initial suspicion about early Content-Length rejection or stream
+  cleanup alone was not confirmed: bounded reading, awaited cancellation,
+  release-only cleanup, and connection-close experiments did not resolve it.
+  No speculative connection headers, retries, dependency upgrades, or overrides
+  were retained. The production reader uses actual byte counting, a shared
+  deadline, and bounded cancellation.
+- The default test asserts the 413 rejection, GETs the unchanged records, then
+  successfully retries the *fixture's duplicate save as a separate test*; it is
+  not an automatic retry of a failed HTTP request. It completes restart and
+  migration-reapply checks. The additional `--transport-stress` mode instead
+  sends a duplicate POST immediately after chunked rejection and fails visibly.
+  Final reproduction evidence:
+  `.wrangler/library-check/dd09027e-339a-44b6-b864-8b8957090ca1/result.json`:
+  `POST HTTP 500, expected 200: local proxy: Network connection lost`.
+  Its owned Worker stopped; failed isolated state is retained. Related
+  [upstream proxy failures](https://github.com/cloudflare/workers-sdk/issues/15002)
+  exist, but this does not establish an identical root cause. This edge case
+  remains unresolved and needs a separately scoped local-tool investigation;
+  hosted behavior has not been checked. A passing default test does not certify
+  the immediate-write transport sequence.
+- An earlier otherwise successful run hit Windows `EBUSY` while removing an
+  owned SQLite shared-memory file after process shutdown. Bounded filesystem
+  cleanup retries fixed that race; the final default run cleaned up successfully.
+  Earlier failed run directories remain under `.wrangler/library-check/` for
+  diagnosis. Normal `.wrangler/state`, real environment files, user processes,
+  application data, bindings, and hosted configuration were not changed.
+- The frontend is unchanged (build assets still `index-JeGgcMsp.js` and
+  `index-DeEVgRB_.css`); prior browser/search and R2 restart evidence was reused.
+  No browser/live arXiv/OpenAI check, PDF operation, push, deployment, or normal
+  user-database migration was performed. Dependencies/audits were not changed;
+  the documented baseline remains 3 high and 4 moderate development findings,
+  zero production-only findings.
+- For normal local use: `npm.cmd run db:migrate:local`, then `npm.cmd run dev`.
+  Applying the new migration to existing normal local/hosted databases remains
+  a deliberate startup/publication step, not part of the isolated checks.
+  Phase 2B will add selection/save/browse UI. GitHub source handoff and hosted
+  publication are separate phases. This phase is committed locally only.
