@@ -271,10 +271,27 @@ does not retry or hide it:
 node scripts/library-check.mjs --transport-stress
 ```
 
-No dependency update/override or hosted verification was performed. A scoped
-local-tool follow-up is needed for that edge case. Related upstream reports
-describe local proxy connection failures, but do not establish the exact cause
-of this reproduction: [workers-sdk #15002](https://github.com/cloudflare/workers-sdk/issues/15002).
+The follow-up investigation reproduced this with a reused native HTTP socket,
+a verified fresh socket, and a separate client process. Failed POSTs did not
+reach the handler. A minimal Worker without D1 or application imports also
+failed, with either cancellation or release-only early rejection. Successful
+immediate GET/health responses are not a workaround: Wrangler logged an
+internal retry before returning 200. No client/application retry was added.
+
+```powershell
+# Fails visibly when the runtime problem reproduces; still checks no-write
+# integrity and recovery, and cleans only its own temporary processes/state:
+node scripts/transport-investigation.mjs
+```
+
+This diagnostic records TCP socket identities/ports, handler entry/exit markers,
+sanitized proxy logs, and library snapshots below
+`.wrangler/transport-investigation/<UUID>/result.json`. The application byte
+limit, deadline, validation, and dependencies remain unchanged. The exact
+internal connection-pool mechanism is unconfirmed; hosted behavior is untested.
+Because fresh-client requests also fail, the Phase 2B readiness blocker remains
+open pending a scoped local-runtime fix. See the appended investigation in
+`DEVELOPMENT_LOG.md`; earlier failures and reports are retained there.
 
 ## Research-paper search interface
 

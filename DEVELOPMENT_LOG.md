@@ -504,3 +504,157 @@ exit $integrationExit
   a deliberate startup/publication step, not part of the isolated checks.
   Phase 2B will add selection/save/browse UI. GitHub source handoff and hosted
   publication are separate phases. This phase is committed locally only.
+
+## 2026-10-08 — Phase 2A transport investigation (no application fix)
+
+### Baseline and reproduction
+
+- Inspected applicable instruction locations (no `AGENTS.md` found), Git,
+  package scripts, this log, README's limitation, bounded body reader, library
+  handler, stress checker, and installed Wrangler/Miniflare source. Current
+  `main` started at `73840f92e295e3602cf67ea7e37a497552a8c5a5`, ahead one of
+  origin/main, with no tracked changes. The existing untracked Phase 0B.2 ZIP
+  and folder were preserved. No history was amended or pushed.
+- Version inspection commands: `node --version`, `npm.cmd --version`, and
+  `node -e "for (const p of ['wrangler','miniflare','workerd','undici']) { console.log(p + ': ' + require(p + '/package.json').version) } console.log('Node bundled undici: ' + process.versions.undici)"`.
+  Installed versions: Node v24.11.1, npm 11.6.2, Wrangler 4.148.0, Miniflare
+  5.20261006.0-alpha, workerd 1.20261006.1, installed Undici 7.29.1, and Node's
+  built-in fetch Undici 7.16.0. The controlled diagnostic uses Node v24.11.1's
+  native `node:http` client, not either Undici implementation.
+- Ran the existing command **unchanged**, before adding instrumentation:
+  `node scripts/library-check.mjs --transport-stress` exited 1. The first
+  immediate duplicate POST after the chunked 413 returned
+  `POST HTTP 500, expected 200: local proxy: Network connection lost`.
+  Evidence: `.wrangler/library-check/cfc97c09-2751-4c6e-a185-ad2833916a04/result.json`.
+  Its owned Worker PID 122796 stopped; its generated state was subsequently
+  removed after retaining this evidence. Older phase state/evidence was untouched.
+
+### Controlled transport and handler observations
+
+- Added `scripts/transport-investigation.mjs` and the small standalone
+  `scripts/fixtures/transport-worker.mjs`. No application module was edited.
+  The diagnostic generates temporary local Wrangler configurations and an
+  observer wrapper in one owned UUID directory. The application variant imports
+  the unchanged source Worker with isolated real D1; the minimal variant imports
+  only the standalone bounded-reader fixture, with no D1, R2, React, Vite, or
+  application/provider imports. Both use the installed runtime and the same
+  compatibility date. Real bindings/configuration and environment files are not
+  modified or copied into those temporary configurations.
+- Requests carry fixed diagnostic labels. The wrapper records handler entry,
+  exit/status, and a response marker, plus an in-memory trace for independent
+  observation. It never logs request contents, configuration, secrets, or SQL.
+  Client evidence records actual socket object identity, local/remote TCP ports,
+  process PID, and `request.reusedSocket`. A one-socket native keep-alive Agent
+  provides the reused connection; `agent: false` creates an observed new socket;
+  a separate Node process provides the third comparison. All are loopback-only,
+  with no client retries. A new `fetch()` call or delay is not used as evidence
+  of a new connection.
+- `node scripts/transport-investigation.mjs` was run twice. Both exited **1**
+  (`transport_failure_reproduced`), retaining failures while continuing distinct
+  integrity/health checks. Final evidence:
+  `.wrangler/transport-investigation/ca8b974b-e3da-4a4b-b1ef-4026c2b07a61/result.json`.
+  Earlier equivalent evidence:
+  `.wrangler/transport-investigation/301d10f3-987f-484c-88a3-73baa8d69a93/result.json`.
+
+Final application observations (same owned Wrangler PID 70396 throughout):
+
+| First operation after chunked 413 | Verified client transport | Outcome | Reached handler? |
+| --- | --- | --- | --- |
+| New valid POST | PID 122780, socket 9 / local port 63763 reused | 500, proxy connection lost | No |
+| New valid POST | New socket 16 / port 63777, distinct from upload socket 15 / port 63775 | 500, proxy connection lost | No |
+| New valid POST | Separate PID 68660 / port 63785, distinct from upload PID 122780 / port 63784 | 500, proxy connection lost | No |
+| Library GET | Same client socket 28 / port 63792 | 200 after proxy retry attempt 2 | Yes, once |
+| Health GET | Same client socket 34 / port 63799 | 200 after proxy retry attempt 2 | Yes, once |
+
+- Every upload reached the handler and returned 413 `body_too_large` with
+  `no-store`. Each failed subsequent POST lacked both a handler entry and a
+  response marker; the trace retained the earlier before/413 entries, ruling
+  out an unnoticed handler-trace reset. Sanitized proxy logs separately record
+  the connection failure. Native client reuse is therefore **not necessary**
+  for this failure: fresh client TCP sockets and another client process fail too.
+- Inspected installed `node_modules/wrangler/wrangler-dist/ProxyWorker.js`:
+  it forwards requests to the UserWorker through its own `fetch` and automatically
+  retries connection-level GET/HEAD failures, but not POST. The same policy is
+  visible in the [official upstream ProxyWorker source](https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/templates/startDevWorker/ProxyWorker.ts).
+  The installed source and actual logs explain why inserting a GET appeared to
+  recover the earlier normal check: it can consume a failed internal attempt.
+  We did not add or configure these runtime retries. GET/health thus returned 200
+  to the client but still encountered an internal forwarding failure first.
+- This distinguishes the observed client-to-Wrangler sockets from the separate
+  Wrangler-to-UserWorker forwarding leg. The failed POST is localized to that
+  forwarding path before handler entry. Internal stale-pool/unfinished-body
+  handling is an inference, not a packet-level observation; the exact workerd/KJ
+  connection lifecycle causing it remains unconfirmed. The older upstream issue
+  linked in Phase 2A is not proof of the same underlying cause.
+
+### No-write, recovery, and minimal reproduction
+
+- Each oversized diagnostic upload was otherwise valid fixture JSON padded to
+  327,680 bytes and sent in five 64 KiB chunks without Content-Length. Its arXiv
+  identity was distinct from both subsequent valid fixtures, making unintended
+  writes detectable. No actual paper/provider request was made.
+- Every application case GET the library before rejection and again afterward.
+  For immediate-POST cases, the first failure was recorded **before** the GET,
+  not hidden by a preflight or retry. For the GET-first case, the sequence was
+  explicitly before-GET → oversized POST → after-GET → valid POST → final-GET.
+  Counts before/after the rejected upload and failed immediate POST were
+  `0→0`, `1→1`, `2→2`; GET-first/health-first cases were `3→3`, `4→4`.
+  Oversized identities were absent and every pre-existing fixture row was
+  deeply compared unchanged. The failed immediate POST identities were absent.
+- After those inspections, each case issued a **distinct new fixture POST**, not
+  a retry of the failed request. All five returned 201; final GETs verified the
+  exact metadata and resulting counts 1, 2, 3, 4, 5. Health and list requests also
+  succeeded, and the same Worker stayed usable without restart. These recovery
+  results do not make the first failed requests successful.
+- The minimal Worker reproduced the same 413 → immediate POST 500 for reused,
+  fresh, and separate-process clients; failed POSTs again did not enter its
+  handler. Its immediate GET/health requests logged retry attempt 2 before 200.
+  Releasing the reader without cancellation still reproduced the POST failure
+  for reused and fresh sockets. This rules out D1, application imports, JSON
+  validation, and `reader.cancel()` alone as necessary conditions. A subsequent
+  small fully consumed POST returned 200 without restart.
+- The minimal fixture uses the same 262,144-byte limit and 10-second deadline,
+  stores no body content, stops reading at overflow, and never drains an
+  unlimited upload. Consulted the official
+  [Workers reader documentation](https://developers.cloudflare.com/workers/runtime-apis/streams/readablestreamdefaultreader/)
+  for cancellation/release semantics. No supported application-specific defect
+  or justified small production fix was established; the original bounded
+  reader, validation, sanitized errors, and API contracts are unchanged.
+
+### Verification, cleanup, and disposition
+
+| Exact command | Result |
+| --- | --- |
+| `node scripts/library-check.mjs --transport-stress` | Exit 1, unchanged original reproduction |
+| `node scripts/transport-investigation.mjs` | Exit 1 on both runs; 12 cases completed with retained failures and integrity checks |
+| `node --check scripts/transport-investigation.mjs` | Exit 0 |
+| `node --check scripts/fixtures/transport-worker.mjs` | Exit 0 |
+| `node scripts/library-check.mjs` | Exit 0; normal concurrency/validation/restart/migration-reapply checks passed |
+
+- Final normal-check evidence:
+  `.wrangler/library-check/b64693a8-fec5-4296-a457-cb0b9c655e71/result.json`.
+  Simultaneous first saves returned 201/200 with one record; three records
+  survived restart and migration reapplication. Its disposable state was removed
+  and only its owned processes stopped. This pass does not cover away the
+  immediate-write failures demonstrated above.
+- Both diagnostic runs stopped only their recorded child process trees and
+  removed only their resolved, UUID-owned `temporary` tree, including test DBs,
+  generated wrappers/configuration, and raw Wrangler logs. Sanitized client,
+  handler, and proxy evidence remains in `result.json`; normal `.wrangler/state`,
+  previous failed-check directories, user servers, and user data were preserved.
+- No application fix was made, so build, paper fixtures, Sites artifacts, and
+  full offline integration were not repeated; their unchanged-input Phase 2A
+  evidence is retained. The requested `npm.cmd run papers` does not exist in
+  the current manifest; the actual offline command is `npm.cmd run papers:check`.
+  No manifest change was made to add an alias, and no live search command ran.
+- **Phase 2B readiness remains blocked under the requested gate:** fresh-client
+  POSTs also fail. Database integrity checks passed, but healthy later requests
+  and a minimal reproduction do not establish reliable immediate fresh writes
+  or unaffected hosted production. A separately scoped local-runtime fix or
+  version-comparison investigation is needed before clearing this blocker.
+  This task stops at diagnosis, with clearly failing diagnostics retained.
+- Only the diagnostic script, minimal fixture, README guidance, and this appended
+  record are committed on the existing branch. No frontend/application source,
+  dependencies/lockfile, migrations/schema, secrets, real bindings, cloud
+  resources, push, deployment, arXiv, or OpenAI operations changed. The audit
+  baseline remains 3 high and 4 moderate development findings, zero production-only.
