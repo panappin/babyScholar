@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
@@ -111,14 +111,20 @@ async function waitForServer(child, url) {
 
 async function migrate() {
   const args = ["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state];
-  const child = launch(wrangler, args);
-  await Promise.race([
-    child.done,
-    delay(45000, undefined, { ref: false }).then(() => { throw new Error("Local migration timed out"); }),
-  ]);
-  if (child.launchError || child.exitCode !== 0) throw new Error(child.log || String(child.launchError));
-  children.delete(child);
-  record("migration-applied", { exitCode: child.exitCode });
+  // This brief, noninteractive command is run synchronously. On Windows,
+  // Wrangler can report an internal error when it is managed as an async
+  // child alongside the later long-lived dev processes.
+  const result = spawnSync(process.execPath, [wrangler, ...args], {
+    cwd: root,
+    windowsHide: true,
+    stdio: ["ignore", "pipe", "pipe"],
+    encoding: "utf8",
+    timeout: 45000,
+    env: { ...process.env, WRANGLER_SEND_METRICS: "false" },
+  });
+  const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+  if (result.error || result.status !== 0) throw new Error(output || String(result.error));
+  record("migration-applied", { exitCode: result.status });
 }
 
 async function startWorker(port, enableProbe) {
