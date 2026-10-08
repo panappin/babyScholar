@@ -47,7 +47,9 @@ function launch(entry, args, extraEnv = {}) {
     cwd: root,
     windowsHide: true,
     detached: process.platform !== "win32",
-    stdio: ["pipe", "pipe", "pipe"],
+    // Wrangler's local D1 command is unattended; a closed piped stdin can
+    // trigger an internal error on Windows, so give children no stdin.
+    stdio: ["ignore", "pipe", "pipe"],
     env: { ...process.env, WRANGLER_SEND_METRICS: "false", ...extraEnv },
   });
   child.log = "";
@@ -110,7 +112,6 @@ async function waitForServer(child, url) {
 async function migrate() {
   const args = ["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state];
   const child = launch(wrangler, args);
-  child.stdin.end();
   await Promise.race([
     child.done,
     delay(45000, undefined, { ref: false }).then(() => { throw new Error("Local migration timed out"); }),
