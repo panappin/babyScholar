@@ -109,3 +109,33 @@ The live check used its own state directory `.wrangler/integration-check/c07cc22
 
 - To perform the one authenticated OpenAI probe, create the ignored `.dev.vars` only if it is absent (`Copy-Item .dev.vars.example .dev.vars`), edit it locally with `notepad .dev.vars`, enter the account's key without sharing it, and run `npm.cmd run integrations`. The result must be a completed response containing usable text for the check to pass fully.
 - No browser rendering check was needed or repeated in this narrow infrastructure phase. The user-provided screenshots remain evidence for the blank page, backend, D1, and R2 indicators. The scripted check verified the frontend's served/proxied HTTP paths; the only unperformed live integration is authenticated OpenAI access pending local configuration.
+
+## 2026-10-08 — Phase 0B.1: source checkpoint and deployment handoff
+
+### Checkpoint and evidence
+
+- Initialized the previously unversioned project as a new Git repository on `main`. Git `2.45.1.windows.1` found the existing valid author identity `Pranav <panappin@gmail.com>`; no global Git configuration was changed. The sandbox Windows identity differs from the workspace owner, so Git commands used a per-command `safe.directory` setting only.
+- Reconciled the supplied successful local Worker result `.wrangler/integration-check/4d91d328-87d3-4552-929c-a3bee2188791/result.json` into the shareable `integration-check-evidence.json`. The sanitized evidence retains the earlier `passed_with_openai_skipped` run and adds the later fully successful run: arXiv metadata passed, `gpt-6-luna` returned `OK`, direct and Vite-proxied health/storage passed, probe routes were disabled by default, and only owned processes were cleaned up. No paid request was repeated.
+- Added `docs/DEPLOYMENT_HANDOFF.md` with source/Worker entry points, Windows build commands, required complete output directories, D1/R2 bindings, migration locations, OpenAI secret/model configuration, and disabled diagnostic flags. It explicitly distinguishes local labels from future hosted identifiers.
+- Extended `.gitignore` for PyCharm/VS Code local files and generated `handoff/` archives, while retaining `.dev.vars.example`. `git check-ignore` confirmed `.dev.vars`, `.wrangler/`, `dist/`, and `node_modules/` are excluded. The real `.dev.vars` was present but never read, staged, printed, copied, or archived.
+- Reviewed the 41-file initial staging set (source, package lock, schema, migration SQL/metadata, scripts, Worker types, documentation, and audit evidence). A non-printing staged-content scan passed with no credential-shaped values. Wrangler-generated `worker-configuration.d.ts` has existing trailing whitespace, retained unchanged because it is generated and required.
+
+### Reproducibility
+
+- Exported the committed source into a separate clean copy with no `.git`, `.dev.vars`, `.wrangler`, `node_modules`, or `dist`. In the final short-path copy, `C:\tmp\bsr-cbbc7b65-2f86-4e58-816a-ef23e81bb6e0`, all required commands passed:
+
+| Command | Result |
+| --- | --- |
+| `npm.cmd ci` | Exit 0; installed exactly 144 packages from `package-lock.json`; npm reported the unchanged 4 moderate + 3 high development-tool findings |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build` | Exit 0; rebuilt `dist/frontend/` and the complete `dist/worker/` ESM directory |
+| `$env:INTEGRATION_CHECK_OFFLINE='true'; npm.cmd run integrations` | Exit 0, `passed_offline`; migration, direct health/storage, Vite-proxied health/storage, disabled-route 404s, and owned-process cleanup passed; arXiv/OpenAI routes were deliberately not invoked |
+
+- The first clean copies were placed under the long `%TEMP%` path and exposed a Wrangler/Miniflare local D1 internal error before any external call. Direct diagnostics showed the failure depended on the long nested persistence path, not source, lockfile, secret, or application configuration. Repeating the unmodified committed source from the short `C:\tmp` path passed. One `npm exec` diagnostic unnecessarily attempted to obtain a Node package; it was outside the final reproducibility run and its discarded temporary copy contained no project secrets. The final required clean verification made no arXiv or OpenAI requests.
+- Added explicit `INTEGRATION_CHECK_OFFLINE=true` support to `scripts/integration-check.mjs` and documented it in README and the handoff. It runs the actual local Worker/Vite core checks while not invoking either external adapter. Normal `npm.cmd run integrations` retains its deliberate live behavior.
+
+### GitHub handoff status
+
+- Local commits created before this log entry: `ffb36c5` (`chore: add phase 0 infrastructure checkpoint`), plus iterative verification-only commits. The final log/checkpoint commit and handoff archive are created after this entry.
+- `gh` is not installed. `git credential-manager github list` failed because this runtime cannot persist/access the Windows `wincredman` store. A read-only `git -c credential.interactive=false ls-remote https://github.com/panappin/babyScholar.git` returned `Repository not found`; without a usable authenticated session that does not distinguish an absent private repository from unauthorized access. No GitHub repository, remote, visibility, or remote history was changed. The next user-side action is to authenticate Git Credential Manager or install/sign in to GitHub CLI as `panappin`; no token should be pasted into chat.
+- The known audit baseline remains 3 high and 4 moderate development-tool findings, with zero production-only findings. No package dependency change, audit suppression, force fix, or override was made in this phase.
