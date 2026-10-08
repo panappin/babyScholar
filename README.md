@@ -80,7 +80,76 @@ The production artifacts are:
 - Frontend static assets: `dist/frontend/`
 - Worker-compatible ESM module: `dist/worker/index.js` (with `dist/worker/index.js.map`)
 
-The Worker exports a default object with a callable `fetch(request, env)` handler. `wrangler.jsonc` points local development at `src/worker/index.ts`. For a later Sites handoff, retain the entire **`dist/worker/`** directory: `index.js` imports the sibling `storage.js` and `local-probe.js` ESM modules. Also retain `dist/frontend/`, `drizzle/*.sql`, and `drizzle/meta/**`. No deployment is configured or performed in this phase.
+The Worker exports a default object with a callable `fetch(request, env)` handler. `wrangler.jsonc` points local development at `src/worker/index.ts`. For a later Sites handoff, retain the entire **`dist/worker/`** directory: `index.js` imports its sibling Worker ESM modules. Also retain `dist/frontend/`, `drizzle/*.sql`, and `drizzle/meta/**`. No deployment is configured or performed in this phase.
+
+## arXiv paper search API
+
+`GET /api/papers/search?q=<plain-text-keywords>` is the Phase 1A backend-only
+paper-search endpoint. The blank frontend intentionally does not call or display
+it yet. For example, with the local Worker running:
+
+```powershell
+Invoke-RestMethod 'http://127.0.0.1:8787/api/papers/search?q=graph%20neural%20networks'
+```
+
+It returns the first 10 arXiv results in relevance order:
+
+```json
+{
+  "provider": "arxiv",
+  "query": "graph neural networks",
+  "papers": [{
+    "id": "2401.01234",
+    "title": "Example title",
+    "authors": ["Example Author"],
+    "year": 2024,
+    "abstract": "Example abstract",
+    "url": "https://arxiv.org/abs/2401.01234v2",
+    "pdfUrl": "https://arxiv.org/pdf/2401.01234v2.pdf"
+  }]
+}
+```
+
+`q` is required, is Unicode-NFC-normalized, has collapsed whitespace, and is
+limited to 200 Unicode characters. It accepts *plain text*, not arXiv's advanced
+query language: Unicode letters/numbers become individually quoted `all:` terms
+joined by server-generated `AND`; punctuation, quotes, field prefixes, wildcards,
+and supplied boolean syntax are separators. URL encoding is used in addition to,
+not instead of, that policy. Invalid input returns JSON HTTP 400 before any
+upstream request.
+
+The adapter parses Atom entries in order, including every author, title, summary,
+and `published` year (first submission, never `updated`). `id` is a stable modern
+or legacy arXiv identifier with its `vN` suffix removed; supplied abstract/PDF URLs
+retain their version and are normalized to HTTPS only for exact `arxiv.org` or
+`www.arxiv.org` hosts. Missing optional metadata is an empty string/array or
+`null`. A valid empty feed is `200` with an empty `papers` array; an Atom error
+feed is an upstream failure even if it has HTTP 200.
+
+Outbound calls have a 10-second whole-operation timeout (including body reading),
+a 1 MB response limit, and no automatic retries. Invalid/malformed/upstream and
+network failures return sanitized JSON HTTP 502; timeouts return 504. A successful
+response is held in a small in-memory cache for five minutes, identical in-flight
+requests are shared, and distinct upstream calls are serialized at least three
+seconds apart. Those controls apply only within one Worker isolate; they are not a
+deployment-wide rate limiter. This follows arXiv's documented API defaults and
+request limits; later hosted work will need any cross-isolate coordination it
+requires. See the [arXiv API manual](https://info.arxiv.org/help/api/user-manual.html)
+and [Terms of Use](https://info.arxiv.org/help/api/tou.html).
+
+```powershell
+# Offline fixtures and mocked fetches only; no network requests:
+npm.cmd run build:worker
+npm.cmd run papers:check
+
+# Starts and stops its own local Worker, then makes exactly one arXiv search:
+npm.cmd run papers:live
+```
+
+`papers:check` covers Atom namespaces/entities, modern and legacy IDs, ordered
+authors, published-year selection, absent links, input validation with no fetch,
+empty/error/malformed feeds, HTTP/network errors, body-read timeout, response
+size limit, cache behavior, in-flight deduplication, and three-second spacing.
 
 ## Structure
 
@@ -90,15 +159,17 @@ drizzle.config.ts               SQLite migration generation configuration
 drizzle/*.sql                   Committed schema-only migrations
 drizzle/meta/                   Committed Drizzle generation history
 src/App.tsx                     Blank screen and relative status requests
-src/worker/index.ts             Health/status routing and ESM fetch handler
+src/worker/index.ts             Health/status/search routing and ESM fetch handler
 src/worker/storage.ts           Typed D1/R2 helpers
 src/worker/local-probe.ts       Explicitly gated local verification routes
-src/worker/arxiv.ts             Bounded arXiv Atom metadata probe
+src/worker/arxiv.ts             Bounded, paced arXiv Atom search adapter and metadata parser
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
 scripts/integration-check.mjs  Isolated live Worker connectivity verification
 scripts/integration-offline-check.mjs  Focused adapter failure-path checks
+scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
+scripts/paper-search-live-check.mjs  One-request local Worker arXiv endpoint check
 worker-configuration.d.ts      Wrangler-generated binding/runtime types
 vite.config.ts                 Development proxy and frontend build output
 wrangler.jsonc                 Local D1/R2 bindings

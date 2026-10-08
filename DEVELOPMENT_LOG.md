@@ -203,3 +203,79 @@ The live check used its own state directory `.wrangler/integration-check/c07cc22
 - This synchronization did not create another Site, redeploy, configure a
   hosted secret, or change the private Site audience. Hosted `OPENAI_API_KEY`
   setup and authenticated hosted OpenAI verification remain pending.
+
+## 2026-10-08 — Phase 1A: backend arXiv paper search
+
+### Scope and implementation
+
+- Inspected the current project, README, development log, Worker router, arXiv
+  adapter, integration scripts, Git state, and HEAD before changing source. No
+  `AGENTS.md` exists in or above this project. Preserved the blank frontend,
+  D1/R2 bindings and state, hosted project ID, Drizzle SQL/metadata,
+  `package-lock.json`, real ignored environment files, and the pre-existing
+  untracked Phase 0B.2 ZIP/folder.
+- Reviewed the arXiv API manual and Terms of Use. Added
+  `GET /api/papers/search?q=<plain-text-keywords>` without changing the
+  frontend or local diagnostic routes. It sends one server-built query to
+  `https://export.arxiv.org/api/query` with `start=0`, `max_results=10`, and
+  relevance sorting.
+- The request contract is `{ provider: "arxiv", query, papers }`. Results keep
+  Atom order and include stable modern/legacy base IDs (the source `vN` suffix
+  is removed only from `id`), title, ordered authors, first-submission year from
+  `published`, full normalized abstract, and optional canonical HTTPS arXiv
+  abstract/PDF links. Source URL versions are retained. Only exact
+  `arxiv.org`/`www.arxiv.org` links are accepted; missing optional fields remain
+  empty or `null`.
+- `q` is required, NFC-normalized, whitespace-collapsed, and limited to 200
+  Unicode characters. The adapter extracts Unicode letter/number terms and
+  creates each quoted `all:` term plus its `AND` operators itself. Therefore
+  user quotes, field prefixes, wildcards, punctuation, and boolean syntax are
+  not passed through as arXiv query language. Invalid input returns JSON 400
+  before fetching.
+- Extended the existing Worker-compatible manual Atom parser rather than adding
+  a dependency. It detects successful HTTP error feeds, normalizes XML entities
+  and namespaces, handles empty valid feeds, constrains complete body reading to
+  10 seconds and 1 MB, clears timers, and returns sanitized 502/504 errors with
+  no retries. The search service has a 20-entry, five-minute successful-result
+  cache, same-query in-flight deduplication, and a single per-isolate queue
+  that spaces distinct arXiv requests by at least three seconds. These are not
+  a deployment-wide rate limiter.
+- Added dependency-free `papers:check` and `papers:live` commands plus fixture
+  coverage for response shape/status errors, modern and legacy IDs, ordered
+  authors, entities/namespaces, published year, absent links, empty/error/
+  malformed feeds, invalid inputs with zero fetches, HTTP/network failures,
+  body timeout/size limit, cache, deduplication, and spacing. No dependency or
+  lockfile update was needed. The documented audit baseline remains 3 high and
+  4 moderate development-tool findings with zero production-only findings.
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build:worker` | Exit 0 |
+| `npm.cmd run papers:check` | Exit 0; all fixed-fixture and mocked-fetch search checks passed |
+| `npm.cmd run build` | Exit 0; type checking, Vite build, Worker ESM build, and Sites staging passed |
+| `npm.cmd run sites` | Exit 0; packaged Worker routing/binding/migration fixture check passed |
+| `npm.cmd run integrations:offline` | Exit 0; prior arXiv/OpenAI adapter failure-path checks passed without external calls |
+| `INTEGRATION_CHECK_OFFLINE=true; npm.cmd run integrations` | Exit 0 (`passed_offline`); local migration, direct Worker health/storage, Vite-proxied health/storage, disabled probe 404s, and owned-process cleanup passed. The prior environment value was restored. |
+| `npm.cmd run papers:live` | Exit 0 after the local Worker started and stopped; made exactly one live arXiv request through the new endpoint, with no OpenAI request. |
+
+- The one live endpoint check searched `graph neural networks` at a local Worker
+  origin and received `2211.12792`, **“MECCH: Metapath Context
+  Convolution-based Heterogeneous Graph Neural Networks”**, with canonical URL
+  `https://arxiv.org/abs/2211.12792v2`. Its isolated ignored state was
+  `.wrangler/paper-search-check/86834ff8-a468-43dc-99e4-0ecf02475550`.
+- The constrained sandbox initially blocked Vite/Wrangler from reading project
+  configuration and writing Wrangler's normal log directory, so the first
+  `build`, full offline integration, and live-check attempts failed before
+  application verification. Rerunning those exact requested commands with
+  normal filesystem access passed. The failed owned Worker was stopped; no
+  user process, runtime state, secret, hosted resource, or paid API request was
+  changed. The live retry is the sole successful endpoint request in this
+  phase.
+- Storage behavior and persistence configuration were unchanged, so the full
+  restart-persistence check was not repeated. Browser UI checking was not
+  repeated because the frontend remains intentionally blank; the local Worker
+  route, built Worker, Sites artifact, and Vite proxy were covered by the
+  scripted checks.

@@ -1,6 +1,7 @@
 import { bucketStatus, databaseStatus, type WorkerEnv } from "./storage.js";
 import { handleLocalProbe } from "./local-probe.js";
 import { handleLocalIntegrationProbe } from "./local-integration-probe.js";
+import { paperSearchFailureStatus, publicPaperSearchError, searchArxivPapers } from "./arxiv.js";
 
 const healthResponse = () =>
   new Response(JSON.stringify({ status: "ok" }), {
@@ -10,6 +11,26 @@ const healthResponse = () =>
       "cache-control": "no-store",
     },
   });
+
+export async function handlePaperSearchRequest(
+  request: Request,
+  search: typeof searchArxivPapers = searchArxivPapers,
+): Promise<Response> {
+  if (request.method !== "GET") {
+    return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET" } });
+  }
+  const url = new URL(request.url);
+  try {
+    return Response.json(await search(url.searchParams.get("q")), {
+      headers: { "cache-control": "no-store" },
+    });
+  } catch (error) {
+    return Response.json({ error: publicPaperSearchError(error) }, {
+      status: paperSearchFailureStatus(error),
+      headers: { "cache-control": "no-store" },
+    });
+  }
+}
 
 export default {
   async fetch(request: Request, env: WorkerEnv = {}): Promise<Response> {
@@ -26,6 +47,10 @@ export default {
         { status: ok ? "ok" : "error", d1, r2 },
         { status: ok ? 200 : 503, headers: { "cache-control": "no-store" } },
       );
+    }
+
+    if (url.pathname === "/api/papers/search") {
+      return handlePaperSearchRequest(request);
     }
 
     if (url.pathname.startsWith("/api/__local/storage-probe/")) {
