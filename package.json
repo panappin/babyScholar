@@ -24,6 +24,7 @@
     "extractions:check": "node scripts/extraction-check.mjs",
     "metadata:check": "node scripts/metadata-check.mjs",
     "metadata:live": "node scripts/metadata-live-check.mjs",
+    "metadata:live:offline": "node scripts/metadata-live-verifier-check.mjs",
     "unpdf:proof": "node scripts/unpdf-worker-proof.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.worker.json && tsc --noEmit --project tsconfig.vite.json",
     "build": "npm run typecheck && npm run build:frontend && npm run build:worker && npm run build:sites",

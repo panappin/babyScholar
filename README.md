@@ -450,6 +450,10 @@ npm.cmd run metadata:check
 # Deliberate one-request local live check. Requires an existing local key and
 # may incur provider use; it never retries. Do not run this during offline work.
 npm.cmd run metadata:live
+
+# Runs the live-verifier success, fixture-mismatch, and application-error paths
+# against a loopback mock and an isolated Worker. No provider request is made.
+npm.cmd run metadata:live:offline
 ```
 
 `metadata:check` uses only the CC0 repository fixture, a loopback Responses
@@ -458,6 +462,13 @@ evidence, missing storage/configuration/text, cache and concurrent claims,
 restart/migration persistence, three-page clipping, refusal/incomplete/malformed
 responses, invalid evidence, provider failure, and unchanged original PDF/text
 records. It leaves normal `.wrangler/state` untouched.
+
+`metadata:live:offline` specifically verifies the live verifier's sanitized
+evidence: a successful persisted result, a fixture-field mismatch that still
+records a GET result, and an application error. For the successful cache path it
+restarts only its owned Worker with `OPENAI_API_KEY` explicitly empty, GETs the
+saved result before any cached POST, and then verifies HTTP 200 with
+`created:false`. It never uses the real local key or contacts OpenAI.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked

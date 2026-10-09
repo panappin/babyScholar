@@ -1032,3 +1032,76 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   not establish hosted behavior. No frontend work, OCR, PDF processing change,
   dependency update, audit action, migration of normal user state, push,
   deployment, hosted secret change, arXiv call, or extra OpenAI call occurred.
+
+## 2026-10-08 — Phase 3C live-verifier offline observability repair
+
+### Retained live-attempt evidence
+
+- Started from committed Phase 3C `9f9b856fcbc6cc7e0d117e9198243e95de71bd8b`
+  with the pre-existing uncommitted cache-guard update in
+  `scripts/metadata-live-check.mjs`. No project or ancestor `AGENTS.md` was
+  present. The untracked Phase 0B.2 ZIP/folder remains untouched.
+- The retained additional-live-attempt record
+  `.wrangler/metadata-live-check/8c62ecbc-47aa-44f1-b464-cd7a557ae240/result.json`
+  establishes only: isolated migrations completed, an owned Worker started and
+  stopped, the verifier marked one provider-capable metadata POST attempt, and
+  it exited with `AssertionError`. It does **not** record an application POST
+  status/error kind, provider response, assertion stage/field, a metadata GET,
+  or persistence. Its isolated runtime state was already deleted. Those details
+  are unknown; this verifier exit alone does not establish that the application
+  failed.
+- The prior original live-attempt evidence remains preserved separately at
+  `.wrangler/metadata-live-check/1ed9a2d2-1c1d-408c-a814-beddf8ee7706/result.json`.
+  No discarded provider output was reconstructed or printed.
+
+### Verifier repair
+
+- Reworked only `scripts/metadata-live-check.mjs` plus its focused offline
+  verifier/documentation command. Before every request assertion it now records
+  a named stage, sanitized application status/error kind, no-store/JSON shape,
+  `created` flag, and compact fixture-only metadata fields. It records expected
+  and actual CC0 fixture fields, evidence counts, the first mismatch name, and
+  a persisted-result GET before deliberately failing a fixture comparison.
+  Headers, keys, raw provider envelopes, and source text are excluded.
+- The cache path now stops only its first owned Worker, restarts the same
+  isolated state with `--var OPENAI_API_KEY:` (empty), GETs the saved result
+  before any cached POST, and only then verifies the cached `200`/
+  `created:false` result. Consequently, the cache POST has no usable key and
+  cannot start a provider request. Cleanup saves diagnostics before and after
+  deleting only the UUID-owned state.
+- Added `metadata:live:offline`, which invokes the real verifier with only a
+  loopback Responses mock and a non-usable test sentinel. It covers a successful
+  persistence/cache path, an intentionally valid-but-fixture-mismatched title,
+  and a provider-originated application error. It does not read or send the
+  real local key.
+
+### Offline verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `node --check scripts/metadata-live-check.mjs` | Exit 0 |
+| `node --check scripts/metadata-live-verifier-check.mjs` | Exit 0 |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run metadata:live:offline` | Exit 0; all three isolated verifier scenarios passed their expected outcomes |
+
+- Success evidence:
+  `.wrangler/metadata-live-check/fcbe6511-bded-4076-a525-8afb0108a5b5/result.json`.
+  The mock received one request; POST was 201, GET was 200 and matched the
+  persisted result, then the empty-key restart GET was 200 and cached POST was
+  200 with `created:false` and the same metadata. Its owned state was removed.
+- Fixture-mismatch evidence:
+  `.wrangler/metadata-live-check/4d8b460d-49ae-47b6-8d7c-7fd605b82d64/result.json`.
+  It intentionally exited 1 at `fixture-field-comparison` with mismatch
+  `title`, while preserving POST 201, GET 200, and matching persisted metadata
+  diagnostics before cleanup. Its owned state was removed.
+- Application-error evidence:
+  `.wrangler/metadata-live-check/44e177fe-e8f5-49fc-8220-99ac0c99fcb0/result.json`.
+  Its mock made one request; the application returned 502
+  `metadata_provider_failure`, and the subsequent GET returned 404
+  `metadata_not_found`. Its owned state was removed.
+- `npm.cmd run metadata:live`, `npm.cmd run integrations`, and every other
+  provider/connectivity probe were deliberately **not** run. No OpenAI/arXiv
+  request, application schema/parser/model/fixture/dependency change, build,
+  frontend change, normal user-state operation, push, or deployment occurred.
+  No concrete application defect was identified; a future live run remains a
+  separate authorization decision.
