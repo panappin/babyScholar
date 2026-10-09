@@ -1441,3 +1441,57 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   change, push, deployment, or transport investigation occurred. The documented
   local Wrangler/Miniflare oversized-upload transport limitation remains open
   and unchanged.
+
+## 2026-10-09 - Phase 5B selected-PDF Q&A UI
+
+- Started at Phase 5A commit `c873855b9d4781ebb3a11f06e98bf2de1ce13524`.
+  The pre-existing untracked Phase 0B.2 ZIP/folder, normal Wrangler state,
+  historical migrations, configured key/model, and unrelated application flows
+  were preserved.
+- Added the selected-PDF **Questions and answers** section. Initial detail
+  reads and **Reload question history** use the relative GET questions route
+  only. **Ask** is an explicit JSON POST from a labeled textarea; it validates
+  trimmed/nonempty input and the 2 KiB UTF-8 limit without truncating text.
+  Metadata and a saved summary remain optional, and the UI says earlier answers
+  are not conversational context.
+- Saved cards retain backend newest-first history, immutable IDs/timestamps,
+  answer parts or an explicit insufficient-source reason, warnings, coverage,
+  and native expandable page-numbered quotes. Partial results explicitly name
+  their included excerpt/pages and the UI retains the source-presence versus
+  paraphrase-entailment limitation.
+- POST failures, malformed output, interruption/timeout, and active claims use
+  a bounded GET reconciliation without an automatic POST retry. Selection and
+  unmount abort Q&A requests; a stale prior-document response cannot update the
+  next selection. A failed history reload preserves confirmed cards and reports
+  the read failure separately.
+
+### Windows verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `node --check scripts/frontend-search-browser-check.mjs` | Exit 0 |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run documents:ui:check` | Exit 0; final sanitized evidence at `.wrangler/frontend-search-browser-check/68570a7e-1719-48e0-bcf8-512ec9e2552a/result.json` |
+| `npm.cmd run build` | Exit 0; TypeScript, Vite, Worker dry-run, and Sites staging passed; no upload |
+| `npm.cmd run sites` | Exit 0; binding-fixture artifact check passed |
+
+- The final Chrome/CDP check used UUID-owned D1/R2 state, relative Vite proxy
+  paths, an actual local Worker, and loopback-only metadata/summary/question
+  Responses mocks. It covered question loading/empty/error, malformed input,
+  answered and insufficient-source cards, partial coverage, evidence, duplicate
+  cache behavior, in-progress and uncertain GET reconciliation, stale selection,
+  retained cards after history-read failure, and narrow layout. Its actual flow
+  uploaded/extracted a fixture with metadata and summary absent, made one
+  explicit loopback question-provider request, refreshed through GET-only
+  history, then repeated the question through the cached POST without another
+  provider request while preserving ID/timestamp. It stopped only its owned
+  Worker, Vite, Chrome, and loopback-provider processes.
+- The first sandboxed browser-check attempt stopped before Worker readiness
+  because that sandbox could not provide Wrangler's normal local process/log
+  access; its retained evidence is ignored. A subsequent harness attempt found
+  and corrected two verifier-only assertions (an earlier alert selector and a
+  flattened request-counter predicate). The final privileged local command
+  passed. No live OpenAI/arXiv request, key exposure/change, backend/schema/
+  dependency change, normal-state migration, push, deployment, or transport
+  investigation occurred. The documented local Wrangler/Miniflare oversized
+  upload transport limitation remains unchanged.

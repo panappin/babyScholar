@@ -4,12 +4,17 @@ import type {
   DocumentExtraction,
   DocumentMetadata,
   DocumentMetadataResponse,
+  DocumentQuestionAnswerPart,
+  DocumentQuestionEvidenceQuote,
+  DocumentQuestionRecord,
+  DocumentQuestionResponse,
   DocumentSummary,
   DocumentSummaryEvidenceQuote,
   DocumentSummaryItem,
   DocumentSummaryPageRange,
   DocumentSummaryResponse,
   GetDocumentTextResponse,
+  ListDocumentQuestionsResponse,
   ListDocumentsResponse,
   UploadedDocument,
   UploadDocumentResponse,
@@ -21,6 +26,8 @@ const UPLOAD_TIMEOUT_MS = 35_000;
 const EXTRACTION_TIMEOUT_MS = 45_000;
 const METADATA_TIMEOUT_MS = 35_000;
 const SUMMARY_TIMEOUT_MS = 35_000;
+const QUESTION_TIMEOUT_MS = 35_000;
+const MAX_QUESTION_BYTES = 2 * 1024;
 
 type ListState = {
   status: "initial" | "loading" | "empty" | "loaded" | "error";
@@ -33,6 +40,7 @@ type DetailState = {
   extraction: DocumentExtraction | null;
   metadata: DocumentMetadata | null;
   summary: SummaryState;
+  questions: QuestionState;
   message?: string;
 };
 
@@ -40,6 +48,13 @@ type SummaryState = {
   status: "initial" | "loading" | "not_generated" | "missing_extraction" | "generating" | "in_progress" | "loaded" | "error" | "uncertain";
   summary: DocumentSummary | null;
   message?: string;
+};
+
+type QuestionState = {
+  status: "initial" | "loading" | "empty" | "missing_extraction" | "asking" | "in_progress" | "loaded" | "error" | "uncertain";
+  questions: DocumentQuestionRecord[];
+  message?: string;
+  submittedQuestion?: string;
 };
 
 type ProcessingState =
@@ -51,9 +66,13 @@ type ProcessingState =
   | { status: "uncertain"; documentId?: string; message: string }
   | { status: "error"; documentId?: string; message: string };
 
-type StoredResults = { extraction: DocumentExtraction | null; metadata: DocumentMetadata | null; summary: SummaryState };
+type StoredResults = { extraction: DocumentExtraction | null; metadata: DocumentMetadata | null; summary: SummaryState; questions: QuestionState };
 
 class DocumentResponseError extends Error {}
+
+function initialQuestionState(): QuestionState {
+  return { status: "initial", questions: [] };
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -152,6 +171,50 @@ function isSummaryResponse(value: unknown): value is DocumentSummaryResponse {
   return isRecord(value) && isSummary(value.summary) && (value.created === undefined || typeof value.created === "boolean");
 }
 
+function isQuestionEvidenceQuote(value: unknown): value is DocumentQuestionEvidenceQuote {
+  return isRecord(value) && typeof value.pageNumber === "number" && typeof value.quote === "string";
+}
+
+function isQuestionAnswerPart(value: unknown): value is DocumentQuestionAnswerPart {
+  return isRecord(value) && typeof value.text === "string" && Array.isArray(value.evidence) && value.evidence.every(isQuestionEvidenceQuote);
+}
+
+function isQuestion(value: unknown): value is DocumentQuestionRecord {
+  if (!isRecord(value)
+    || typeof value.id !== "string"
+    || typeof value.documentId !== "string"
+    || typeof value.question !== "string"
+    || typeof value.normalizedQuestion !== "string"
+    || typeof value.sourceSha256 !== "string"
+    || value.extractionParser !== "unpdf"
+    || typeof value.extractionParserVersion !== "string"
+    || typeof value.extractionExtractedAt !== "string"
+    || typeof value.extractionFingerprint !== "string"
+    || typeof value.totalPageCount !== "number"
+    || !Array.isArray(value.includedPageNumbers) || !value.includedPageNumbers.every((page) => typeof page === "number")
+    || !Array.isArray(value.includedPageRanges) || !value.includedPageRanges.every(isSummaryPageRange)
+    || typeof value.sourceExcerptByteCount !== "number"
+    || typeof value.sourceExcerptTruncated !== "boolean"
+    || typeof value.sourceCoverageWarning !== "string"
+    || typeof value.model !== "string"
+    || typeof value.promptVersion !== "string"
+    || typeof value.schemaVersion !== "string"
+    || !Array.isArray(value.answerParts) || !value.answerParts.every(isQuestionAnswerPart)
+    || (value.insufficientSourceReason !== null && typeof value.insufficientSourceReason !== "string")
+    || !Array.isArray(value.warnings) || !value.warnings.every((warning) => typeof warning === "string")
+    || typeof value.createdAt !== "string") return false;
+  return (value.outcome === "answered" && value.answerParts.length > 0 && value.insufficientSourceReason === null)
+    || (value.outcome === "insufficient_source" && value.answerParts.length === 0 && typeof value.insufficientSourceReason === "string");
+}
+
+function isListQuestionsResponse(value: unknown): value is ListDocumentQuestionsResponse {
+  return isRecord(value) && Array.isArray(value.questions) && value.questions.every(isQuestion);
+}
+
+function isQuestionResponse(value: unknown): value is DocumentQuestionResponse {
+  return isRecord(value) && isQuestion(value.question) && (value.created === undefined || typeof value.created === "boolean");
+}
+
 function documentError(value: unknown): DocumentErrorResponse["error"] | undefined {
   if (!isRecord(value) || !isRecord(value.error) || typeof value.error.kind !== "string" || typeof value.error.message !== "string") return undefined;
   return value.error as DocumentErrorResponse["error"];
@@ -172,6 +235,21 @@ function formatBytes(bytes: number): string {
 
 function formatPageRanges(ranges: DocumentSummaryPageRange[]): string {
   return ranges.map((range) => range.startPage === range.endPage ? `Page ${range.startPage}` : `Pages ${range.startPage}-${range.endPage}`).join(", ");
+}
+
+function normalizedQuestion(value: string): string {
+  return value.normalize("NFC").replace(/\s+/gu, " ").trim();
+}
+
+function questionInputError(value: string): string | null {
+  if (!value || value !== value.trim()) return "Enter a trimmed, nonempty question.";
+  if (new TextEncoder().encode(value).byteLength > MAX_QUESTION_BYTES) return "Use a question of 2 KiB UTF-8 or fewer.";
+  return null;
+}
+
+function mergeQuestions(questions: DocumentQuestionRecord[], next: DocumentQuestionRecord): DocumentQuestionRecord[] {
+  return [next, ...questions.filter((question) => question.id !== next.id)]
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt) || right.id.localeCompare(left.id));
 }
 
 function mergeDocument(documents: UploadedDocument[], next: UploadedDocument): UploadedDocument[] {
@@ -220,10 +298,41 @@ function SummaryContent({ summary }: { summary: DocumentSummary }) {
   </>;
 }
 
+function QuestionQuotes({ evidence }: { evidence: DocumentQuestionEvidenceQuote[] }) {
+  return <details className="summary-evidence question-evidence">
+    <summary>Supporting quotes ({evidence.length})</summary>
+    <ol>{evidence.map((quote, index) => <li key={`${quote.pageNumber}-${index}`}><strong>Page {quote.pageNumber}:</strong> {quote.quote}</li>)}</ol>
+  </details>;
+}
+
+function QuestionCard({ question }: { question: DocumentQuestionRecord }) {
+  const coverage = formatPageRanges(question.includedPageRanges);
+  return <article className="question-card" data-question-id={question.id}>
+    <div className="question-card-heading">
+      <h5>{question.question}</h5>
+      <time dateTime={question.createdAt}>{formatTime(question.createdAt)}</time>
+    </div>
+    <p className={question.sourceExcerptTruncated ? "summary-coverage summary-coverage--partial" : "summary-coverage"}>
+      <strong>{question.sourceExcerptTruncated ? "Partial source coverage." : "Full source coverage."}</strong>{" "}
+      {question.sourceCoverageWarning} Included extracted pages: {coverage || "none"} of {question.totalPageCount}. {question.sourceExcerptTruncated ? "Text outside the included excerpt was omitted." : "No extracted page text was omitted by the question source budget."}
+    </p>
+    {question.outcome === "insufficient_source" ? <section className="question-insufficient" aria-label="Insufficient source result">
+      <h6>Insufficient source</h6><p>{question.insufficientSourceReason}</p>
+    </section> : <section className="question-answered" aria-label="Source-grounded answer">
+      <h6>Answer</h6>
+      <ol>{question.answerParts.map((part, index) => <li key={`${part.text}-${index}`}><p>{part.text}</p><QuestionQuotes evidence={part.evidence} /></li>)}</ol>
+    </section>}
+    <p className="results-note">Supporting quotes show that cited text occurs on the listed source page. They do not prove every paraphrased answer claim.</p>
+    {question.warnings.length > 0 && <section className="document-warnings question-warnings" aria-labelledby={`question-warnings-${question.id}`}><h6 id={`question-warnings-${question.id}`}>Warnings</h6><ul>{question.warnings.map((warning, index) => <li key={`${warning}-${index}`}>{warning}</li>)}</ul></section>}
+  </article>;
+}
+
 export function DocumentWorkspace() {
   const [listState, setListState] = useState<ListState>({ status: "initial", documents: [] });
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [detailState, setDetailState] = useState<DetailState>({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null } });
+  const [detailState, setDetailState] = useState<DetailState>({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null }, questions: initialQuestionState() });
+  const [questionInput, setQuestionInput] = useState("");
+  const [questionInputMessage, setQuestionInputMessage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<ProcessingState>({ status: "idle" });
@@ -232,15 +341,18 @@ export function DocumentWorkspace() {
   const detailRequest = useRef<AbortController | null>(null);
   const pipelineRequest = useRef<AbortController | null>(null);
   const summaryRequest = useRef<AbortController | null>(null);
+  const questionRequest = useRef<AbortController | null>(null);
   const listRevision = useRef(0);
   const detailRevision = useRef(0);
   const pipelineRevision = useRef(0);
   const summaryRevision = useRef(0);
+  const questionRevision = useRef(0);
 
   const selectedDocument = selectedId ? listState.documents.find((document) => document.id === selectedId) ?? null : null;
   const pipelineBusy = processing.status === "uploading" || processing.status === "extracting" || processing.status === "metadata";
   const processingDocumentId = processing.status === "extracting" || processing.status === "metadata" ? processing.documentId : undefined;
   const summaryBusy = detailState.summary.status === "generating";
+  const questionBusy = detailState.questions.status === "asking";
 
   function isCurrentPipeline(id: number, controller: AbortController) {
     return mounted.current && pipelineRevision.current === id && pipelineRequest.current === controller && !controller.signal.aborted;
@@ -252,6 +364,14 @@ export function DocumentWorkspace() {
 
   function isCurrentSummary(id: number, documentId: string, controller: AbortController) {
     return ownsSummaryRequest(id, documentId, controller) && !controller.signal.aborted;
+  }
+
+  function ownsQuestionRequest(id: number, documentId: string, controller: AbortController) {
+    return mounted.current && selectedId === documentId && questionRevision.current === id && questionRequest.current === controller;
+  }
+
+  function isCurrentQuestion(id: number, documentId: string, controller: AbortController) {
+    return ownsQuestionRequest(id, documentId, controller) && !controller.signal.aborted;
   }
 
   async function readJson(response: Response): Promise<unknown> {
@@ -309,11 +429,30 @@ export function DocumentWorkspace() {
     }
   }
 
+  async function getStoredQuestions(id: string, signal: AbortSignal): Promise<QuestionState> {
+    try {
+      const response = await fetch(`/api/documents/${encodeURIComponent(id)}/questions`, { signal });
+      const body = await readJson(response);
+      if (response.ok) {
+        if (!isListQuestionsResponse(body) || body.questions.some((question) => question.documentId !== id)) {
+          return { status: "error", questions: [], message: "Saved questions returned an unexpected response. Reload question history to try again." };
+        }
+        return { status: body.questions.length ? "loaded" : "empty", questions: body.questions };
+      }
+      const error = documentError(body);
+      if (error?.kind === "extraction_not_found") return { status: "missing_extraction", questions: [] };
+      return { status: "error", questions: [], message: messageForResponse(response, body, "Saved questions could not be loaded") };
+    } catch (error) {
+      return { status: "error", questions: [], message: error instanceof Error ? `Saved questions could not be loaded: ${error.message}` : "Saved questions could not be loaded. Reload question history to try again." };
+    }
+  }
+
   async function getStoredResults(id: string, signal: AbortSignal): Promise<StoredResults> {
-    const [textResponse, metadataResponse, summary] = await Promise.all([
+    const [textResponse, metadataResponse, summary, questions] = await Promise.all([
       fetch(`/api/documents/${encodeURIComponent(id)}/text`, { signal }),
       fetch(`/api/documents/${encodeURIComponent(id)}/metadata`, { signal }),
       getStoredSummary(id, signal),
+      getStoredQuestions(id, signal),
     ]);
     const [textBody, metadataBody] = await Promise.all([readJson(textResponse), readJson(metadataResponse)]);
     let extraction: DocumentExtraction | null = null;
@@ -330,7 +469,7 @@ export function DocumentWorkspace() {
     } else if (!["metadata_not_found", "extraction_not_found"].includes(documentError(metadataBody)?.kind ?? "")) {
       throw new Error(messageForResponse(metadataResponse, metadataBody, "Stored metadata could not be loaded"));
     }
-    return { extraction, metadata, summary };
+    return { extraction, metadata, summary, questions };
   }
 
   async function loadDetails(id: string) {
@@ -341,7 +480,7 @@ export function DocumentWorkspace() {
     detailRequest.current = controller;
     let timedOut = false;
     const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, READ_TIMEOUT_MS);
-    if (mounted.current) setDetailState((current) => ({ status: "loading", extraction: current.extraction, metadata: current.metadata, summary: { status: "loading", summary: current.summary.summary } }));
+    if (mounted.current) setDetailState((current) => ({ status: "loading", extraction: current.extraction, metadata: current.metadata, summary: { status: "loading", summary: current.summary.summary }, questions: { status: "loading", questions: current.questions.questions } }));
     try {
       const results = await getStoredResults(id, controller.signal);
       if (!mounted.current || controller.signal.aborted || revision !== detailRevision.current) return results;
@@ -354,6 +493,7 @@ export function DocumentWorkspace() {
         extraction: current.extraction,
         metadata: current.metadata,
         summary: current.summary,
+        questions: current.questions,
         message: timedOut ? "Reading this PDF took too long. Select it again or reload the PDFs view." : error instanceof Error ? error.message : "This PDF could not be read.",
       }));
       return undefined;
@@ -367,8 +507,12 @@ export function DocumentWorkspace() {
     if (pipelineBusy || summaryBusy) return;
     summaryRevision.current += 1;
     summaryRequest.current?.abort();
+    questionRevision.current += 1;
+    questionRequest.current?.abort();
     setSelectedId(id);
-    setDetailState({ status: "loading", extraction: null, metadata: null, summary: { status: "loading", summary: null } });
+    setDetailState({ status: "loading", extraction: null, metadata: null, summary: { status: "loading", summary: null }, questions: { status: "loading", questions: [] } });
+    setQuestionInput("");
+    setQuestionInputMessage(null);
     setProcessing({ status: "idle" });
     void loadDetails(id);
   }
@@ -493,6 +637,146 @@ export function DocumentWorkspace() {
     }
   }
 
+  async function loadQuestions(id: string) {
+    if (questionBusy) return;
+    const revision = questionRevision.current + 1;
+    questionRevision.current = revision;
+    questionRequest.current?.abort();
+    const controller = new AbortController();
+    questionRequest.current = controller;
+    let timedOut = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, READ_TIMEOUT_MS);
+    setDetailState((current) => current.status === "initial" ? current : {
+      ...current,
+      questions: { status: "loading", questions: current.questions.questions, submittedQuestion: current.questions.submittedQuestion },
+    });
+    try {
+      const questions = await getStoredQuestions(id, controller.signal);
+      if (!ownsQuestionRequest(revision, id, controller)) return;
+      setDetailState((current) => ({
+        ...current,
+        questions: timedOut && questions.status === "error"
+          ? { status: "error", questions: current.questions.questions, message: "Loading saved questions took too long. Reload question history to try again." }
+          : questions.status === "error"
+            ? { ...questions, questions: current.questions.questions }
+            : questions,
+      }));
+    } finally {
+      window.clearTimeout(timeout);
+      if (questionRequest.current === controller) questionRequest.current = null;
+    }
+  }
+
+  async function reconcileQuestion(
+    id: string,
+    revision: number,
+    submittedQuestion: string,
+    status: "in_progress" | "uncertain",
+    message: string,
+  ) {
+    if (selectedId !== id || questionRevision.current !== revision || !mounted.current) return;
+    setDetailState((current) => ({ ...current, questions: { status, questions: current.questions.questions, message, submittedQuestion } }));
+    const controller = new AbortController();
+    questionRequest.current = controller;
+    const timeout = window.setTimeout(() => controller.abort(), READ_TIMEOUT_MS);
+    try {
+      const saved = await getStoredQuestions(id, controller.signal);
+      if (!isCurrentQuestion(revision, id, controller)) return;
+      if (saved.status === "loaded" || saved.status === "empty") {
+        const matching = saved.questions.some((question) => normalizedQuestion(question.question) === normalizedQuestion(submittedQuestion));
+        if (matching) {
+          setDetailState((current) => ({ ...current, questions: saved }));
+        } else {
+          setDetailState((current) => ({
+            ...current,
+            questions: {
+              status,
+              questions: saved.questions,
+              submittedQuestion,
+              message: `${message} No matching saved result was found. Reload question history before another explicit attempt.`,
+            },
+          }));
+        }
+      } else {
+        setDetailState((current) => ({
+          ...current,
+          questions: {
+            status,
+            questions: current.questions.questions,
+            submittedQuestion,
+            message: `${message} The saved question history could not be read. Reload question history before another explicit attempt.`,
+          },
+        }));
+      }
+    } finally {
+      window.clearTimeout(timeout);
+      if (questionRequest.current === controller) questionRequest.current = null;
+    }
+  }
+
+  async function askQuestion(document: UploadedDocument) {
+    if (!detailState.extraction || questionBusy || detailState.questions.status === "in_progress" || pipelineBusy) return;
+    const validationError = questionInputError(questionInput);
+    if (validationError) {
+      setQuestionInputMessage(validationError);
+      return;
+    }
+    const submittedQuestion = questionInput;
+    const revision = questionRevision.current + 1;
+    questionRevision.current = revision;
+    questionRequest.current?.abort();
+    const controller = new AbortController();
+    questionRequest.current = controller;
+    let timedOut = false;
+    let receivedResponse = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, QUESTION_TIMEOUT_MS);
+    setQuestionInputMessage(null);
+    setDetailState((current) => ({
+      ...current,
+      questions: { status: "asking", questions: current.questions.questions, submittedQuestion, message: "Asking from this PDF's saved extracted text..." },
+    }));
+    try {
+      const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}/questions`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: submittedQuestion }),
+        signal: controller.signal,
+      });
+      receivedResponse = true;
+      const body = await readJson(response);
+      if (!isCurrentQuestion(revision, document.id, controller)) return;
+      if (!response.ok) {
+        const error = documentError(body);
+        if (error?.kind === "question_in_progress") {
+          await reconcileQuestion(document.id, revision, submittedQuestion, "in_progress", `${error.message} Checking saved question history without generating again.`);
+        } else {
+          setDetailState((current) => ({ ...current, questions: { status: "error", questions: current.questions.questions, submittedQuestion, message: messageForResponse(response, body, "Question could not be completed") } }));
+        }
+        return;
+      }
+      if (!isQuestionResponse(body) || body.question.documentId !== document.id) {
+        await reconcileQuestion(document.id, revision, submittedQuestion, "uncertain", "Questioning returned an unexpected response. Checking saved question history without generating again.");
+        return;
+      }
+      setDetailState((current) => ({ ...current, questions: { status: "loaded", questions: mergeQuestions(current.questions.questions, body.question) } }));
+      setQuestionInput("");
+    } catch {
+      if (!mounted.current || questionRevision.current !== revision || selectedId !== document.id) return;
+      await reconcileQuestion(
+        document.id,
+        revision,
+        submittedQuestion,
+        "uncertain",
+        timedOut || !receivedResponse
+          ? "Questioning was interrupted or timed out and may have completed. Checking saved question history without generating again."
+          : "Questioning could not be completed. Checking saved question history without generating again.",
+      );
+    } finally {
+      window.clearTimeout(timeout);
+      if (questionRequest.current === controller) questionRequest.current = null;
+    }
+  }
+
   async function resumeProcessing(document: UploadedDocument) {
     if (pipelineBusy || summaryBusy) return;
     const revision = pipelineRevision.current + 1;
@@ -525,6 +809,9 @@ export function DocumentWorkspace() {
           ...results,
           extraction: body.extraction,
           summary: results.summary.status === "missing_extraction" ? { status: "not_generated", summary: null } : results.summary,
+          questions: results.questions.status === "missing_extraction"
+            ? await getStoredQuestions(document.id, controller.signal)
+            : results.questions,
         };
         if (!isCurrentPipeline(revision, controller)) return;
         setDetailState({ status: "loaded", ...results });
@@ -588,7 +875,9 @@ export function DocumentWorkspace() {
         return { status: "loaded", documents };
       });
       setSelectedId(document.id);
-      setDetailState({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null } });
+      setDetailState({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null }, questions: initialQuestionState() });
+      setQuestionInput("");
+      setQuestionInputMessage(null);
       setFile(null);
       await resumeProcessing(document);
     } catch (error) {
@@ -617,6 +906,7 @@ export function DocumentWorkspace() {
       detailRequest.current?.abort();
       pipelineRequest.current?.abort();
       summaryRequest.current?.abort();
+      questionRequest.current?.abort();
     };
   }, []);
 
@@ -697,6 +987,36 @@ export function DocumentWorkspace() {
             <button type="button" className="save-button" data-generate-summary onClick={() => void generateSummary(selectedDocument)} disabled={pipelineBusy || summaryBusy}>Generate summary again</button>
           </>}
           {detailState.summary.summary && <SummaryContent summary={detailState.summary.summary} />}
+        </section>
+        <section className="document-questions" aria-labelledby="document-questions-title">
+          <div className="summary-heading">
+            <div><p className="eyebrow">Source-grounded PDF questions</p><h4 id="document-questions-title">Questions and answers</h4></div>
+            <button type="button" className="reload-button" data-question-reload onClick={() => void loadQuestions(selectedDocument.id)} disabled={detailState.questions.status === "loading" || questionBusy}>Reload question history</button>
+          </div>
+          <p className="results-note">Each question is answered independently from this PDF&apos;s saved extracted text. Previous answers are not conversational context; metadata and summaries are not required.</p>
+          {detailState.status === "loading" && <p className="search-feedback" role="status">Loading saved questions...</p>}
+          {detailState.status !== "loading" && !detailState.extraction && <p className="search-feedback" role="status">Text extraction is required before asking a question.</p>}
+          {detailState.extraction && <form className="question-form" onSubmit={(event) => { event.preventDefault(); void askQuestion(selectedDocument); }} noValidate>
+            <label htmlFor="document-question-input">Question about this PDF</label>
+            <div className="question-controls">
+              <textarea id="document-question-input" value={questionInput} onChange={(event) => { setQuestionInput(event.target.value); setQuestionInputMessage(null); }} aria-describedby="document-question-help document-question-error" aria-invalid={questionInputMessage ? true : undefined} placeholder="Ask about the saved extracted text" rows={3} disabled={questionBusy || detailState.questions.status === "in_progress"} />
+              <button type="submit" className="save-button" data-question-submit disabled={questionBusy || detailState.questions.status === "in_progress" || pipelineBusy}>{questionBusy ? "Asking..." : "Ask"}</button>
+            </div>
+            <p id="document-question-help" className="search-help">Use a trimmed question of up to 2 KiB UTF-8. Asking is explicit and is never retried automatically.</p>
+            {questionInputMessage && <p id="document-question-error" className="search-feedback search-feedback--error" role="alert">{questionInputMessage}</p>}
+          </form>}
+          {detailState.extraction && detailState.questions.status === "initial" && <p className="search-feedback" role="status">Question history has not loaded yet.</p>}
+          {detailState.extraction && detailState.questions.status === "loading" && <p className="search-feedback" role="status">Loading saved questions...</p>}
+          {detailState.extraction && detailState.questions.status === "missing_extraction" && <p className="search-feedback" role="status">Text extraction is required before asking a question.</p>}
+          {detailState.extraction && detailState.questions.status === "empty" && <p className="search-feedback" role="status">No saved questions yet. Ask an explicit question to create one.</p>}
+          {detailState.extraction && detailState.questions.status === "asking" && <p className="search-feedback" role="status">{detailState.questions.message}</p>}
+          {detailState.extraction && detailState.questions.status === "in_progress" && <p className="search-feedback" role="status">{detailState.questions.message} Reload question history to check for the saved result.</p>}
+          {detailState.extraction && detailState.questions.status === "uncertain" && <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message} The submitted question remains in the input; no additional question was sent.</p>}
+          {detailState.extraction && detailState.questions.status === "error" && <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message}</p>}
+          {detailState.questions.questions.length > 0 && <>
+            <p className="results-note">Saved questions, newest first. A reload uses GET only and does not ask a question.</p>
+            <ol className="question-list">{detailState.questions.questions.map((question) => <li key={question.id}><QuestionCard question={question} /></li>)}</ol>
+          </>}
         </section>
         {detailState.extraction && <details className="document-text"><summary>Extracted page text ({detailState.extraction.pageCount} {detailState.extraction.pageCount === 1 ? "page" : "pages"})</summary>
           {detailState.extraction.pages.map((page) => <section key={page.pageNumber}><h4>Page {page.pageNumber}</h4><pre>{page.text || "No text was extracted from this page."}</pre></section>)}

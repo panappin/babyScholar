@@ -31,6 +31,8 @@ let metadataProviderCalls = 0;
 let metadataProviderMode = "success";
 let summaryProviderCalls = 0;
 let summaryProviderMode = "success";
+let questionProviderCalls = 0;
+let autoMockQuestionGets = false;
 
 const existingPaper = {
   id: "11111111-1111-4111-8111-111111111111",
@@ -91,6 +93,27 @@ const partialSummary = (documentId) => ({
   methods: [], findings: [], limitations: [],
   warnings: ["methods are unavailable in the selected source.", "findings are unavailable in the selected source.", "limitations are unavailable in the selected source.", "Partial source coverage: pages 1-3 of 5 were included within the 98304-byte budget."],
 });
+const partialQuestion = (documentId) => ({
+  id: "66666666-6666-4666-8666-666666666666",
+  documentId,
+  question: "What does the included excerpt establish?",
+  normalizedQuestion: "What does the included excerpt establish?",
+  sourceSha256: "a".repeat(64), extractionParser: "unpdf", extractionParserVersion: "unpdf@1.8.1", extractionExtractedAt: "2026-01-02T03:04:05.000Z",
+  extractionFingerprint: "c".repeat(64), totalPageCount: 5, includedPageNumbers: [1, 2, 3], includedPageRanges: [{ startPage: 1, endPage: 3 }],
+  sourceExcerptByteCount: 98_304, sourceExcerptTruncated: true, sourceCoverageWarning: "Partial source coverage: pages 1-3 of 5 were included within the 98304-byte budget.",
+  model: "local-question-mock", promptVersion: "document-question-v1", schemaVersion: "document-question-schema-v1", outcome: "answered",
+  answerParts: [{ text: "The included excerpt establishes that questions use saved extracted text.", evidence: [{ pageNumber: 1, quote: "Resume fixture page text" }] }],
+  insufficientSourceReason: null, warnings: ["Partial source coverage: pages 1-3 of 5 were included within the 98304-byte budget."], createdAt: "2026-01-04T03:04:07.000Z",
+});
+const insufficientQuestion = (documentId) => ({
+  ...partialQuestion(documentId),
+  id: "77777777-7777-4777-8777-777777777777",
+  question: "What is outside the included excerpt?",
+  normalizedQuestion: "What is outside the included excerpt?",
+  outcome: "insufficient_source", answerParts: [],
+  insufficientSourceReason: "The included excerpt does not establish what omitted pages contain.",
+  createdAt: "2026-01-05T03:04:07.000Z",
+});
 
 function record(step, details = {}) {
   evidence.steps.push({ step, ...details });
@@ -141,6 +164,19 @@ function summaryProviderOutput() {
   };
 }
 
+function questionProviderOutput() {
+  const expected = summaryFixture.expected;
+  return {
+    outcome: "answered",
+    answerParts: [{
+      text: "The later page states that supporting quotes do not establish every implication of a paraphrase.",
+      evidence: [{ pageNumber: 4, quote: expected.limitationQuote }],
+    }],
+    insufficientSourceReason: null,
+    warnings: [],
+  };
+}
+
 async function startMetadataProvider() {
   metadataProvider = createHttpServer(async (request, response) => {
     const chunks = [];
@@ -148,7 +184,8 @@ async function startMetadataProvider() {
     let body;
     try { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { body = undefined; }
     const isSummary = body?.text?.format?.name === "document_summary";
-    const expectedAuthorization = isSummary ? "Bearer local-summary-test-key" : "Bearer local-metadata-test-key";
+    const isQuestion = body?.text?.format?.name === "document_question";
+    const expectedAuthorization = isSummary ? "Bearer local-summary-test-key" : isQuestion ? "Bearer local-question-test-key" : "Bearer local-metadata-test-key";
     if (request.method !== "POST" || request.url !== "/v1/responses" || request.headers.authorization !== expectedAuthorization) {
       response.writeHead(400, { "content-type": "application/json" });
       response.end(JSON.stringify({ error: { message: "unexpected local provider request" } }));
@@ -163,6 +200,12 @@ async function startMetadataProvider() {
       }
       response.writeHead(200, { "content-type": "application/json" });
       response.end(JSON.stringify({ status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(summaryProviderOutput()) }] }] }));
+      return;
+    }
+    if (isQuestion) {
+      questionProviderCalls += 1;
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(JSON.stringify({ status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(questionProviderOutput()) }] }] }));
       return;
     }
     metadataProviderCalls += 1;
@@ -325,7 +368,7 @@ async function main() {
   await startMetadataProvider();
   await migrate();
   worker = launch(process.execPath, [wrangler, "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
-    "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_SUMMARY_PROVIDER_URL:${metadataProviderOrigin}`,
+    "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_SUMMARY_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_QUESTION_PROVIDER_URL:${metadataProviderOrigin}`,
     "--ip", "127.0.0.1", "--port", String(workerPort), "--inspector-port", "0", "--show-interactive-dev-session=false"]);
   await waitForServer(worker, `${workerOrigin}/api/health`);
   frontend = launch(process.execPath, [vite, "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], { LOCAL_WORKER_ORIGIN: workerOrigin });
@@ -345,6 +388,16 @@ async function main() {
   const allPaused = [];
   cdp.on("Fetch.requestPaused", (params, eventSessionId) => {
     if (eventSessionId !== sessionId) return;
+    if (autoMockQuestionGets && params.request.method === "GET" && /^\/api\/documents\/[^/]+\/questions$/u.test(new URL(params.request.url).pathname)) {
+      record("mock-response", { method: params.request.method, path: new URL(params.request.url).pathname, status: 200, automatic: "questions" });
+      void cdp.send("Fetch.fulfillRequest", {
+        requestId: params.requestId,
+        responseCode: 200,
+        responseHeaders: [{ name: "content-type", value: "application/json; charset=utf-8" }],
+        body: Buffer.from(JSON.stringify({ questions: [] })).toString("base64"),
+      }, sessionId).catch((error) => { console.error(`Automatic question mock failed: ${error}`); });
+      return;
+    }
     paused.push(params);
     allPaused.push({ method: params.request.method, url: params.request.url, postData: params.request.postData });
   });
@@ -370,6 +423,15 @@ async function main() {
     const input = document.querySelector('#paper-search-query');
     if (!(input instanceof HTMLInputElement)) return false;
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    setter.call(input, ${JSON.stringify(value)});
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+    return true;
+  })()`);
+  const fillQuestion = (value) => evaluate(`(() => {
+    const input = document.querySelector('#document-question-input');
+    if (!(input instanceof HTMLTextAreaElement)) return false;
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set;
     setter.call(input, ${JSON.stringify(value)});
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.focus();
@@ -420,6 +482,9 @@ async function main() {
   const isDocumentMetadataPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/metadata`;
   const isDocumentSummaryGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/summary`;
   const isDocumentSummaryPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/summary`;
+  const isDocumentQuestionsGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/questions`;
+  const isDocumentQuestionsPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/questions`;
+  const questionPostCount = (id) => allPaused.filter((request) => request.method === "POST" && new URL(request.url).pathname === `/api/documents/${id}/questions`).length;
   const fulfillJson = async (request, status, body) => {
     record("mock-response", { method: request.request.method, path: new URL(request.request.url).pathname, status });
     return cdp.send("Fetch.fulfillRequest", {
@@ -620,6 +685,7 @@ async function main() {
   // extraction or the local provider boundary.
   await cdp.send("Fetch.disable", {}, sessionId);
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/documents*" }] }, sessionId);
+  autoMockQuestionGets = true;
   await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
   await waitFor("document.querySelector('#pdfs-tab')", "mocked PDFs page");
   assert.equal(await click("#pdfs-tab"), true);
@@ -713,9 +779,103 @@ async function main() {
   assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/summary`)).length, summaryPostsBeforeUncertain + 1, "uncertain summary POST must not retry automatically");
   record("mocked-pdfs-summary-loading-partial-evidence-get-only-stale-and-inprogress-passed");
 
+  // Q&A rendering uses the same isolated browser/CDP path. Question GETs were
+  // automatically empty for the pre-existing document checks above; these
+  // explicit cases exercise loading, failure, reconciliation, and cards.
+  autoMockQuestionGets = false;
+  assert.equal(await fillQuestion(" leading whitespace"), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await waitFor("document.body.innerText.includes('trimmed, nonempty')", "trimmed question validation");
+  assert.equal(await fillQuestion("x".repeat(2049)), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await waitFor("document.body.innerText.includes('2 KiB UTF-8')", "question byte validation");
+
+  assert.equal(await click("[data-question-reload]"), true);
+  await waitFor("document.body.innerText.includes('Loading saved questions')", "question history loading state");
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "question history error GET"), 503, { error: { kind: "database_failure", message: "The saved question history database operation failed." } });
+  await waitFor("document.body.innerText.includes('question history database operation failed')", "question history API error");
+  assert.equal(await click("[data-question-reload]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "malformed question history GET"), 200, { unexpected: true });
+  await waitFor("document.body.innerText.includes('unexpected response')", "malformed question history response");
+  assert.equal(await click("[data-question-reload]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "empty question history GET"), 200, { questions: [] });
+  await waitFor("document.body.innerText.includes('No saved questions yet')", "empty question history");
+
+  const mockAnsweredQuestion = partialQuestion(mockDocumentTwo.id);
+  assert.equal(await fillQuestion(mockAnsweredQuestion.question), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  const answeredQuestionPost = await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "answered question POST");
+  assert.deepEqual(JSON.parse(answeredQuestionPost.request.postData), { question: mockAnsweredQuestion.question });
+  await waitFor("document.body.innerText.includes(\"Asking from this PDF's saved extracted text\")", "question asking feedback");
+  assert.equal(await click("[data-question-submit]"), true);
+  await delay(50);
+  assert.equal(paused.filter((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id)).length, 0, "busy question must not submit twice");
+  await fulfillJson(answeredQuestionPost, 201, { question: mockAnsweredQuestion, created: true });
+  await waitFor(`document.querySelector('[data-question-id="${mockAnsweredQuestion.id}"]') && document.body.innerText.includes('Partial source coverage')`, "answered partial question card");
+  await evaluate("document.querySelector('.question-evidence').open = true");
+  await waitFor("document.body.innerText.includes('Supporting quotes') && document.body.innerText.includes('Page 1:')", "question page-numbered evidence");
+  const answeredQuestionTime = await evaluate(`document.querySelector('[data-question-id="${mockAnsweredQuestion.id}"] time')?.dateTime`);
+  assert.equal(answeredQuestionTime, mockAnsweredQuestion.createdAt);
+  await cdp.send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }, sessionId);
+  await delay(50);
+  const questionMobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
+  assert.ok(questionMobileMetrics.scrollWidth <= questionMobileMetrics.width, "narrow question layout must not require horizontal scrolling");
+  await cdp.send("Emulation.clearDeviceMetricsOverride", {}, sessionId);
+
+  assert.equal(await click("[data-question-reload]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "question history reload error"), 503, { error: { kind: "database_failure", message: "The saved question history database operation failed." } });
+  await waitFor("document.body.innerText.includes('question history database operation failed')", "question reload error retains card");
+  assert.equal(await evaluate(`document.querySelector('[data-question-id="${mockAnsweredQuestion.id}"] time')?.dateTime`), mockAnsweredQuestion.createdAt, "failed question reload must retain confirmed card");
+  const questionPostsBeforeCached = questionPostCount(mockDocumentTwo.id);
+  assert.equal(await fillQuestion(mockAnsweredQuestion.question), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "cached question POST"), 200, { question: mockAnsweredQuestion, created: false });
+  await waitFor(`document.querySelectorAll('[data-question-id="${mockAnsweredQuestion.id}"]').length === 1`, "cached question preserves one card");
+  assert.equal(await evaluate(`document.querySelector('[data-question-id="${mockAnsweredQuestion.id}"] time')?.dateTime`), mockAnsweredQuestion.createdAt, "cached question must retain original timestamp");
+  assert.equal(questionPostCount(mockDocumentTwo.id), questionPostsBeforeCached + 1, "cached question is one explicit POST only");
+
+  const mockInsufficientQuestion = insufficientQuestion(mockDocumentTwo.id);
+  assert.equal(await fillQuestion(mockInsufficientQuestion.question), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "insufficient-source question POST"), 201, { question: mockInsufficientQuestion, created: true });
+  await waitFor("document.body.innerText.includes('Insufficient source') && document.body.innerText.includes('does not establish what omitted pages contain')", "insufficient-source question card");
+
+  const inProgressQuestion = "Is another question currently being generated?";
+  assert.equal(await fillQuestion(inProgressQuestion), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "in-progress question POST"), 409, { error: { kind: "question_in_progress", message: "Question generation is in progress; try again after the active request finishes." } });
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "in-progress question reconciliation GET"), 200, { questions: [mockInsufficientQuestion, mockAnsweredQuestion] });
+  await waitFor("document.body.innerText.includes('No matching saved result was found')", "in-progress question reconciliation");
+  assert.equal(await click("[data-question-reload]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "question history after in-progress"), 200, { questions: [mockInsufficientQuestion, mockAnsweredQuestion] });
+  await waitFor(`document.querySelector('[data-question-id="${mockInsufficientQuestion.id}"]')`, "question history after in-progress reload");
+
+  const questionPostsBeforeUncertain = questionPostCount(mockDocumentTwo.id);
+  assert.equal(await fillQuestion("Did the malformed response persist this question?"), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "malformed question POST"), 200, { unexpected: true });
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "malformed question reconciliation GET"), 200, { questions: [mockInsufficientQuestion, mockAnsweredQuestion] });
+  await waitFor("document.body.innerText.includes('No matching saved result was found')", "uncertain question reconciliation");
+  assert.equal(questionPostCount(mockDocumentTwo.id), questionPostsBeforeUncertain + 1, "uncertain question POST must not retry automatically");
+
+  // A late question-history response for the former document must not appear
+  // under the newly selected document.
+  assert.equal(await click("[data-question-reload]"), true);
+  const staleQuestionHistory = await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "stale question history request");
+  autoMockQuestionGets = true;
+  assert.equal(await click(`[data-document-id="${mockDocumentOne.id}"]`), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentOne.id), "current stale-question text GET"), 200, { extraction: mockExtraction(mockDocumentOne.id, "Current selected PDF text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentOne.id), "current stale-question metadata GET"), 200, { metadata: unknownMetadata(mockDocumentOne.id) });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentOne.id), "current stale-question summary GET"), 200, { summary: partialSummary(mockDocumentOne.id) });
+  await cdp.send("Fetch.failRequest", { requestId: staleQuestionHistory.requestId, errorReason: "Aborted" }).catch(() => undefined);
+  await waitFor("document.querySelector('#selected-pdf-title')?.textContent.includes('unknown-metadata.pdf')", "new selection after stale question history");
+  assert.equal((await evaluate(`Boolean(document.querySelector('[data-question-id="${mockAnsweredQuestion.id}"]'))`)), false, "stale question history must not appear under a different PDF");
+  record("mocked-pdfs-questions-loading-empty-errors-partial-cache-insufficient-reconciliation-stale-and-narrow-passed", { answeredId: mockAnsweredQuestion.id, insufficientId: mockInsufficientQuestion.id });
+
   // Real isolated PDF flow: browser FormData crosses the relative Vite proxy,
   // Worker uploads to isolated R2, extracts with the real parser, and reaches
   // only this loopback metadata-provider boundary.
+  autoMockQuestionGets = false;
   await cdp.send("Fetch.disable", {}, sessionId);
   await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
   await waitFor("document.querySelector('#pdfs-tab')", "PDFs tab");
@@ -787,6 +947,33 @@ async function main() {
   await waitFor("document.body.innerText.includes('No summary has been generated')", "actual summary not-generated state");
   const summaryDocumentId = await evaluate("document.querySelector('.document-select')?.dataset.documentId");
   assert.match(summaryDocumentId, /^[0-9a-f-]{36}$/u);
+  assert.equal(questionProviderCalls, 0, "loading/uploading must not call the question provider");
+  assert.equal(await evaluate("!document.querySelector('.document-metadata')"), true, "actual question flow must not require metadata");
+  const actualQuestionText = "What limitation is stated on the later page?";
+  assert.equal(await fillQuestion(actualQuestionText), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await waitFor("document.body.innerText.includes('supporting quotes do not establish every implication')", "actual explicit question answer and later-page evidence");
+  assert.equal(questionProviderCalls, 1, "explicit Q&A must make exactly one loopback provider request");
+  const actualQuestionId = await evaluate("document.querySelector('.question-card')?.dataset.questionId");
+  const actualQuestionTime = await evaluate("document.querySelector('.question-card time')?.dateTime");
+  assert.match(actualQuestionId, /^[0-9a-f-]{36}$/u);
+  assert.match(actualQuestionTime, /^\d{4}-\d{2}-\d{2}T/u);
+  await evaluate("document.querySelector('.question-evidence').open = true");
+  await waitFor("document.body.innerText.includes('Supporting quotes') && document.body.innerText.includes('Page 4:')", "actual question expandable evidence");
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#pdfs-tab')", "question browser refresh");
+  assert.equal(await click("#pdfs-tab"), true);
+  await waitFor(`document.querySelector('[data-document-id=${JSON.stringify(summaryDocumentId)}]')`, "persisted question PDF after refresh");
+  assert.equal(await click(`[data-document-id="${summaryDocumentId}"]`), true);
+  await waitFor(`document.querySelector('[data-question-id="${actualQuestionId}"]')`, "persisted question after GET-only refresh");
+  assert.equal(questionProviderCalls, 1, "browser refresh and selection must not regenerate a saved question");
+  assert.equal(await evaluate(`document.querySelector('[data-question-id="${actualQuestionId}"] time')?.dateTime`), actualQuestionTime);
+  assert.equal(await fillQuestion(actualQuestionText), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await waitFor(`document.querySelectorAll('[data-question-id="${actualQuestionId}"]').length === 1`, "actual cached question card");
+  assert.equal(await evaluate(`document.querySelector('[data-question-id="${actualQuestionId}"] time')?.dateTime`), actualQuestionTime, "cached question must retain its original timestamp");
+  assert.equal(questionProviderCalls, 1, "cached duplicate question must not make another provider request");
+  record("actual-browser-vite-proxy-question-explicit-generation-metadata-summary-optional-refresh-and-cache-passed", { documentId: summaryDocumentId, questionId: actualQuestionId, questionProviderCalls });
   assert.equal(await click('[data-generate-summary]'), true);
   await waitFor("document.body.innerText.includes('Later-page findings can remain represented in the resulting summary.') && document.body.innerText.includes('Full source coverage')", "actual summary generation and evidence");
   assert.equal(summaryProviderCalls, 1, "explicit summary generation must make exactly one loopback provider request");
@@ -813,6 +1000,7 @@ async function main() {
   evidence.viteOrigin = viteOrigin;
   evidence.metadataProviderCalls = metadataProviderCalls;
   evidence.summaryProviderCalls = summaryProviderCalls;
+  evidence.questionProviderCalls = questionProviderCalls;
   evidence.desktopScreenshotPath = desktopScreenshotPath;
   evidence.mobileScreenshotPath = mobileScreenshotPath;
 } catch (error) {

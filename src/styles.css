@@ -549,6 +549,7 @@ a:focus-visible {
 .document-detail,
 .document-metadata,
 .document-summary,
+.document-questions,
 .document-text,
 .metadata-evidence,
 .summary-evidence,
@@ -576,6 +577,108 @@ a:focus-visible {
   border: 1px solid #dce2ec;
   border-radius: 0.75rem;
   background: #ffffff;
+}
+
+.document-questions {
+  padding: 1rem;
+  border: 1px solid #dce2ec;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.question-form {
+  margin-top: 1rem;
+}
+
+.question-form > label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2a3548;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.question-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.question-controls textarea {
+  min-width: 0;
+  flex: 1 1 24rem;
+  resize: vertical;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid #aeb8c8;
+  border-radius: 0.55rem;
+  color: #172033;
+  background: #ffffff;
+  line-height: 1.5;
+}
+
+.question-controls textarea[aria-invalid="true"] {
+  border-color: #c13232;
+}
+
+.question-list {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.question-card {
+  padding: 1rem;
+  border: 1px solid #dce2ec;
+  border-radius: 0.65rem;
+  background: #fbfcfe;
+}
+
+.question-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.question-card-heading h5,
+.question-card h6 {
+  margin: 0;
+  color: #172033;
+}
+
+.question-card-heading h5 {
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.question-card-heading time {
+  flex: 0 1 auto;
+  color: #5b6474;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.question-answered,
+.question-insufficient,
+.question-warnings {
+  margin-top: 1rem;
+}
+
+.question-answered > ol {
+  display: grid;
+  gap: 0.875rem;
+  margin: 0.75rem 0 0;
+  padding-left: 1.3rem;
+}
+
+.question-answered p,
+.question-insufficient p {
+  color: #364157;
+  line-height: 1.6;
 }
 
 .summary-coverage {
@@ -630,7 +733,8 @@ a:focus-visible {
 
 .document-text summary,
 .metadata-evidence summary,
-.summary-evidence summary {
+.summary-evidence summary,
+.question-evidence summary {
   cursor: pointer;
   color: #124f94;
   font-weight: 700;
@@ -655,6 +759,7 @@ a:focus-visible {
 
 .metadata-evidence ol,
 .summary-evidence ol,
+.question-evidence ol,
 .document-warnings ul {
   display: grid;
   gap: 0.5rem;
@@ -683,6 +788,16 @@ a:focus-visible {
   }
 
   .summary-heading .reload-button {
+    width: 100%;
+  }
+
+  .question-controls,
+  .question-card-heading {
+    flex-direction: column;
+  }
+
+  .question-controls textarea,
+  .question-controls .save-button {
     width: 100%;
   }
 }

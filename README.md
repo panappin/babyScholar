@@ -1,8 +1,8 @@
 # AI Research Assistant
 
-Phase 5A adds backend-only, source-grounded Q&A over one selected uploaded
-PDF's persisted text. The existing Papers, Library, and PDF workspace UI remain
-unchanged; Q&A controls and OCR remain out of scope.
+Phase 5B adds source-grounded Q&A controls and saved history for one selected
+uploaded PDF's persisted text. The existing Papers, Library, PDF, summary, and
+metadata workflows remain unchanged; OCR remains out of scope.
 
 ## Prerequisites
 
@@ -602,7 +602,7 @@ handling with strict JSON schema, `store:false`, no tools, 2,048 output tokens,
 a 25-second deadline, and a 256 KiB response cap. A separate D1 claim keyed by
 the same cache identity prevents concurrent provider generation; expired claims
 are removed, failures release their claim, and conditional persistence returns
-the first immutable result. There is no Q&A frontend in this phase.
+the first immutable result.
 
 ```powershell
 # Loopback mock provider plus isolated Worker/D1/R2 state; zero OpenAI calls:
@@ -645,13 +645,36 @@ page-numbered supporting quotes use the stored backend result. The quotes show
 only that cited text occurs on the listed page, not that every paraphrased claim
 is entailed.
 
+The selected PDF also has a **Questions and answers** section. Selection and
+**Reload question history** use `GET /api/documents/:id/questions` only. An
+explicit **Ask** click is the only action that sends
+`POST /api/documents/:id/questions`; page load, selection, refresh, and reload
+never ask a question or retry a POST. Questions require saved extracted text,
+but do not require metadata or a summary, and every answer is independent rather
+than conversational context from earlier answers.
+
+The browser validates trimmed, nonempty questions up to 2 KiB UTF-8 without
+silently truncating them. Saved history remains newest-first from the
+authoritative GET result and cached POST results retain their original record ID
+and timestamp without duplicate cards. Answered results render ordered parts,
+expandable page-numbered quotes, warnings, UTC saved time, and source coverage.
+Insufficient-source results are labeled with their explicit reason and no answer
+or citations. Partial source coverage says that only the recorded included pages
+were available; source-quote presence does not prove every paraphrased answer
+claim.
+
+Interrupted, malformed, or in-progress POST outcomes are reconciled through a
+read-only GET. The submitted question remains in the input while its result is
+unknown. A failed history reload retains any already confirmed cards and reports
+the reload problem separately.
+
 `npm.cmd run documents:ui:check` runs the dependency-free Chrome check against
 isolated local D1/R2 state. Its real browser path uses the relative Vite proxy,
-actual Worker PDF extraction, and loopback metadata and summary mocks with
-offline sentinel keys; it makes no OpenAI or arXiv request. It covers saved and
-missing summaries, partial coverage/evidence rendering, stale selections,
-in-progress/failure/uncertain summary states, explicit generation, and
-GET-only refresh persistence.
+actual Worker PDF extraction, and loopback metadata, summary, and question
+mocks with offline sentinel keys; it makes no OpenAI or arXiv request. It covers
+saved and missing summaries/questions, partial coverage/evidence rendering,
+stale selections, in-progress/failure/uncertain outcomes, explicit generation,
+GET-only refresh persistence, and cached question identity preservation.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked
@@ -759,6 +782,7 @@ drizzle.config.ts               SQLite migration generation configuration
 drizzle/*.sql                   Committed schema-only migrations
 drizzle/meta/                   Committed Drizzle generation history
 src/App.tsx                     Search/Save/Library UI plus relative API requests
+src/DocumentWorkspace.tsx       Selected-PDF upload, metadata, summary, and Q&A UI
 src/paper-identity.ts           Browser-safe canonical arXiv identity and link helpers
 src/worker/index.ts             Health/status/search/library routing and ESM fetch handler
 src/worker/storage.ts           Typed D1/R2 helpers
@@ -797,7 +821,7 @@ scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
 scripts/document-check.mjs      Isolated local D1/R2 original-PDF persistence check
 scripts/paper-search-live-check.mjs  One-request local Worker arXiv endpoint check
-scripts/frontend-search-browser-check.mjs  Isolated search/Library browser/proxy check
+scripts/frontend-search-browser-check.mjs  Isolated Search/Library/PDF/Summary/Q&A browser/proxy check
 worker-configuration.d.ts      Wrangler-generated binding/runtime types
 vite.config.ts                 Development proxy and frontend build output
 wrangler.jsonc                 Local D1/R2 bindings
