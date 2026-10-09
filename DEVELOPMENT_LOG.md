@@ -1105,3 +1105,32 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   frontend change, normal user-state operation, push, or deployment occurred.
   No concrete application defect was identified; a future live run remains a
   separate authorization decision.
+
+## 2026-10-08 — Phase 3C authorized live metadata verification
+
+- With explicit one-request authorization, ran `npm.cmd run metadata:live`
+  once from repaired-verifier commit
+  `0b43c5f3dc7111b7186233f366be1b494dc3eaac`. It exited 0 and saved sanitized
+  evidence at
+  `.wrangler/metadata-live-check/bcc7c3c3-b7e3-44ed-985f-adf8d4db8b19/result.json`.
+  The verifier recorded one provider-capable metadata POST (`liveProviderRequests: 1`)
+  and no retry. It does not retain a separately verifiable upstream request
+  count or raw provider envelope.
+- The application metadata POST returned HTTP 201 with `created:true` and no
+  application error kind. The owned CC0 fixture's title, ordered authors, year,
+  and abstract all matched expected values; source SHA-256, selected pages,
+  clipping status, prompt version, configured-model presence, and each field's
+  source-evidence indicator also matched.
+- Before evaluating completion, the verifier performed a read-only metadata GET:
+  it returned HTTP 200 with no error and matched the initially persisted
+  metadata. It then stopped only its owned Worker, restarted the same isolated
+  state with `OPENAI_API_KEY` explicitly empty, confirmed the saved metadata by
+  GET (HTTP 200), and made the cached POST. That POST returned HTTP 200 with
+  `created:false` and preserved the original metadata and timestamp-bearing
+  cached result (`cachedPostMatchesInitial: true`). The verifier removed only
+  its UUID-owned runtime state during cleanup.
+- README's existing local command and cache-safety guidance remains accurate;
+  no application source, dependencies, model/key configuration, normal user
+  state, frontend, migration, push, deployment, or additional provider request
+  occurred. The pre-existing local Wrangler/Miniflare oversized-upload
+  transport limitation remains unchanged.
