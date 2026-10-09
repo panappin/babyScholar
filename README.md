@@ -433,7 +433,14 @@ current date, web data, tools, PDF bytes, or text beyond that bounded excerpt.
 It is instructed that the PDF text is untrusted data. Runtime validation still
 requires normalized source quotes and source-supported values after strict
 structured JSON decoding; an unavailable field must be `null`, have no evidence,
-and have a warning naming it.
+and have a warning naming it. Comparison uses NFC and collapsed whitespace. On
+the persisted PDF-source side only, it also joins a hyphen immediately followed
+by a physical line break between letters (for example, `interpreta-` then
+`tion`), matching PDF presentation wrapping without changing stored text.
+Same-line compound hyphens and all other punctuation remain literal, so removing
+`state-of-the-art`, changing a number, or paraphrasing text is rejected. A
+line-end hyphen can be typographically ambiguous in some PDFs; this narrow rule
+does not infer meaning beyond the exact joined character sequence.
 
 Only the Worker reads `OPENAI_API_KEY`; Vite/frontend code never receives the
 key, source excerpt, or provider implementation. The Responses request uses

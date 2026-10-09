@@ -154,6 +154,33 @@ export function createMetadataPdfFixture() {
   };
 }
 
+/** A CC0 fixture with presentation-only line-end hyphens and a real compound. */
+export function createWrappedMetadataPdfFixture() {
+  const expected = {
+    title: "Wrapped Metadata Fixture",
+    authors: ["Avery Example", "Bao Example"],
+    year: 2024,
+    abstract: "This controlled interpretation evaluates state-of-the-art performance on 17 source-grounded records.",
+  };
+  return {
+    bytes: buildPdf([
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      multiLineTextStream([
+        expected.title,
+        "Authors: Avery Example; Bao Example",
+        "Published: 2024",
+        "Abstract: This controlled interpreta-",
+        "tion evaluates state-of-the-art per-",
+        "formance on 17 source-grounded records.",
+      ]),
+    ]),
+    expected,
+  };
+}
+
 export function createMetadataClippedPdfFixture() {
   return buildPdf([
     "<< /Type /Catalog /Pages 2 0 R >>",

@@ -1162,3 +1162,28 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   metadata evidence. The existing local Wrangler/Miniflare oversized-upload
   transport limitation remains documented; no schema, dependency, normal-state,
   key/model, deployment, or push change occurred.
+
+## 2026-10-09 — Phase 3 metadata presentation-wrap validation repair
+
+- Investigated the hosted sanitized failure, `OpenAI returned an abstract
+  unsupported by the selected PDF text.`, for Bespoke OLAP (arXiv
+  `2603.02001v2`). The rejected provider output was not retained, so this does
+  not establish its exact cause. Read-only offline extraction demonstrated a
+  concrete formatting failure mode: PDF text can split words as
+  `interpreta-\ntion`, `chal-\nlenge`, and `per-\nformance`; the old NFC plus
+  whitespace-collapse comparison changed these to `interpreta- tion`, causing a
+  source-faithful joined value to fail.
+- Kept stored page text unchanged. Source/evidence comparison now additionally
+  joins only a hyphen immediately followed by a physical line break between
+  letters, before NFC/whitespace normalization. It does not delete ordinary
+  hyphens, fuzzily compare text, use a model for validation, or clear a rejected
+  abstract. Same-line compounds and punctuation remain exact. The typography of
+  a hard hyphen at a physical line end can be inherently ambiguous; this limited
+  policy accepts only the exact joined sequence and does not infer wording.
+- Added a small CC0 synthetic PDF fixture and loopback-only metadata regression.
+  It verifies wrapped words, whitespace, exact page evidence, a clean fixture
+  and cached metadata, while rejecting removed `state-of-the-art` punctuation,
+  an invented word, and a changed number. `npm.cmd run metadata:check` passed with UUID-owned
+  local state and a loopback provider mock; evidence:
+  `.wrangler/metadata-check/8f3ef209-d107-4392-9e78-a35cfcec6c52/result.json`.
+  It made zero external OpenAI/arXiv requests and left normal state untouched.

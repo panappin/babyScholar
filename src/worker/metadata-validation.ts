@@ -43,9 +43,21 @@ function byteLength(value: string): number {
   return encoder.encode(value).byteLength;
 }
 
-/** NFC plus collapsed whitespace is the documented source/evidence comparison. */
+/** NFC plus collapsed whitespace is the default source/evidence comparison. */
 export function normalizeMetadataWhitespace(value: string): string {
   return value.normalize("NFC").replace(/\s+/gu, " ").trim();
+}
+
+/**
+ * PDF text extraction can expose a presentation-only line-end hyphen, e.g.
+ * `interpreta-\ntion`. Join only that exact physical line-break form on the
+ * persisted source side before comparison. Same-line compound hyphens and all
+ * punctuation remain literal; an ordinary hyphen deletion never matches.
+ */
+export function normalizeMetadataSourcePresentation(value: string): string {
+  return normalizeMetadataWhitespace(
+    value.normalize("NFC").replace(/(\p{L})[\u00ad\u2010-\u2015-][\t \f\v]*\r?\n[\t \f\v]*(\p{L})/gu, "$1$2"),
+  );
 }
 
 function boundedSourceString(value: unknown, maximumBytes: number, name: string): string {
@@ -57,7 +69,7 @@ function boundedSourceString(value: unknown, maximumBytes: number, name: string)
 
 function sourceContains(excerpt: MetadataSourceExcerpt, value: string): boolean {
   const target = normalizeMetadataWhitespace(value);
-  return target.length > 0 && excerpt.pages.some((page) => normalizeMetadataWhitespace(page.text).includes(target));
+  return target.length > 0 && excerpt.pages.some((page) => normalizeMetadataSourcePresentation(page.text).includes(target));
 }
 
 function validateWarnings(value: unknown): string[] {
@@ -79,7 +91,7 @@ function validateEvidenceQuote(value: unknown, excerpt: MetadataSourceExcerpt): 
     invalid("OpenAI returned unsupported metadata evidence.");
   }
   const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
-  if (!page || !normalizeMetadataWhitespace(page.text).includes(normalizeMetadataWhitespace(quote))) {
+  if (!page || !normalizeMetadataSourcePresentation(page.text).includes(normalizeMetadataWhitespace(quote))) {
     invalid("OpenAI returned metadata evidence that does not match the selected PDF text.");
   }
   return { pageNumber, quote };

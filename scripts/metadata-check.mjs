@@ -7,7 +7,7 @@ import { createServer as createTcpServer } from "node:net";
 import { dirname, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import workerArtifact from "../dist/worker/index.js";
-import { createMetadataClippedPdfFixture, createMetadataPdfFixture } from "./fixtures/pdf-fixtures.mjs";
+import { createMetadataClippedPdfFixture, createMetadataPdfFixture, createWrappedMetadataPdfFixture } from "./fixtures/pdf-fixtures.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
@@ -17,6 +17,7 @@ const state = resolve(evidenceDirectory, "state");
 const children = new Set();
 const fixture = createMetadataPdfFixture();
 const expected = fixture.expected;
+const wrappedFixture = createWrappedMetadataPdfFixture();
 const evidence = {
   id,
   state,
@@ -56,6 +57,23 @@ function validOutput() {
       authors: [{ pageNumber: 1, quote: "Avery Example; Bao Example" }],
       year: [{ pageNumber: 1, quote: "Published: 2024" }],
       abstract: [{ pageNumber: 1, quote: `Abstract: ${expected.abstract}` }],
+    },
+    warnings: [],
+  };
+}
+
+function wrappedOutput() {
+  const expectedWrapped = wrappedFixture.expected;
+  return {
+    title: expectedWrapped.title,
+    authors: expectedWrapped.authors,
+    year: expectedWrapped.year,
+    abstract: expectedWrapped.abstract,
+    evidence: {
+      title: [{ pageNumber: 1, quote: expectedWrapped.title }],
+      authors: [{ pageNumber: 1, quote: "Avery Example; Bao Example" }],
+      year: [{ pageNumber: 1, quote: "Published: 2024" }],
+      abstract: [{ pageNumber: 1, quote: "Abstract: This controlled interpretation evaluates state-of-the-art performance on 17 source-grounded records." }],
     },
     warnings: [],
   };
@@ -127,6 +145,20 @@ async function startProvider() {
       }
       let payload;
       if (providerMode === "unknown") payload = providerResponse(unknownOutput());
+      else if (providerMode === "wrapped") payload = providerResponse(wrappedOutput());
+      else if (providerMode === "wrapped_compound_deleted") {
+        const output = wrappedOutput();
+        output.abstract = output.abstract.replace("state-of-the-art", "state of the art");
+        payload = providerResponse(output);
+      } else if (providerMode === "wrapped_number_changed") {
+        const output = wrappedOutput();
+        output.abstract = output.abstract.replace("17", "18");
+        payload = providerResponse(output);
+      } else if (providerMode === "wrapped_word_changed") {
+        const output = wrappedOutput();
+        output.abstract = output.abstract.replace("controlled", "invented");
+        payload = providerResponse(output);
+      }
       else if (providerMode === "wrong_evidence") {
         const output = validOutput();
         output.evidence.title = [{ pageNumber: 1, quote: "not present in source" }];
@@ -363,6 +395,24 @@ async function main() {
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/metadata`, undefined, 200)).body.metadata, first.body.metadata);
   await download(primary.document, fixture.bytes);
   record("migration-reapply-preserves-metadata-text-and-original-bytes", { documentId: primary.document.id });
+
+  const wrapped = await uploadAndExtract(wrappedFixture.bytes, "wrapped-metadata.pdf");
+  providerMode = "wrapped";
+  const wrappedResult = await jsonRequest(`/api/documents/${wrapped.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(wrappedResult.body.metadata.abstract, wrappedFixture.expected.abstract);
+  assert.equal(wrappedResult.body.metadata.evidence.abstract[0].quote, "Abstract: This controlled interpretation evaluates state-of-the-art performance on 17 source-grounded records.");
+  const wrappedCached = await jsonRequest(`/api/documents/${wrapped.document.id}/metadata`, { method: "POST" }, 200);
+  assert.equal(wrappedCached.body.created, false);
+  assert.deepEqual(wrappedCached.body.metadata, wrappedResult.body.metadata);
+  assert.equal((await jsonRequest(`/api/documents/${wrapped.document.id}/text`, undefined, 200)).body.extraction.pages[0].text.includes("interpreta-\ntion"), true);
+  for (const mode of ["wrapped_compound_deleted", "wrapped_number_changed", "wrapped_word_changed"]) {
+    const rejected = await uploadAndExtract(wrappedFixture.bytes, `${mode}.pdf`);
+    providerMode = mode;
+    const response = await jsonRequest(`/api/documents/${rejected.document.id}/metadata`, { method: "POST" }, 502);
+    assert.equal(response.body.error.kind, "metadata_invalid_response");
+  }
+  providerMode = "valid";
+  record("wrapped-word-comparison-preserves-compounds-numbers-evidence-and-cache", { documentId: wrapped.document.id });
 
   const unknown = await uploadAndExtract();
   providerMode = "unknown";
