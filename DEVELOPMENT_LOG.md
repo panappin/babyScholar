@@ -837,3 +837,104 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   request used a fixed byte body; neither result clears the known local
   transport limitation or establishes hosted behavior. No retry, runtime
   experiment, dependency change, or diagnostic suppression was introduced.
+
+## 2026-10-08 — Phase 3B: Worker PDF text extraction and D1 persistence
+
+### Scope and implementation
+
+- Inspected the repository, Git state, existing document routes/types,
+  migrations, local Worker/Sites build staging, isolated checks, README, and
+  development history before editing. No project or ancestor `AGENTS.md` was
+  present. The pre-existing untracked Phase 0B.2 ZIP/folder remains untouched;
+  normal `.wrangler/state`, real local secret file, bindings, frontend, and
+  hosted configuration were not changed.
+- Added the only runtime dependency, exact `unpdf@1.8.1`. Its bundled
+  serverless PDF.js build is bundled by Wrangler; no canvas, native filesystem,
+  remote font/asset fetch, PDF rendering, PDF JavaScript evaluation, OCR, or
+  additional service was added. The Worker sets range/background fetches,
+  font-face/system fonts, XFA, and eval off, and releases each PDF loading task.
+- Replaced the former TypeScript-emission-only Worker build with
+  `scripts/build-worker.mjs`, which uses Wrangler `deploy --dry-run --metafile`.
+  TypeScript remains the type-checker, while the deploy-compatible bundle now
+  resolves UnPDF into `dist/worker/index.js` and `bundle-meta.json`; Sites
+  staging copies that complete artifact to `dist/server`.
+- Before adding the D1 table or API routes, `scripts/unpdf-worker-proof.mjs`
+  bundled a minimal Worker through the same Wrangler artifact path, started the
+  emitted bundle locally, and extracted a valid two-page fixture. The final
+  proof passed with PDF.js `6.1.200`, no bare UnPDF import, known separate page
+  phrases, and non-ASCII `Café`. The original fixture generator is
+  `scripts/fixtures/pdf-fixtures.mjs`, released as CC0-1.0.
+- Added `document_extractions` to `db/schema.ts` and generated the additive
+  `drizzle/0003_document_extractions.sql`, snapshot, and journal entry. The
+  document ID primary key permits exactly one successful record per stored
+  document; each row persists source SHA-256, `unpdf`/runtime version, UTC
+  extraction time, page count, and ordered one-based page JSON. Earlier SQL,
+  snapshots, and applied migrations remain unchanged.
+- Added declaration-only `DocumentExtraction`/page/response types and the
+  Worker-only parser and route modules. `POST /api/documents/:id/extract`
+  accepts no body, checks a cached D1 result before R2/parser work, validates
+  the recomputed R2 SHA-256, then returns 201 for a persisted result or 200 for
+  the immutable original. Conflict-safe D1 persistence leaves one authoritative
+  record under concurrent first calls. `GET /api/documents/:id/text` separates
+  `document_not_found` from `extraction_not_found`; all responses are no-store
+  and all SQL remains parameterized.
+- Extraction rejects rather than truncates over 100 pages, 500 KiB extracted
+  UTF-8 text, or 1 MiB serialized page data. A 20-second deadline bounds async
+  parser operations but cannot interrupt synchronous PDF.js CPU already on the
+  Worker event loop. Clear sanitized errors cover absent R2, hash mismatch,
+  password protection, unusable image-only text, parser failure, limits,
+  deadline, and D1/storage failure. Failed attempts retain original bytes and
+  never replace an existing successful extraction.
+- Added `extractions:check` and strengthened the Sites artifact check. The
+  frontend artifact is asserted free of parser runtime markers; Sites bundle
+  metadata must include UnPDF with no bare runtime import. No frontend code was
+  changed.
+
+### Verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `npm.cmd install unpdf@1.8.1 --save-exact` | Exit 0; one dependency added, lockfile updated |
+| `npm.cmd run unpdf:proof` | Final exit 0; actual emitted local Wrangler Worker parsed the CC0 two-page fixture, PDF.js 6.1.200 |
+| `npm.cmd run db:generate -- --name=document_extractions` | Exit 0; generated only `0003_document_extractions.sql`, snapshot, and journal entry |
+| `node --check scripts/extraction-check.mjs` | Exit 0 |
+| `node --check scripts/unpdf-worker-proof.mjs` | Exit 0 |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build` | Exit 0; type checks, Vite build, Wrangler dry-run Worker bundle, and Sites staging passed |
+| `npm.cmd run sites` | Exit 0; binding/static routing/migration checks plus packaged UnPDF and parser-free frontend assertions passed |
+| `npm.cmd run extractions:check` | Final exit 0; isolated real local Worker/D1/R2 extraction check passed |
+| `npm.cmd run documents:check` | Exit 0; existing isolated upload/list/download/restart/migration check still passed |
+| `npm.cmd audit --json` | Exit 1 because findings were reported: unchanged count of 3 high and 4 moderate development-tool findings |
+| `npm.cmd audit --omit=dev --json` | Exit 0; 0 production-only findings |
+
+- Final extraction evidence:
+  `.wrangler/extraction-check/5df2f533-201d-45c4-83e6-481df8a879f6/result.json`.
+  It used only UUID-scoped state and owned Wrangler processes. It proved the
+  actual two-page ordered text, SHA linkage, GET-before/after extraction, 201
+  then cached 200, two concurrent first requests yielding 201/200 with the same
+  record, byte-identical PDF downloads, restart read before another extraction,
+  migration reapplication, no-body enforcement, corrupt/signature-only,
+  encrypted, image-only, page/text limits, and offline missing-object/hash/D1
+  errors. The owned state was removed after the pass.
+- During harness construction, a local variable shadowed Node `process`, then a
+  fixed port was found to be unsuitable for an isolated checker. Both were
+  check-only defects corrected before the passing Worker proof. Sandbox-local
+  Wrangler runs also could not write their normal user-profile diagnostic log;
+  the same owned commands passed when permitted to use that standard Wrangler
+  log location. Neither issue was an application/runtime behavior change.
+- PDF.js emitted its standard-font-data warning for the deliberately basic
+  Type1 fixture. Text extraction still passed in the actual local Worker; no
+  remote font URL was configured or fetched. This fixture warning is retained
+  in ignored local evidence rather than suppressed.
+- Search, library, browser, live arXiv/OpenAI, hosted, normal-storage, and
+  known transport-stress checks were not repeated: this backend slice did not
+  alter their inputs or behavior. The new document migration/router did justify
+  rerunning the isolated document retention check.
+
+### Remaining limitation
+
+- The pre-existing local Wrangler/Miniflare oversized-chunked-upload transport
+  failure remains documented, unchanged, and unrerun. This Phase 3B check does
+  not establish hosted behavior for that unrelated proxy fault. No retry,
+  runtime update, audit override, dependency upgrade beyond UnPDF, deployment,
+  secret change, provider call, or frontend/metadata feature was introduced.

@@ -1,6 +1,9 @@
 # AI Research Assistant
 
-Phase 3A adds backend-only original-PDF upload, private R2 retention, and D1 document records. Text/metadata extraction, an upload UI, summaries, and Q&A remain later work.
+Phase 3B adds backend-only readable-text extraction from the original PDFs
+retained in private R2, with immutable D1 extraction records. Automatic
+title/authors/year/abstract extraction, an upload or text UI, OCR, summaries,
+and Q&A remain later work.
 
 ## Prerequisites
 
@@ -52,6 +55,13 @@ using the document endpoints:
 npm.cmd run db:migrate:local
 ```
 
+The additive `drizzle/0003_document_extractions.sql` creates one text-extraction
+record per uploaded document. It preserves the source PDF SHA-256, parser and
+version, UTC extraction timestamp, page count, and ordered one-based page text
+as JSON. Its `document_id` primary key is the D1 uniqueness constraint used to
+retain one authoritative result under concurrent extraction requests. It does
+not alter any earlier migration, existing document row, or R2 object.
+
 ```powershell
 # After a deliberate schema change, generate a NEW migration and inspect its SQL:
 npm.cmd run db:generate -- --name=describe_the_change
@@ -95,9 +105,16 @@ npm.cmd run build
 The production artifacts are:
 
 - Frontend static assets: `dist/frontend/`
-- Worker-compatible ESM module: `dist/worker/index.js` (with `dist/worker/index.js.map`)
+- Worker-compatible bundled ESM module: `dist/worker/index.js` (with source map
+  and `dist/worker/bundle-meta.json`)
 
-The Worker exports a default object with a callable `fetch(request, env)` handler. `wrangler.jsonc` points local development at `src/worker/index.ts`. For a later Sites handoff, retain the entire **`dist/worker/`** directory: `index.js` imports its sibling Worker ESM modules. Also retain `dist/frontend/`, `drizzle/*.sql`, and `drizzle/meta/**`. No deployment is configured or performed in this phase.
+The Worker exports a default object with a callable `fetch(request, env)` handler.
+`wrangler.jsonc` points local development at `src/worker/index.ts`; the build
+uses Wrangler's dry-run bundler so Worker dependencies such as UnPDF are included
+in the same artifact that Sites stages at `dist/server/`. Retain the complete
+`dist/worker/`, `dist/server/`, and `dist/frontend/` directories, plus
+`drizzle/*.sql` and `drizzle/meta/**`, for a handoff. No deployment is configured
+or performed in this phase.
 
 ## arXiv paper search API
 
@@ -270,12 +287,12 @@ arXiv/OpenAI. It stops only owned processes, removes only its generated state
 after success, and retains sanitized `result.json` evidence. Failed state is
 retained for diagnosis. Normal `.wrangler/state` and user servers are untouched.
 
-## Original-PDF document API (Phase 3A)
+## Original-PDF document API (Phases 3A–3B)
 
-This backend-only slice adds private original-PDF retention. There is no upload
-control, PDF parsing, OCR, metadata extraction, or text extraction yet. The
-existing private Site boundary, `DB`, and `PAPER_BUCKET` bindings are reused;
-there is no new secret, public bucket route, CORS policy, or frontend request.
+This backend-only slice retains private original PDFs and extracts readable text
+only on the Worker. There is no upload control, OCR, metadata extraction, or
+frontend request. The existing private Site boundary, `DB`, and `PAPER_BUCKET`
+bindings are reused; there is no new secret, public bucket route, or CORS policy.
 
 `POST /api/documents` accepts uncompressed `multipart/form-data` containing
 **exactly one** field named `file`. The field must be a nonempty file with an
@@ -304,16 +321,54 @@ original object only when its D1 document row exists. It returns
 and a safe server-generated attachment name (`document-<UUID>.pdf`), never the
 submitted filename.
 
+### Stored-PDF text extraction (Phase 3B)
+
+`POST /api/documents/:id/extract` accepts **no request body**. It first checks
+for an existing D1 record before reading R2 or invoking the parser. A new,
+complete extraction is returned as HTTP **201**; the same document later returns
+HTTP **200** with its original timestamp and `created:false`. Concurrent first
+requests may parse in parallel, but the D1 `document_id` primary key and
+conflict-safe insert retain one authoritative persisted record.
+
+`GET /api/documents/:id/text` returns the same stored extraction. It returns
+`document_not_found` for an unknown application UUID and `extraction_not_found`
+for a known PDF that has not successfully extracted.
+
+```json
+{"extraction":{"documentId":"application-uuid","sourceSha256":"lowercase-sha256-hex","parser":"unpdf","parserVersion":"unpdf@1.8.1/pdfjs@<runtime-version>","extractedAt":"2026-10-08T00:00:00.000Z","pageCount":2,"pages":[{"pageNumber":1,"text":"First page text"},{"pageNumber":2,"text":"Second page text"}]},"created":true}
+```
+
+The Worker reads only the stored private R2 object, recomputes SHA-256 before
+parsing, and never accepts client-supplied text. It uses UnPDF's bundled
+serverless PDF.js build with range/background fetches, system fonts, font-face
+use, XFA, and PDF JavaScript evaluation disabled. It does not render pages,
+use canvas/native filesystem APIs, fetch remote fonts/assets, execute embedded
+PDF JavaScript, or perform OCR. Parser resources are released after every
+attempt.
+
+This MVP rejects—not truncates—PDFs over **100 pages**, extracted UTF-8 text
+over **500 KiB**, or serialized page data over **1 MiB**. It applies a 20-second
+whole-extraction deadline to asynchronous parser waits. A timer cannot interrupt
+synchronous PDF.js CPU work already running on the Worker event loop; this is a
+bounded operational guard, not CPU preemption. Password-protected PDFs,
+corrupt/signature-only inputs, and image-only PDFs with no usable text are not
+converted or OCRed. Failures leave the original object and any existing
+successful extraction untouched.
+
 Every document error is sanitized JSON with `Cache-Control: no-store`:
 
 | Status | `error.kind` |
 | --- | --- |
 | 400 | `invalid_request` |
 | 404 | `document_not_found` or `object_missing` |
+| 404 | `extraction_not_found` (known document, no successful extraction) |
+| 409 | `source_hash_mismatch` |
 | 408 | `request_timeout` |
-| 413 | `body_too_large` |
+| 413 | `body_too_large` or `extraction_limit_exceeded` |
 | 415 | `unsupported_media_type` |
 | 405 | `method_not_allowed` (with the route's `Allow` header) |
+| 422 | `password_protected`, `no_usable_text`, or `parser_error` |
+| 504 | `extraction_timeout` |
 | 503 | `storage_unavailable` or `database_failure` |
 
 D1 and R2 do not share an atomic transaction. If R2 storage succeeds but the
@@ -327,6 +382,8 @@ After applying the migration, use the focused local check after a build:
 ```powershell
 npm.cmd run build
 npm.cmd run documents:check
+npm.cmd run unpdf:proof
+npm.cmd run extractions:check
 ```
 
 `documents:check` uses only a UUID-scoped `.wrangler/document-check/<UUID>/`
@@ -336,6 +393,17 @@ distinct uploads, returned byte/hash metadata, exact downloaded bytes, stable
 order, restart-before-new-upload persistence, migration reapplication, invalid
 multipart cases, raw body/file limits, and offline storage/cleanup failures.
 It never calls arXiv or OpenAI and never touches normal `.wrangler/state`.
+
+`unpdf:proof` first bundles a minimal no-binding Worker with the exact Wrangler
+settings used for Worker/Sites artifacts, starts the resulting bundle locally,
+and extracts a repository-authored valid two-page PDF. The fixture source is
+`scripts/fixtures/pdf-fixtures.mjs`, released as CC0-1.0; it verifies separate
+known phrases and non-ASCII `Café`. `extractions:check` then uses a separate
+UUID-scoped local D1/R2 state tree to verify the complete API, source hash,
+ordered pages, cache/repeat/concurrent behavior, original-byte preservation,
+restart-before-reextract, migration reapplication, corrupt/signature-only,
+encrypted, image-only, page/text-limit, missing R2, hash mismatch, and D1
+failure cases. It never calls external providers or normal local state.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked

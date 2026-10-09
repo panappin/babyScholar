@@ -21,17 +21,20 @@
     "papers:live": "node scripts/paper-search-live-check.mjs",
     "papers:ui:check": "node scripts/frontend-search-browser-check.mjs",
     "documents:check": "node scripts/document-check.mjs",
+    "extractions:check": "node scripts/extraction-check.mjs",
+    "unpdf:proof": "node scripts/unpdf-worker-proof.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.worker.json && tsc --noEmit --project tsconfig.vite.json",
     "build": "npm run typecheck && npm run build:frontend && npm run build:worker && npm run build:sites",
     "build:sites": "node scripts/prepare-sites-build.mjs",
     "sites": "npm run sites:check",
     "sites:check": "node scripts/sites-artifact-check.mjs",
     "build:frontend": "vite build",
-    "build:worker": "tsc --project tsconfig.worker.json"
+    "build:worker": "node scripts/build-worker.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "unpdf": "1.8.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

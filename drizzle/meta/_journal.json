@@ -22,6 +22,13 @@
       "when": 1791505731279,
       "tag": "0002_uploaded_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1791507153230,
+      "tag": "0003_document_extractions",
+      "breakpoints": true
     }
   ]
 }

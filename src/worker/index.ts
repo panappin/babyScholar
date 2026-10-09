@@ -4,6 +4,7 @@ import { handleLocalIntegrationProbe } from "./local-integration-probe.js";
 import { paperSearchFailureStatus, publicPaperSearchError, searchArxivPapers } from "./arxiv.js";
 import { handleLibrary } from "./library.js";
 import { handleDocumentPdf, handleDocuments } from "./documents.js";
+import { handleDocumentExtraction, handleDocumentText } from "./extractions.js";
 
 const healthResponse = () =>
   new Response(JSON.stringify({ status: "ok" }), {
@@ -61,6 +62,16 @@ export default {
 
     if (url.pathname === "/api/documents") {
       return handleDocuments(request, env);
+    }
+
+    const documentExtraction = /^\/api\/documents\/([^/]+)\/extract$/u.exec(url.pathname);
+    if (documentExtraction) {
+      return handleDocumentExtraction(request, env, documentExtraction[1]);
+    }
+
+    const documentText = /^\/api\/documents\/([^/]+)\/text$/u.exec(url.pathname);
+    if (documentText) {
+      return handleDocumentText(request, env, documentText[1]);
     }
 
     const documentPdf = /^\/api\/documents\/([^/]+)\/pdf$/u.exec(url.pathname);

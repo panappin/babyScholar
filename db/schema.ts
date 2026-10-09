@@ -34,3 +34,15 @@ export const uploadedDocuments = sqliteTable("uploaded_documents", {
   uniqueIndex("uploaded_documents_object_key").on(table.objectKey),
   index("uploaded_documents_uploaded_at_id").on(table.uploadedAt, table.id),
 ]);
+
+// Each original PDF has at most one immutable successful text extraction. The
+// source hash lets later callers verify which exact R2 bytes produced it.
+export const documentExtractions = sqliteTable("document_extractions", {
+  documentId: text("document_id").primaryKey().notNull(),
+  sourceSha256: text("source_sha256").notNull(),
+  parser: text("parser").notNull(),
+  parserVersion: text("parser_version").notNull(),
+  extractedAt: text("extracted_at").notNull(),
+  pageCount: integer("page_count").notNull(),
+  pagesJson: text("pages_json").notNull(),
+});

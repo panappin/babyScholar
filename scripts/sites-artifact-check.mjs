@@ -9,6 +9,19 @@ const manifest = JSON.parse(await readFile(resolve(root, ".openai/hosting.json")
 assert.equal(manifest.d1, "DB");
 assert.equal(manifest.r2, "PAPER_BUCKET");
 
+const serverRoot = resolve(root, "dist/server");
+const bundleMetadata = JSON.parse(await readFile(resolve(serverRoot, "bundle-meta.json"), "utf8"));
+assert.ok(Object.keys(bundleMetadata.inputs).some((entry) => entry.replaceAll("\\", "/").includes("node_modules/unpdf/")), "Sites Worker must package UnPDF.");
+const serverBundle = await readFile(resolve(serverRoot, "index.js"), "utf8");
+assert.doesNotMatch(serverBundle, /from\s+["']unpdf(?:\/pdfjs)?["']/u, "Sites Worker must not rely on a bare UnPDF import.");
+const frontendFiles = (await readdir(resolve(root, "dist/client"), { recursive: true, withFileTypes: true }))
+  .filter((entry) => entry.isFile())
+  .map((entry) => resolve(entry.parentPath, entry.name));
+for (const file of frontendFiles) {
+  const content = await readFile(file, "utf8");
+  assert.doesNotMatch(content, /getDocumentProxy|unpdf\/pdfjs|from["']unpdf/u, `Frontend must not contain Worker parser code: ${file}`);
+}
+
 let assetRequests = 0;
 const html = await readFile(resolve(root, "dist/client/index.html"), "utf8");
 const env = {
@@ -34,4 +47,4 @@ for (const source of migrationFiles) {
   const name = source.slice(resolve(root, "drizzle").length + 1);
   assert.deepEqual(await readFile(resolve(root, "dist/.openai/drizzle", name)), await readFile(resolve(root, "drizzle", name)));
 }
-console.log("Sites artifact: callable Worker, API/static routing, disabled probes, declared bindings, and unchanged migration metadata: PASS (binding fixtures).");
+console.log("Sites artifact: callable Worker, API/static routing, disabled probes, declared bindings, packaged UnPDF, parser-free frontend, and unchanged migration metadata: PASS (binding fixtures).");

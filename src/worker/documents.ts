@@ -7,7 +7,7 @@ import type {
 import { DocumentError, readUploadedDocument, type ValidatedDocumentUpload } from "./document-validation.js";
 import type { WorkerEnv } from "./storage.js";
 
-interface DocumentRow {
+export interface DocumentRow {
   id: string;
   filename: string;
   byte_count: number;
@@ -17,7 +17,7 @@ interface DocumentRow {
   status: "stored";
 }
 
-const COLUMNS = "id, filename, byte_count, sha256, object_key, uploaded_at, status";
+export const DOCUMENT_COLUMNS = "id, filename, byte_count, sha256, object_key, uploaded_at, status";
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
 
@@ -48,14 +48,14 @@ function documentFromRow(row: DocumentRow): UploadedDocument {
   };
 }
 
-function requireDocumentStorage(env: WorkerEnv): { db: D1Database; bucket: R2Bucket } {
+export function requireDocumentStorage(env: WorkerEnv): { db: D1Database; bucket: R2Bucket } {
   if (!env.DB || !env.PAPER_BUCKET) {
     throw new DocumentError("storage_unavailable", 503, "The document storage is unavailable.");
   }
   return { db: env.DB, bucket: env.PAPER_BUCKET };
 }
 
-function validDocumentId(id: string): string {
+export function validDocumentId(id: string): string {
   if (!UUID.test(id)) {
     throw new DocumentError("invalid_request", 400, "Document id must be a canonical application UUID.");
   }
@@ -63,18 +63,18 @@ function validDocumentId(id: string): string {
 }
 
 async function listDocuments(db: D1Database): Promise<ListDocumentsResponse> {
-  const rows = await db.prepare(`SELECT ${COLUMNS} FROM uploaded_documents ORDER BY uploaded_at DESC, id DESC`).all<DocumentRow>();
+  const rows = await db.prepare(`SELECT ${DOCUMENT_COLUMNS} FROM uploaded_documents ORDER BY uploaded_at DESC, id DESC`).all<DocumentRow>();
   if (!rows.success) throw new Error("Document list failed");
   return { documents: rows.results.map(documentFromRow) };
 }
 
-async function findDocument(db: D1Database, id: string): Promise<DocumentRow | null> {
-  const row = await db.prepare(`SELECT ${COLUMNS} FROM uploaded_documents WHERE id = ?`).bind(id).first<DocumentRow>();
+export async function findDocument(db: D1Database, id: string): Promise<DocumentRow | null> {
+  const row = await db.prepare(`SELECT ${DOCUMENT_COLUMNS} FROM uploaded_documents WHERE id = ?`).bind(id).first<DocumentRow>();
   return row ?? null;
 }
 
 async function insertDocument(db: D1Database, row: DocumentRow): Promise<void> {
-  const result = await db.prepare(`INSERT INTO uploaded_documents (${COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+  const result = await db.prepare(`INSERT INTO uploaded_documents (${DOCUMENT_COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?)`)
     .bind(row.id, row.filename, row.byte_count, row.sha256, row.object_key, row.uploaded_at, row.status)
     .run();
   if (!result.success || result.meta.changes !== 1) throw new Error("Document insert failed");
@@ -112,7 +112,7 @@ async function storeDocument(env: WorkerEnv, upload: ValidatedDocumentUpload): P
   return documentFromRow(row);
 }
 
-function errorResponse(error: unknown, headers: Record<string, string>): Response {
+export function documentErrorResponse(error: unknown, headers: Record<string, string>): Response {
   const failure = error instanceof DocumentError ? error
     : new DocumentError("database_failure", 503, "The document database operation failed.");
   const body: DocumentErrorResponse = { error: { kind: failure.kind, message: failure.message } };
@@ -134,7 +134,7 @@ export async function handleDocuments(request: Request, env: WorkerEnv): Promise
     headers.Allow = "GET, POST";
     throw new DocumentError("method_not_allowed", 405, "Use GET or POST for documents.");
   } catch (error) {
-    return errorResponse(error, headers);
+    return documentErrorResponse(error, headers);
   }
 }
 
@@ -166,6 +166,6 @@ export async function handleDocumentPdf(request: Request, env: WorkerEnv, rawId:
       },
     });
   } catch (error) {
-    return errorResponse(error, headers);
+    return documentErrorResponse(error, headers);
   }
 }
