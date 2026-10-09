@@ -1134,3 +1134,31 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   state, frontend, migration, push, deployment, or additional provider request
   occurred. The pre-existing local Wrangler/Miniflare oversized-upload
   transport limitation remains unchanged.
+
+## 2026-10-08 — Phase 3D PDF frontend
+
+- Added the **PDFs** workspace view with reloadable persisted records, a 10 MiB
+  client-side file guard, browser-owned multipart upload, explicit one-shot
+  upload/extract/metadata pipeline, and explicit resume. Refreshing, listing,
+  and selecting use GETs only. Interrupted or malformed processing responses
+  reconcile the known document through GET before another explicit action; no
+  POST retries occur.
+- The selected PDF shows original filename/upload time/download, full
+  page-numbered text, nullable source-grounded metadata fallbacks, warnings, and
+  collapsible page-numbered evidence. It imports declaration-only document types
+  and does not bundle Worker/provider runtime code or keys.
+- Verification: `npm.cmd run typecheck` passed; `npm.cmd run build` passed after
+  one sandbox-denied build rerun; `npm.cmd run sites` passed. The dependency-free
+  Chrome verifier passed at
+  `.wrangler/frontend-search-browser-check/1f921668-994a-4f38-b190-6feb9278d9a1/result.json`:
+  mocked PDF loading/empty/error/malformed/unknown/stale/in-progress and safe
+  reconciliation states passed; real isolated browser upload through the Vite
+  proxy extracted the CC0 fixture, received all metadata fields/evidence from a
+  loopback provider, survived refresh, and downloaded byte-identical PDF bytes.
+  A mocked local provider failure retained the uploaded PDF and extracted text.
+  The check used two loopback provider requests, zero live OpenAI/arXiv calls,
+  and stopped only its owned Worker/Vite/Chrome processes.
+- Reused unchanged backend extraction, storage/restart, and successful live
+  metadata evidence. The existing local Wrangler/Miniflare oversized-upload
+  transport limitation remains documented; no schema, dependency, normal-state,
+  key/model, deployment, or push change occurred.

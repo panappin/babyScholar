@@ -3,9 +3,11 @@ import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
+import { createServer as createHttpServer } from "node:http";
 import { createServer } from "node:net";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
+import { createMetadataPdfFixture } from "./fixtures/pdf-fixtures.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
@@ -18,9 +20,14 @@ const browserCandidates = [
 const browserPath = browserCandidates.find(existsSync);
 const children = new Set();
 const evidence = { startedAt: new Date().toISOString(), state, steps: [], result: "running" };
+const documentFixture = createMetadataPdfFixture();
 let worker;
 let frontend;
 let browser;
+let metadataProvider;
+let metadataProviderOrigin;
+let metadataProviderCalls = 0;
+let metadataProviderMode = "success";
 
 const existingPaper = {
   id: "11111111-1111-4111-8111-111111111111",
@@ -62,10 +69,70 @@ const actualSearchPaper = {
   url: "https://arxiv.org/abs/2401.01239v3",
   pdfUrl: "https://arxiv.org/pdf/2401.01239v3.pdf",
 };
+const mockDocumentOne = { id: "44444444-4444-4444-8444-444444444444", filename: "unknown-metadata.pdf", byteCount: 512, sha256: "a".repeat(64), uploadedAt: "2026-01-02T03:04:05.000Z", status: "stored" };
+const mockDocumentTwo = { id: "55555555-5555-4555-8555-555555555555", filename: "resume-fixture.pdf", byteCount: 768, sha256: "b".repeat(64), uploadedAt: "2026-01-03T03:04:05.000Z", status: "stored" };
+const mockExtraction = (documentId, title = "Mock extracted page") => ({ documentId, sourceSha256: "a".repeat(64), parser: "unpdf", parserVersion: "unpdf@1.8.1", extractedAt: "2026-01-02T03:04:05.000Z", pageCount: 1, pages: [{ pageNumber: 1, text: title }] });
+const unknownMetadata = (documentId) => ({
+  documentId, sourceSha256: "a".repeat(64), extractionParser: "unpdf", extractionParserVersion: "unpdf@1.8.1", extractionExtractedAt: "2026-01-02T03:04:05.000Z",
+  selectedPageNumbers: [1], sourceExcerptByteCount: 18, sourceExcerptClipped: false, model: "local-mock", promptVersion: "document-metadata-v1", generatedAt: "2026-01-02T03:04:06.000Z",
+  title: null, authors: null, year: null, abstract: null,
+  evidence: { title: [], authors: [], year: [], abstract: [] }, warnings: ["title is unknown in the selected source."],
+});
 
 function record(step, details = {}) {
   evidence.steps.push({ step, ...details });
   console.log(JSON.stringify({ step, ...details }));
+}
+
+function metadataProviderOutput() {
+  const expected = documentFixture.expected;
+  return {
+    title: expected.title,
+    authors: expected.authors,
+    year: expected.year,
+    abstract: expected.abstract,
+    evidence: {
+      title: [{ pageNumber: 1, quote: expected.title }],
+      authors: [{ pageNumber: 1, quote: "Avery Example; Bao Example" }],
+      year: [{ pageNumber: 1, quote: "Published: 2024" }],
+      abstract: [{ pageNumber: 1, quote: `Abstract: ${expected.abstract}` }],
+    },
+    warnings: [],
+  };
+}
+
+async function startMetadataProvider() {
+  metadataProvider = createHttpServer((request, response) => {
+    if (request.method !== "POST" || request.url !== "/v1/responses" || request.headers.authorization !== "Bearer local-metadata-test-key") {
+      response.writeHead(400, { "content-type": "application/json" });
+      response.end(JSON.stringify({ error: { message: "unexpected local metadata request" } }));
+      return;
+    }
+    metadataProviderCalls += 1;
+    if (metadataProviderMode === "failure") {
+      response.writeHead(500, { "content-type": "application/json" });
+      response.end(JSON.stringify({ error: { message: "local metadata provider failure" } }));
+      return;
+    }
+    response.writeHead(200, { "content-type": "application/json" });
+    response.end(JSON.stringify({
+      status: "completed",
+      output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(metadataProviderOutput()) }] }],
+    }));
+  });
+  await new Promise((resolveStarted, rejectStarted) => {
+    metadataProvider.once("error", rejectStarted);
+    metadataProvider.listen(0, "127.0.0.1", resolveStarted);
+  });
+  const address = metadataProvider.address();
+  assert.ok(address && typeof address !== "string", "Local metadata provider did not bind a TCP port.");
+  metadataProviderOrigin = `http://127.0.0.1:${address.port}/v1/responses`;
+}
+
+async function stopMetadataProvider() {
+  if (!metadataProvider) return;
+  await new Promise((resolveStopped, rejectStopped) => metadataProvider.close((error) => error ? rejectStopped(error) : resolveStopped()));
+  metadataProvider = undefined;
 }
 
 async function availablePort() {
@@ -198,8 +265,10 @@ async function main() {
   const workerOrigin = `http://127.0.0.1:${workerPort}`;
   const viteOrigin = `http://127.0.0.1:${vitePort}`;
 
+  await startMetadataProvider();
   await migrate();
   worker = launch(process.execPath, [wrangler, "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
+    "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`,
     "--ip", "127.0.0.1", "--port", String(workerPort), "--inspector-port", "0", "--show-interactive-dev-session=false"]);
   await waitForServer(worker, `${workerOrigin}/api/health`);
   frontend = launch(process.execPath, [vite, "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], { LOCAL_WORKER_ORIGIN: workerOrigin });
@@ -283,6 +352,12 @@ async function main() {
   const isSearch = (request) => request.request.method === "GET" && request.request.url.includes("/api/papers/search");
   const isLibraryGet = (request) => request.request.method === "GET" && request.request.url.includes("/api/library/papers");
   const isLibraryPost = (request) => request.request.method === "POST" && request.request.url.includes("/api/library/papers");
+  const documentPath = (request) => new URL(request.request.url).pathname;
+  const isDocumentList = (request) => request.request.method === "GET" && documentPath(request) === "/api/documents";
+  const isDocumentText = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/text`;
+  const isDocumentMetadataGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/metadata`;
+  const isDocumentExtractPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/extract`;
+  const isDocumentMetadataPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/metadata`;
   const fulfillJson = async (request, status, body) => {
     record("mock-response", { method: request.request.method, path: new URL(request.request.url).pathname, status });
     return cdp.send("Fetch.fulfillRequest", {
@@ -423,6 +498,7 @@ async function main() {
   assert.equal(await click("#search-tab"), true);
   const interruptedSearch = { provider: "arxiv", query: "interrupted save", papers: [{ id: "2401.01237", title: "Interrupted fixture", authors: ["Interrupted Author"], year: 2024, abstract: "This must not be retried automatically.", url: "https://arxiv.org/abs/2401.01237v1", pdfUrl: null }] };
   await mockSearch("interrupted save", interruptedSearch);
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01237\"]')", "interrupted-save search result");
   await evaluate(`(() => {
     window.__libraryOriginalSetTimeout = window.setTimeout;
     window.setTimeout = (callback, milliseconds, ...args) => window.__libraryOriginalSetTimeout(callback, milliseconds === 15000 ? 25 : milliseconds, ...args);
@@ -477,11 +553,138 @@ async function main() {
   await waitFor(`document.body.innerText.includes(${JSON.stringify(actualRecordId)})`, "unchanged record after real duplicate");
   record("actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed", { id: actualRecordId, savedAt: actualSavedAt });
 
+  // Document-only mock states use the same browser/CDP harness. They exercise
+  // rendering and stale/interrupted request handling without invoking Worker
+  // extraction or the local provider boundary.
+  await cdp.send("Fetch.disable", {}, sessionId);
+  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/documents*" }] }, sessionId);
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#pdfs-tab')", "mocked PDFs page");
+  assert.equal(await click("#pdfs-tab"), true);
+  const initialDocuments = await newestPaused(isDocumentList, "initial PDFs list request");
+  await waitFor("document.body.innerText.includes('Loading saved PDFs')", "PDF loading state");
+  await fulfillJson(initialDocuments, 200, { documents: [] });
+  await waitFor("document.body.innerText.includes('No PDFs have been uploaded yet')", "PDF empty state");
+  assert.equal(await click("#pdfs-view .reload-button"), true);
+  await fulfillJson(await nextPaused(isDocumentList, "PDF error reload"), 503, { error: { kind: "database_failure", message: "The document database operation failed." } });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('document database operation failed')", "PDF list API error");
+  assert.equal(await click("#pdfs-view .reload-button"), true);
+  await fulfillJson(await nextPaused(isDocumentList, "malformed PDFs reload"), 200, { unexpected: true });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('unexpected response')", "malformed PDFs response");
+  assert.equal(await click("#pdfs-view .reload-button"), true);
+  await fulfillJson(await nextPaused(isDocumentList, "mock PDFs records reload"), 200, { documents: [mockDocumentOne, mockDocumentTwo] });
+  await waitFor(`document.querySelector('[data-document-id="${mockDocumentOne.id}"]')`, "mock PDF records");
+
+  // Unknown metadata remains explicit and readable rather than fabricated.
+  assert.equal(await click(`[data-document-id="${mockDocumentOne.id}"]`), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentOne.id), "unknown-metadata text GET"), 200, { extraction: mockExtraction(mockDocumentOne.id, "Current selected PDF text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentOne.id), "unknown-metadata GET"), 200, { metadata: unknownMetadata(mockDocumentOne.id) });
+  await waitFor("document.body.innerText.includes('Title unavailable') && document.body.innerText.includes('title is unknown')", "unknown metadata fallbacks");
+
+  // A superseded detail response must not overwrite a newer selection.
+  assert.equal(await click(`[data-document-id="${mockDocumentTwo.id}"]`), true);
+  const staleText = await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "stale document text request");
+  const staleMetadata = await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "stale document metadata request");
+  assert.equal(await click(`[data-document-id="${mockDocumentOne.id}"]`), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentOne.id), "current document text request"), 200, { extraction: mockExtraction(mockDocumentOne.id, "Current selected PDF text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentOne.id), "current document metadata request"), 200, { metadata: unknownMetadata(mockDocumentOne.id) });
+  await cdp.send("Fetch.failRequest", { requestId: staleText.requestId, errorReason: "Aborted" }).catch(() => undefined);
+  await cdp.send("Fetch.failRequest", { requestId: staleMetadata.requestId, errorReason: "Aborted" }).catch(() => undefined);
+  await waitFor("document.querySelector('.document-text pre')?.textContent.includes('Current selected PDF text')", "stale document selection ignored");
+
+  // Resume reads first, then surfaces in-progress and interrupted POSTs without
+  // retrying them. The interrupted case reconciles through read-only GETs.
+  assert.equal(await click(`[data-document-id="${mockDocumentTwo.id}"]`), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "resume candidate text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "resume candidate metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await waitFor("document.body.innerText.includes('Resume processing')", "resume action");
+  assert.equal(await click("#pdfs-view .document-detail .save-button"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "resume preflight text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "resume preflight metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataPost(request, mockDocumentTwo.id), "in-progress metadata POST"), 409, { error: { kind: "metadata_in_progress", message: "Metadata generation is in progress; try again after the active request finishes." } });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('Metadata generation is in progress')", "metadata in-progress feedback");
+  const postsBeforeInterrupt = allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/metadata`)).length;
+  assert.equal(await click("#pdfs-view .document-detail .save-button"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "interrupted preflight text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "interrupted preflight metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataPost(request, mockDocumentTwo.id), "interrupted metadata POST"), 200, { unexpected: true });
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "interrupted reconciliation text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "interrupted reconciliation metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await waitFor("document.body.innerText.includes('saved results are shown')", "interrupted processing reconciliation");
+  assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/metadata`)).length, postsBeforeInterrupt + 1, "interrupted metadata POST must not retry automatically");
+  record("mocked-pdfs-loading-empty-errors-unknown-stale-inprogress-and-interrupted-passed");
+
+  // Real isolated PDF flow: browser FormData crosses the relative Vite proxy,
+  // Worker uploads to isolated R2, extracts with the real parser, and reaches
+  // only this loopback metadata-provider boundary.
+  await cdp.send("Fetch.disable", {}, sessionId);
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#pdfs-tab')", "PDFs tab");
+  assert.equal(metadataProviderCalls, 0, "loading the page must not call the metadata provider");
+  assert.equal(await click("#pdfs-tab"), true);
+  await waitFor("document.querySelector('#pdf-upload')", "PDF upload form");
+  await waitFor("document.body.innerText.includes('No PDFs have been uploaded yet')", "empty PDFs state");
+  const fixtureBase64 = Buffer.from(documentFixture.bytes).toString("base64");
+  const choosePdf = async (filename) => evaluate(`(() => {
+    const input = document.querySelector('#pdf-upload');
+    if (!(input instanceof HTMLInputElement)) return false;
+    const bytes = Uint8Array.from(atob(${JSON.stringify(fixtureBase64)}), (character) => character.charCodeAt(0));
+    const file = new File([bytes], ${JSON.stringify(filename)}, { type: 'application/pdf' });
+    const files = new DataTransfer();
+    files.items.add(file);
+    Object.defineProperty(input, 'files', { configurable: true, value: files.files });
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    return input.files?.[0]?.name === ${JSON.stringify(filename)};
+  })()`);
+  assert.equal(await choosePdf("metadata-browser-fixture.pdf"), true);
+  assert.equal(await click("#pdfs-view button[type=submit]"), true);
+  await waitFor("document.body.innerText.includes('Extracting text from the stored PDF') || document.body.innerText.includes('Extracting source-grounded metadata')", "PDF processing feedback");
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(documentFixture.expected.title)}) && document.body.innerText.includes(${JSON.stringify(documentFixture.expected.abstract)}) && document.body.innerText.includes('Ready — text and source-grounded metadata are saved.')`, "completed PDF metadata pipeline");
+  assert.equal(metadataProviderCalls, 1, "the explicit upload pipeline must make one loopback metadata request");
+  const uploadedDocumentId = await evaluate("document.querySelector('.document-select')?.dataset.documentId");
+  assert.match(uploadedDocumentId, /^[0-9a-f-]{36}$/u);
+  await evaluate("document.querySelector('.document-text').open = true; document.querySelector('.metadata-evidence').open = true");
+  await waitFor("document.body.innerText.includes('Page 1') && document.body.innerText.includes('Avery Example') && document.body.innerText.includes('Page-numbered source evidence')", "extracted page text and metadata evidence");
+  const originalPdfBase64 = await evaluate(`fetch('/api/documents/${uploadedDocumentId}/pdf').then(async (response) => {
+    if (!response.ok) throw new Error('download failed');
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    let text = '';
+    for (const byte of bytes) text += String.fromCharCode(byte);
+    return btoa(text);
+  })`);
+  assert.deepEqual(Buffer.from(originalPdfBase64, "base64"), Buffer.from(documentFixture.bytes), "original-PDF download must preserve fixture bytes");
+  await cdp.send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }, sessionId);
+  await delay(50);
+  const pdfMobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
+  assert.ok(pdfMobileMetrics.scrollWidth <= pdfMobileMetrics.width, "narrow PDFs layout must not require horizontal scrolling");
+  await cdp.send("Emulation.clearDeviceMetricsOverride", {}, sessionId);
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#pdfs-tab')", "PDF browser refresh");
+  assert.equal(metadataProviderCalls, 1, "browser refresh must not generate metadata");
+  assert.equal(await click("#pdfs-tab"), true);
+  await waitFor(`document.querySelector('[data-document-id=${JSON.stringify(uploadedDocumentId)}]')`, "persisted PDF after browser refresh");
+  assert.equal(await click(`[data-document-id="${uploadedDocumentId}"]`), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(documentFixture.expected.title)})`, "persisted document metadata after selection");
+  assert.equal(metadataProviderCalls, 1, "list reload and selection must use GET only");
+  record("actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-download-passed", { documentId: uploadedDocumentId, providerCalls: metadataProviderCalls });
+
+  // A provider failure is surfaced without removing the stored original or
+  // extracted text. It also proves no automatic metadata POST retry occurs.
+  metadataProviderMode = "failure";
+  assert.equal(await choosePdf("metadata-browser-failure.pdf"), true);
+  assert.equal(await click("#pdfs-view button[type=submit]"), true);
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('metadata provider')", "metadata failure feedback");
+  await waitFor("document.body.innerText.includes('Extracted page text')", "text retained after metadata failure");
+  assert.equal(metadataProviderCalls, 2, "failed metadata processing must have exactly one provider request and no automatic retry");
+  metadataProviderMode = "success";
+  record("actual-browser-metadata-failure-retains-upload-and-text-passed", { providerCalls: metadataProviderCalls });
+
   cdp.close();
   evidence.result = "passed";
   evidence.browser = browserPath;
   evidence.workerOrigin = workerOrigin;
   evidence.viteOrigin = viteOrigin;
+  evidence.metadataProviderCalls = metadataProviderCalls;
   evidence.desktopScreenshotPath = desktopScreenshotPath;
   evidence.mobileScreenshotPath = mobileScreenshotPath;
 } catch (error) {
@@ -493,6 +696,7 @@ async function main() {
   for (const child of [...children]) {
     try { await stop(child); } catch (error) { console.error(`Owned process cleanup failed: ${error}`); process.exitCode = 1; }
   }
+  try { await stopMetadataProvider(); } catch (error) { console.error(`Owned local metadata provider cleanup failed: ${error}`); process.exitCode = 1; }
   evidence.finishedAt = new Date().toISOString();
   await mkdir(state, { recursive: true });
   await writeFile(resolve(state, "result.json"), JSON.stringify(evidence, null, 2) + "\n");

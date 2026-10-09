@@ -449,3 +449,167 @@ a:focus-visible {
     gap: 0.75rem;
   }
 }
+
+.pdf-upload-form {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #dce2ec;
+  border-radius: 0.75rem;
+  background: #fbfcfe;
+}
+
+.pdf-upload-form > label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2a3548;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.upload-controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.upload-controls input {
+  min-width: 0;
+  flex: 1 1 20rem;
+  padding: 0.55rem 0;
+  color: #2a3548;
+}
+
+.upload-controls button,
+.document-select {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.upload-controls button {
+  min-height: 2.9rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid #124f94;
+  border-radius: 0.55rem;
+  color: #ffffff;
+  background: #155daf;
+}
+
+.upload-controls button:hover:not(:disabled) {
+  background: #104a8a;
+}
+
+.upload-controls button:disabled,
+.document-select:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.document-list {
+  display: grid;
+  gap: 0.625rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.document-select {
+  width: 100%;
+  min-height: 0;
+  padding: 0.875rem 1rem;
+  border: 1px solid #dce2ec;
+  border-radius: 0.65rem;
+  color: #2a3548;
+  background: #fbfcfe;
+  text-align: left;
+}
+
+.document-select:hover:not(:disabled),
+.document-select[aria-pressed="true"] {
+  border-color: #b8d1ed;
+  background: #edf5ff;
+}
+
+.document-select span,
+.document-select small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.document-select span {
+  font-weight: 700;
+}
+
+.document-select small {
+  margin-top: 0.25rem;
+  color: #59667a;
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.document-detail,
+.document-metadata,
+.document-text,
+.metadata-evidence,
+.document-warnings {
+  margin-top: 1.25rem;
+}
+
+.document-detail {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #b8d1ed;
+  border-radius: 0.75rem;
+  background: #f9fcff;
+}
+
+.document-text,
+.metadata-evidence {
+  padding: 0.875rem 1rem;
+  border: 1px solid #dce2ec;
+  border-radius: 0.65rem;
+  background: #ffffff;
+}
+
+.document-text summary,
+.metadata-evidence summary {
+  cursor: pointer;
+  color: #124f94;
+  font-weight: 700;
+}
+
+.document-text section,
+.metadata-evidence section {
+  margin-top: 1rem;
+}
+
+.document-text pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  color: #2a3548;
+  background: #f2f5fa;
+  font: 0.875rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.metadata-evidence ol,
+.document-warnings ul {
+  display: grid;
+  gap: 0.5rem;
+  padding-left: 1.3rem;
+  color: #364157;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .upload-controls {
+    flex-direction: column;
+  }
+
+  .upload-controls input,
+  .upload-controls button {
+    flex: 0 1 auto;
+    width: 100%;
+  }
+}

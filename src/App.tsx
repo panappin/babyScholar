@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { DocumentWorkspace } from "./DocumentWorkspace";
 import { arxivSourceIdentity, safeArxivPaperLink } from "./paper-identity";
 import type {
   PaperSearchErrorPayload,
@@ -14,7 +15,7 @@ import type {
 } from "./worker/library-types";
 
 type HealthState = "loading" | "connected" | "failed";
-type View = "search" | "library";
+type View = "search" | "library" | "pdfs";
 type SearchState =
   | { status: "initial" }
   | { status: "loading"; query: string }
@@ -435,6 +436,7 @@ function App() {
           <button id="library-tab" type="button" role="tab" aria-selected={view === "library"} aria-controls="library-view" onClick={() => setView("library")}>
             Library{libraryCount ? ` (${libraryCount})` : ""}
           </button>
+          <button id="pdfs-tab" type="button" role="tab" aria-selected={view === "pdfs"} aria-controls="pdfs-view" onClick={() => setView("pdfs")}>PDFs</button>
         </div>
 
         {view === "search" && (
@@ -511,6 +513,8 @@ function App() {
             </>}
           </section>
         )}
+
+        {view === "pdfs" && <DocumentWorkspace />}
       </div>
     </main>
   );

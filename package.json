@@ -20,6 +20,7 @@
     "papers:check": "node scripts/paper-search-check.mjs",
     "papers:live": "node scripts/paper-search-live-check.mjs",
     "papers:ui:check": "node scripts/frontend-search-browser-check.mjs",
+    "documents:ui:check": "node scripts/frontend-search-browser-check.mjs",
     "documents:check": "node scripts/document-check.mjs",
     "extractions:check": "node scripts/extraction-check.mjs",
     "metadata:check": "node scripts/metadata-check.mjs",

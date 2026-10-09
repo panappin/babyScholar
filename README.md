@@ -470,6 +470,22 @@ restarts only its owned Worker with `OPENAI_API_KEY` explicitly empty, GETs the
 saved result before any cached POST, and then verifies HTTP 200 with
 `created:false`. It never uses the real local key or contacts OpenAI.
 
+### PDFs
+
+Use the **PDFs** tab to reload stored document records, select a saved PDF, and
+read its stored text and metadata without starting processing. Choose one
+nonempty PDF up to 10 MiB, then select **Upload and process** to make the
+explicit one-shot upload, text-extraction, and metadata requests. A later
+**Resume processing** first reads saved results and submits only missing work;
+it never automatically retries a POST. The selected record offers the original
+PDF download, full page-numbered extracted text, source-grounded title/authors/
+year/abstract, warnings, and collapsible page-numbered evidence.
+
+`npm.cmd run documents:ui:check` runs the dependency-free Chrome check against
+isolated local D1/R2 state. Its real browser path uses the relative Vite proxy,
+actual Worker PDF extraction, and a loopback metadata mock with an offline
+sentinel key; it makes no OpenAI or arXiv request.
+
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked
 upload can receive a proxy-generated `500 Network connection lost`, outside
