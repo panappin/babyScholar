@@ -6,7 +6,9 @@ export type IntegrationFailureKind =
   | "malformed_response"
   | "network_failure"
   | "timeout"
-  | "upstream_error";
+  | "upstream_error"
+  | "refusal"
+  | "incomplete_response";
 
 export class IntegrationError extends Error {
   constructor(

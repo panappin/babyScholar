@@ -70,7 +70,7 @@ function extractionFromRow(row: ExtractionRow): DocumentExtraction {
   };
 }
 
-async function findExtraction(db: D1Database, documentId: string): Promise<DocumentExtraction | null> {
+export async function findExtraction(db: D1Database, documentId: string): Promise<DocumentExtraction | null> {
   const row = await db.prepare(`SELECT ${EXTRACTION_COLUMNS} FROM document_extractions WHERE document_id = ?`)
     .bind(documentId).first<ExtractionRow>();
   return row ? extractionFromRow(row) : null;

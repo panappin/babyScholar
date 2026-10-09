@@ -1,9 +1,8 @@
 # AI Research Assistant
 
-Phase 3B adds backend-only readable-text extraction from the original PDFs
-retained in private R2, with immutable D1 extraction records. Automatic
-title/authors/year/abstract extraction, an upload or text UI, OCR, summaries,
-and Q&A remain later work.
+Phase 3C adds backend-only, source-grounded title/authors/year/abstract
+generation from persisted PDF text retained in private R2. There is still no
+upload or text UI, OCR, summaries, or Q&A.
 
 ## Prerequisites
 
@@ -61,6 +60,12 @@ version, UTC extraction timestamp, page count, and ordered one-based page text
 as JSON. Its `document_id` primary key is the D1 uniqueness constraint used to
 retain one authoritative result under concurrent extraction requests. It does
 not alter any earlier migration, existing document row, or R2 object.
+
+The additive `drizzle/0004_document_metadata.sql` creates immutable
+`document_metadata` results and short-lived `document_metadata_claims` leases.
+It preserves the existing papers, uploaded-document, and extraction tables.
+Apply it with the same deliberate local migration command before requesting
+metadata.
 
 ```powershell
 # After a deliberate schema change, generate a NEW migration and inspect its SQL:
@@ -287,12 +292,13 @@ arXiv/OpenAI. It stops only owned processes, removes only its generated state
 after success, and retains sanitized `result.json` evidence. Failed state is
 retained for diagnosis. Normal `.wrangler/state` and user servers are untouched.
 
-## Original-PDF document API (Phases 3A–3B)
+## Original-PDF document API (Phases 3A–3C)
 
 This backend-only slice retains private original PDFs and extracts readable text
-only on the Worker. There is no upload control, OCR, metadata extraction, or
-frontend request. The existing private Site boundary, `DB`, and `PAPER_BUCKET`
-bindings are reused; there is no new secret, public bucket route, or CORS policy.
+only on the Worker. Metadata generation is available only through the Worker
+API; there is no upload or text frontend control, OCR, summary, or Q&A feature.
+The existing private Site boundary, `DB`, and `PAPER_BUCKET` bindings are reused;
+there is no new public bucket route or CORS policy.
 
 `POST /api/documents` accepts uncompressed `multipart/form-data` containing
 **exactly one** field named `file`. The field must be a nonempty file with an
@@ -384,6 +390,7 @@ npm.cmd run build
 npm.cmd run documents:check
 npm.cmd run unpdf:proof
 npm.cmd run extractions:check
+npm.cmd run metadata:check
 ```
 
 `documents:check` uses only a UUID-scoped `.wrangler/document-check/<UUID>/`
@@ -404,6 +411,53 @@ ordered pages, cache/repeat/concurrent behavior, original-byte preservation,
 restart-before-reextract, migration reapplication, corrupt/signature-only,
 encrypted, image-only, page/text-limit, missing R2, hash mismatch, and D1
 failure cases. It never calls external providers or normal local state.
+
+### Source-grounded metadata (Phase 3C)
+
+`POST /api/documents/:id/metadata` accepts **no request body** and requires a
+successful persisted text extraction. It returns a newly saved metadata result
+with HTTP **201** and `created:true`; a later POST returns the immutable cached
+result with HTTP **200** and `created:false`. `GET /api/documents/:id/metadata`
+returns the saved result without contacting OpenAI. Unknown document,
+missing-text, and missing-metadata cases remain distinct (`document_not_found`,
+`extraction_not_found`, and `metadata_not_found`). A concurrent generation
+returns `409 metadata_in_progress`; its claim lease prevents duplicate live
+provider calls without becoming a durable result.
+
+The Worker selects at most the first three persisted, ordered text pages and no
+more than 24,000 UTF-8 bytes, never splitting a Unicode code point. The response
+records selected pages, byte count, clipping, source SHA-256, parser/extraction
+provenance, configured model, prompt version, generation time, nullable fields,
+page-numbered evidence quotes, and warnings. The model receives no filename,
+current date, web data, tools, PDF bytes, or text beyond that bounded excerpt.
+It is instructed that the PDF text is untrusted data. Runtime validation still
+requires normalized source quotes and source-supported values after strict
+structured JSON decoding; an unavailable field must be `null`, have no evidence,
+and have a warning naming it.
+
+Only the Worker reads `OPENAI_API_KEY`; Vite/frontend code never receives the
+key, source excerpt, or provider implementation. The Responses request uses
+`store:false`, no tools, one bounded 25-second operation, a 256 KiB bounded
+response body, no automatic retry, and `gpt-6-luna` reasoning effort `none`
+when that configured model is selected. Sanitized errors distinguish missing
+configuration, authentication, quota/rate limits, model access, timeout,
+refusal, incomplete/malformed output, and provider/network failure.
+
+```powershell
+# Local mock provider plus isolated Worker/D1/R2 state; no OpenAI call:
+npm.cmd run metadata:check
+
+# Deliberate one-request local live check. Requires an existing local key and
+# may incur provider use; it never retries. Do not run this during offline work.
+npm.cmd run metadata:live
+```
+
+`metadata:check` uses only the CC0 repository fixture, a loopback Responses
+mock, and UUID-scoped local state. It verifies all nullable/known fields and
+evidence, missing storage/configuration/text, cache and concurrent claims,
+restart/migration persistence, three-page clipping, refusal/incomplete/malformed
+responses, invalid evidence, provider failure, and unchanged original PDF/text
+records. It leaves normal `.wrangler/state` untouched.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked
@@ -524,11 +578,17 @@ src/worker/library.ts           Parameterized D1 save/list API
 src/worker/document-types.ts    Declaration-only uploaded-document contracts
 src/worker/document-validation.ts  Bounded multipart/PDF validation and SHA-256
 src/worker/documents.ts         Private R2 + parameterized D1 document API
+src/worker/document-metadata.ts Cached/claimed source-grounded metadata API
+src/worker/metadata-source.ts   Bounded persisted-text excerpt selection
+src/worker/metadata-openai.ts   Bounded strict-JSON Responses adapter
+src/worker/metadata-validation.ts Runtime source/evidence validation
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
 scripts/integration-check.mjs  Isolated live Worker connectivity verification
 scripts/integration-offline-check.mjs  Focused adapter failure-path checks
+scripts/metadata-check.mjs      Isolated metadata Worker/D1/R2/mock-provider check
+scripts/metadata-live-check.mjs One-request local live metadata verifier
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
 scripts/document-check.mjs      Isolated local D1/R2 original-PDF persistence check
@@ -558,6 +618,9 @@ Leave `OPENAI_MODEL=gpt-6-luna` unless deliberately selecting a model available 
 npm.cmd run integrations:offline
 npm.cmd run integrations
 ```
+
+The metadata endpoint reuses that same Worker-only key and preserves the
+configured model; it does not introduce another secret or a `VITE_` variable.
 
 `integrations` creates isolated local Wrangler state and ports, verifies health and storage directly and through its own Vite proxy, proves both integration routes are 404 when disabled, then enables them only for that check. In normal mode it makes one fixed arXiv metadata query (`max_results=1`) and at most one OpenAI request with the prompt `Reply with the word OK.` No integrations run on page load, normal health/storage requests, type checks, builds, or offline tests. The script stops only its own processes and preserves a sanitized result in its ignored state directory. The first recorded run succeeded against arXiv and skipped OpenAI before a key existed; the later supplied run succeeded against both and received `OK` from `gpt-6-luna`. Both records are retained in `integration-check-evidence.json`.
 

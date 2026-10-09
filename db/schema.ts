@@ -46,3 +46,35 @@ export const documentExtractions = sqliteTable("document_extractions", {
   pageCount: integer("page_count").notNull(),
   pagesJson: text("pages_json").notNull(),
 });
+
+// One immutable source-grounded bibliographic result per successful text
+// extraction. Arrays and evidence stay JSON because D1 stores this small,
+// bounded API result without introducing a second document identity.
+export const documentMetadata = sqliteTable("document_metadata", {
+  documentId: text("document_id").primaryKey().notNull(),
+  sourceSha256: text("source_sha256").notNull(),
+  extractionParser: text("extraction_parser").notNull(),
+  extractionParserVersion: text("extraction_parser_version").notNull(),
+  extractionExtractedAt: text("extraction_extracted_at").notNull(),
+  selectedPagesJson: text("selected_pages_json").notNull(),
+  sourceExcerptByteCount: integer("source_excerpt_byte_count").notNull(),
+  sourceExcerptClipped: integer("source_excerpt_clipped").notNull(),
+  model: text("model").notNull(),
+  promptVersion: text("prompt_version").notNull(),
+  generatedAt: text("generated_at").notNull(),
+  title: text("title"),
+  authorsJson: text("authors_json"),
+  year: integer("year"),
+  abstract: text("abstract"),
+  evidenceJson: text("evidence_json").notNull(),
+  warningsJson: text("warnings_json").notNull(),
+});
+
+// A short-lived ownership record prevents concurrent first requests from
+// producing duplicate provider calls. It is deliberately separate from the
+// immutable result so failed/expired attempts can be recovered explicitly.
+export const documentMetadataClaims = sqliteTable("document_metadata_claims", {
+  documentId: text("document_id").primaryKey().notNull(),
+  ownerToken: text("owner_token").notNull(),
+  expiresAt: text("expires_at").notNull(),
+});

@@ -54,11 +54,57 @@ export interface GetDocumentTextResponse {
   extraction: DocumentExtraction;
 }
 
+export type DocumentMetadataField = "title" | "authors" | "year" | "abstract";
+
+/** A short, page-numbered quotation from the selected persisted PDF text. */
+export interface DocumentMetadataEvidenceQuote {
+  pageNumber: number;
+  quote: string;
+}
+
+export type DocumentMetadataEvidence = Record<DocumentMetadataField, DocumentMetadataEvidenceQuote[]>;
+
+/** Source-grounded bibliographic metadata, never inferred from a filename or web source. */
+export interface DocumentMetadata {
+  documentId: string;
+  /** SHA-256 of the original stored PDF used by the linked text extraction. */
+  sourceSha256: string;
+  extractionParser: "unpdf";
+  extractionParserVersion: string;
+  extractionExtractedAt: string;
+  /** One-based pages selected from the persisted extraction for this request. */
+  selectedPageNumbers: number[];
+  /** UTF-8 byte count of the selected text only, before prompt framing. */
+  sourceExcerptByteCount: number;
+  /** True when the three-page or 24 KiB excerpt policy omitted source text. */
+  sourceExcerptClipped: boolean;
+  /** Configured Responses API model; never a frontend or secret value. */
+  model: string;
+  promptVersion: string;
+  generatedAt: string;
+  title: string | null;
+  /** Ordered names, or null when the selected text does not establish authors. */
+  authors: string[] | null;
+  year: number | null;
+  abstract: string | null;
+  evidence: DocumentMetadataEvidence;
+  /** Explicit uncertainty/ambiguity notes; no fabricated confidence score. */
+  warnings: string[];
+}
+
+export interface DocumentMetadataResponse {
+  metadata: DocumentMetadata;
+  created?: boolean;
+}
+
 export type DocumentErrorKind = "invalid_request" | "unsupported_media_type" | "body_too_large"
   | "request_timeout" | "method_not_allowed" | "storage_unavailable" | "database_failure"
   | "document_not_found" | "object_missing" | "extraction_not_found" | "source_hash_mismatch"
   | "password_protected" | "no_usable_text" | "extraction_limit_exceeded" | "extraction_timeout"
-  | "parser_error";
+  | "parser_error" | "metadata_not_found" | "metadata_in_progress"
+  | "metadata_missing_configuration" | "metadata_authentication" | "metadata_quota_or_rate_limit"
+  | "metadata_model_access" | "metadata_provider_failure" | "metadata_timeout"
+  | "metadata_refusal" | "metadata_incomplete" | "metadata_invalid_response";
 
 export interface DocumentErrorResponse {
   error: { kind: DocumentErrorKind; message: string };

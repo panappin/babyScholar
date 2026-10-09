@@ -20,6 +20,7 @@ const frontendFiles = (await readdir(resolve(root, "dist/client"), { recursive: 
 for (const file of frontendFiles) {
   const content = await readFile(file, "utf8");
   assert.doesNotMatch(content, /getDocumentProxy|unpdf\/pdfjs|from["']unpdf/u, `Frontend must not contain Worker parser code: ${file}`);
+  assert.doesNotMatch(content, /OPENAI_API_KEY|api\.openai\.com|requestDocumentMetadata|metadata-openai/u, `Frontend must not contain metadata-provider code: ${file}`);
 }
 
 let assetRequests = 0;

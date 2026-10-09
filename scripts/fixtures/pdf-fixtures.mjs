@@ -100,6 +100,11 @@ function textStream(value) {
   return streamObject(latin1(`BT /F1 18 Tf 72 720 Td (${literal}) Tj ET`));
 }
 
+function multiLineTextStream(lines) {
+  const operators = lines.map((line) => `(${line.replace(/[\\()]/g, "\\$&")}) Tj 0 -22 Td`).join(" ");
+  return streamObject(latin1(`BT /F1 14 Tf 72 720 Td ${operators} ET`));
+}
+
 export function createTextPdfFixture() {
   const first = "First page phrase: alpha";
   const second = "Second page phrase: Caf\u00e9";
@@ -120,6 +125,49 @@ export function createTextPdfFixture() {
     ]),
     expected: { first, second },
   };
+}
+
+export function createMetadataPdfFixture() {
+  const expected = {
+    title: "Source-Grounded Metadata Fixture",
+    authors: ["Avery Example", "Bao Example"],
+    year: 2024,
+    abstract: "This controlled fixture evaluates source-grounded bibliographic metadata extraction.",
+  };
+  return {
+    bytes: buildPdf([
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 6 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 7 0 R >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      multiLineTextStream([
+        expected.title,
+        "Authors: Avery Example; Bao Example",
+        "Published: 2024",
+        "Abstract: This controlled fixture evaluates",
+        "source-grounded bibliographic metadata extraction.",
+      ]),
+      multiLineTextStream(["This second page is retained as ordered source text."]),
+    ]),
+    expected,
+  };
+}
+
+export function createMetadataClippedPdfFixture() {
+  return buildPdf([
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R 4 0 R 5 0 R 6 0 R] /Count 4 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 8 0 R >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 9 0 R >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 10 0 R >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 11 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+    textStream("Clipping fixture page one"),
+    textStream("Clipping fixture page two"),
+    textStream("Clipping fixture page three"),
+    textStream("Clipping fixture page four must not reach metadata"),
+  ]);
 }
 
 export function createImageOnlyPdfFixture() {

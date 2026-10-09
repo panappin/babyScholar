@@ -3,6 +3,8 @@
 export type WorkerEnv = Omit<Partial<Env>, "OPENAI_MODEL"> & {
   LOCAL_STORAGE_PROBE?: string;
   LOCAL_INTEGRATION_PROBE?: string;
+  /** Check-only loopback Responses mock; absent from committed Wrangler config. */
+  LOCAL_METADATA_PROVIDER_URL?: string;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
   ASSETS?: Fetcher;

@@ -938,3 +938,97 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   not establish hosted behavior for that unrelated proxy fault. No retry,
   runtime update, audit override, dependency upgrade beyond UnPDF, deployment,
   secret change, provider call, or frontend/metadata feature was introduced.
+
+## 2026-10-08 — Phase 3C: source-grounded document metadata (backend only)
+
+### Scope and implementation
+
+- Inspected the repository, existing Phase 3A/3B document types/routes,
+  persisted extraction contract, Worker bindings, generated types, migrations,
+  README, development history, and project/ancestor instruction paths before
+  editing. No `AGENTS.md` was present. The existing ignored Phase 0B.2 ZIP and
+  folder, real local secret file, normal `.wrangler/state`, bindings, frontend,
+  dependencies, lockfile, and hosted configuration remain unchanged.
+- Added the additive `drizzle/0004_document_metadata.sql`, generated Drizzle
+  snapshot, and journal entry. `document_metadata` persists one immutable result
+  per document with source/extraction provenance, exact selected-page/clip
+  facts, configured model, prompt version, time, nullable values, evidence, and
+  warnings. `document_metadata_claims` is a short-lived D1 owner-token lease;
+  only its owner can persist/release, so it prevents duplicate in-flight live
+  calls without changing existing metadata.
+- Added Worker-only source selection, strict Responses adapter, runtime output
+  validation, and metadata route modules. `POST /api/documents/:id/metadata`
+  requires an empty body and an existing extraction; it returns 201 on creation
+  and 200 from cache. `GET` returns only stored metadata. Unknown document,
+  missing extraction/metadata, claim-in-progress, missing configuration,
+  provider categories, refusal/incomplete/malformed output, and storage errors
+  remain separate sanitized API results.
+- Metadata uses at most the first three persisted ordered pages and 24,000 UTF-8
+  bytes, with code-point-safe clipping. The prompt treats PDF text as untrusted
+  data and forbids filename/current-date/reference-list/web/model-memory
+  inference. It sends no tools or PDF bytes, uses `store:false`, strict JSON
+  Schema, one 25-second operation, a 256 KiB response cap, no automatic retry,
+  and `reasoning.effort: none` only for the configured `gpt-6-luna` model.
+  Runtime validation normalizes whitespace, requires source-matching evidence
+  for known values, preserves author order, and requires a warning for each
+  null/unknown field.
+- Added `metadata:check` (isolated Worker/D1/R2 and loopback mock only) and
+  `metadata:live` (one deliberate provider-capable POST, no retry). The latter
+  reuses only the existing ignored Worker key/model; it never reads, prints,
+  writes, rotates, or places the key in Vite/build/evidence output. The Sites
+  artifact check now rejects metadata-provider/key markers in the frontend.
+
+### Verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `npm.cmd run db:generate -- --name=document_metadata` | Exit 0; generated only `0004_document_metadata.sql`, its snapshot, and journal entry |
+| `node --check scripts/metadata-check.mjs` | Exit 0 |
+| `node --check scripts/metadata-live-check.mjs` | Exit 0 |
+| `node --experimental-strip-types --input-type=module` (inline UTF-8 selector-boundary assertion) | Exit 0; 24,000-byte policy stopped before a partial multibyte code point |
+| `npm.cmd run typecheck` | Final exit 0 |
+| `npm.cmd run build` | Final exit 0; type checks, frontend, Worker ESM dry-run, and Sites staging passed |
+| `npm.cmd run sites` | Final exit 0; callable Worker/static routing/bindings/migration artifact checks passed, including no metadata provider/key markers in frontend files |
+| `npm.cmd run metadata:check` | Final exit 0; isolated real Worker/D1/R2/mocked-Responses matrix passed |
+| `npm.cmd run documents:check` | Exit 0; existing upload/list/download/restart/migration check passed after shared router/migration work |
+| `npm.cmd run extractions:check` | Final exit 0; existing extraction/restart/migration/original-byte check passed (the pre-existing PDF.js standard-font fixture warning remains non-fatal) |
+| `npm.cmd run metadata:live` | Exit 1; exactly one authorized provider-capable metadata POST, no retry |
+
+- Final offline metadata evidence is
+  `.wrangler/metadata-check/92c55f37-7828-4c7f-9233-6c29687e6003/result.json`.
+  It verifies source-supported known fields and quotes, all-null unknown fields,
+  selected `[1,2,3]` clipping, no text/PDF mutation, cache GET/POST behavior,
+  one provider call under concurrent POSTs, restart-before-read, migration
+  reapplication, missing storage/configuration/text, wrong evidence, malformed
+  JSON, refusal, incomplete response, and provider failure. The mock confirms
+  `store:false`, 4096 maximum output tokens, no tools, and strict schema shape.
+- The single live invocation used a fresh, UUID-scoped Worker/D1/R2 state and
+  the already configured model/key. Its sanitized evidence is
+  `.wrangler/metadata-live-check/1ed9a2d2-1c1d-408c-a814-beddf8ee7706/result.json`.
+  It reached the local Worker, uploaded and extracted the CC0 fixture, then the
+  metadata endpoint returned 502 and persisted no metadata row. Read-only local
+  observability status metadata showed an upstream HTTP 200 and the local
+  metadata POST HTTP 502. The raw provider body was intentionally neither
+  printed nor retained, so the exact provider error/shape cannot be recovered
+  without a second request.
+- Comparing the 200/502 evidence with code identified a justified parser gap:
+  the new adapter accepted only top-level `output_text`, while the existing
+  project Responses parser also accepts REST `output[].content[].text`. The
+  adapter now accepts both forms; the offline mock was changed to the REST
+  nested form and passed all final checks. This is an evidence-based fix, not a
+  claim that it explains the one live failure conclusively. The live checker now
+  records only sanitized status/error kind for any future deliberate run and
+  retries cleanup of its own state, but it was not rerun to respect the
+  one-request limit. The temporary live-check state was removed; its sanitized
+  result remains ignored for audit history.
+
+### Remaining limitation and next verification
+
+- No successful live Phase 3C metadata response was obtained in this phase.
+  A future explicitly authorized `npm.cmd run metadata:live` should confirm the
+  corrected REST parser with one new deliberate request; it must not be treated
+  as already verified. The existing Phase 2A local Wrangler/Miniflare
+  oversized-chunked-upload transport limitation also remains unchanged and does
+  not establish hosted behavior. No frontend work, OCR, PDF processing change,
+  dependency update, audit action, migration of normal user state, push,
+  deployment, hosted secret change, arXiv call, or extra OpenAI call occurred.
