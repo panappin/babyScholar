@@ -1377,3 +1377,67 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   dependency/lockfile, secret/key, normal-state, push, deployment, Q&A, or
   transport change occurred. The documented local Wrangler/Miniflare
   oversized-upload transport limitation remains open and unchanged.
+
+## 2026-10-09 - Phase 5A source-grounded document-question backend
+
+- Started from synchronized `main` at
+  `99ed735019440784748716db436e676ea91d9f57`. The pre-existing untracked
+  Phase 0B.2 ZIP/folder, normal `.wrangler/state`, prior migrations, document
+  data, configured Worker-only key/model, and existing frontend were preserved.
+- Added extraction-required `GET`/`POST /api/documents/:id/questions`. GET
+  lists immutable saved records newest-first; POST accepts only bounded strict
+  JSON `{ "question": "..." }`. Questions are trimmed/nonempty, limited to
+  2 KiB UTF-8, with an independent 3 KiB uncompressed body cap and no-store
+  sanitized errors. Metadata and summaries remain optional.
+- Each answer result has an independent UUID and stores the original question,
+  NFC/collapsed-whitespace normalized cache key (case, punctuation, and numbers
+  remain significant), SHA-256 extraction fingerprint/provenance, coverage,
+  model/prompt/schema versions, UTC timestamp, outcome, ordered answer parts,
+  evidence, warnings, or an explicit insufficient-source reason. The additive
+  generated `0006_document_questions.sql` creates result and expiring claim
+  tables only; migrations `0000` through `0005` are unchanged.
+- Q&A reuses the ordered 96 KiB summary source selector and strict shared
+  NFC/whitespace plus narrow ASCII physical-wrap-hyphen quote comparison. A
+  grounded answer has one to four parts, each with included-page exact quotes;
+  answer prose is capped at 300 words and quotes at 600 UTF-8 bytes. An
+  insufficient-source result has no answer/citations. Partial-source results
+  retain a coverage warning, and partial insufficient-source reasons must refer
+  to the included excerpt/pages. Quote presence remains evidence of source
+  presence, not proof that every paraphrase is entailed.
+- The Worker reuses the existing configured model/key only through its bounded
+  Responses adapter: strict JSON schema, `store:false`, no tools, 2,048 output
+  tokens, a 25-second deadline, 256 KiB response cap, and no automatic retry.
+  The isolated check receives a loopback sentinel instead of the local key.
+
+### Windows verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `npm.cmd run db:generate -- --name=document_questions` | Exit 0; generated additive `drizzle/0006_document_questions.sql`, `0006_snapshot.json`, and journal entry |
+| `node --check scripts/question-check.mjs` | Exit 0 |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build` | Exit 0; TypeScript, Vite, Worker dry-run, and Sites staging passed; no upload |
+| `npm.cmd run questions` | Exit 0; final sanitized evidence at `.wrangler/question-check/39e472a2-736d-4c0a-927b-f22a7d76fa13/result.json` |
+| `npm.cmd run sites` | Exit 0; binding-fixture artifact check passed |
+
+- The final `questions` check used CC0 fixtures, UUID-owned local D1/R2 state,
+  and one loopback Responses mock. It verified an answered result with page-four
+  evidence, whitespace-normalized cache preservation of the original UUID/time,
+  case/punctuation/numeric cache identity, newest-first list order,
+  insufficient-source persistence, partial 96 KiB coverage, malformed input and
+  both question/body bounds, wrong-page/invented/601-byte evidence rejection,
+  the 300-word cap, malformed/refusal/timeout failures with no record,
+  concurrent duplicate prevention, and restart/migration reapplication.
+  It snapshot-compared the original PDF bytes, extraction, metadata, and
+  summary before/after questions. Its cached GET/POST branch restarted only its
+  Worker with `OPENAI_API_KEY` explicitly empty, then confirmed an uncached POST
+  returns `question_missing_configuration`; this makes an external provider call
+  impossible for that cache check. It stopped only its owned Worker/provider and
+  removed only its successful UUID-owned state.
+- An initial typecheck identified that this Worker runtime's `TextDecoder`
+  declaration requires explicit `ignoreBOM`; adding `ignoreBOM:false` retained
+  fatal UTF-8 decoding and resolved it. No live OpenAI/arXiv request, key read
+  or change, normal-state migration, frontend change, dependency/lockfile
+  change, push, deployment, or transport investigation occurred. The documented
+  local Wrangler/Miniflare oversized-upload transport limitation remains open
+  and unchanged.

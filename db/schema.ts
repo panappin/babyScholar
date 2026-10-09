@@ -111,3 +111,46 @@ export const documentSummaryClaims = sqliteTable("document_summary_claims", {
   ownerToken: text("owner_token").notNull(),
   expiresAt: text("expires_at").notNull(),
 });
+
+// Each question result has its own application identity. The cache identity is
+// scoped to the exact extraction provenance instead of a title or filename.
+export const documentQuestions = sqliteTable("document_questions", {
+  id: text("id").primaryKey().notNull(),
+  documentId: text("document_id").notNull(),
+  question: text("question").notNull(),
+  normalizedQuestion: text("normalized_question").notNull(),
+  sourceSha256: text("source_sha256").notNull(),
+  extractionParser: text("extraction_parser").notNull(),
+  extractionParserVersion: text("extraction_parser_version").notNull(),
+  extractionExtractedAt: text("extraction_extracted_at").notNull(),
+  extractionFingerprint: text("extraction_fingerprint").notNull(),
+  totalPageCount: integer("total_page_count").notNull(),
+  includedPageNumbersJson: text("included_page_numbers_json").notNull(),
+  includedPageRangesJson: text("included_page_ranges_json").notNull(),
+  sourceExcerptByteCount: integer("source_excerpt_byte_count").notNull(),
+  sourceExcerptTruncated: integer("source_excerpt_truncated").notNull(),
+  sourceCoverageWarning: text("source_coverage_warning").notNull(),
+  model: text("model").notNull(),
+  promptVersion: text("prompt_version").notNull(),
+  schemaVersion: text("schema_version").notNull(),
+  outcome: text("outcome").notNull(),
+  answerPartsJson: text("answer_parts_json").notNull(),
+  insufficientSourceReason: text("insufficient_source_reason"),
+  warningsJson: text("warnings_json").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [
+  uniqueIndex("document_questions_cache_identity").on(table.documentId, table.normalizedQuestion, table.extractionFingerprint),
+  index("document_questions_document_created_id").on(table.documentId, table.createdAt, table.id),
+]);
+
+// A claim is deliberately independent from a saved result so provider failures
+// leave no false success and an expired claim can be retried explicitly.
+export const documentQuestionClaims = sqliteTable("document_question_claims", {
+  documentId: text("document_id").notNull(),
+  normalizedQuestion: text("normalized_question").notNull(),
+  extractionFingerprint: text("extraction_fingerprint").notNull(),
+  ownerToken: text("owner_token").notNull(),
+  expiresAt: text("expires_at").notNull(),
+}, (table) => [
+  uniqueIndex("document_question_claim_identity").on(table.documentId, table.normalizedQuestion, table.extractionFingerprint),
+]);

@@ -25,6 +25,7 @@
     "extractions:check": "node scripts/extraction-check.mjs",
     "metadata:check": "node scripts/metadata-check.mjs",
     "summaries": "node scripts/summary-check.mjs",
+    "questions": "node scripts/question-check.mjs",
     "metadata:live": "node scripts/metadata-live-check.mjs",
     "metadata:live:offline": "node scripts/metadata-live-verifier-check.mjs",
     "unpdf:proof": "node scripts/unpdf-worker-proof.mjs",

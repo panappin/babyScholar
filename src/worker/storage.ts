@@ -7,6 +7,8 @@ export type WorkerEnv = Omit<Partial<Env>, "OPENAI_MODEL"> & {
   LOCAL_METADATA_PROVIDER_URL?: string;
   /** Check-only loopback Responses mock for summary verification. */
   LOCAL_SUMMARY_PROVIDER_URL?: string;
+  /** Check-only loopback Responses mock for document-question verification. */
+  LOCAL_QUESTION_PROVIDER_URL?: string;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
   ASSETS?: Fetcher;

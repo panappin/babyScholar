@@ -151,6 +151,62 @@ export interface DocumentSummaryResponse {
   created?: boolean;
 }
 
+/** A short exact quotation establishing that an answer cites an included source page. */
+export interface DocumentQuestionEvidenceQuote {
+  pageNumber: number;
+  quote: string;
+}
+
+/** One ordered, source-grounded portion of an answered question. */
+export interface DocumentQuestionAnswerPart {
+  text: string;
+  evidence: DocumentQuestionEvidenceQuote[];
+}
+
+export type DocumentQuestionOutcome = "answered" | "insufficient_source";
+
+/** Immutable, source-grounded answer for one normalized question/extraction pair. */
+export interface DocumentQuestionRecord {
+  /** Independent application UUID for this saved Q&A result. */
+  id: string;
+  documentId: string;
+  /** Trimmed user question, retaining its original case, punctuation, and numbers. */
+  question: string;
+  /** NFC/collapsed-whitespace cache identity; it also preserves case and punctuation. */
+  normalizedQuestion: string;
+  sourceSha256: string;
+  extractionParser: "unpdf";
+  extractionParserVersion: string;
+  extractionExtractedAt: string;
+  /** SHA-256 fingerprint of the exact extraction provenance used for this result. */
+  extractionFingerprint: string;
+  totalPageCount: number;
+  includedPageNumbers: number[];
+  includedPageRanges: DocumentSummaryPageRange[];
+  sourceExcerptByteCount: number;
+  sourceExcerptTruncated: boolean;
+  sourceCoverageWarning: string;
+  model: string;
+  promptVersion: string;
+  schemaVersion: string;
+  outcome: DocumentQuestionOutcome;
+  /** Present only when outcome is `answered`, in the provider's returned order. */
+  answerParts: DocumentQuestionAnswerPart[];
+  /** Present only when outcome is `insufficient_source`; it has no answer/citations. */
+  insufficientSourceReason: string | null;
+  warnings: string[];
+  createdAt: string;
+}
+
+export interface DocumentQuestionResponse {
+  question: DocumentQuestionRecord;
+  created?: boolean;
+}
+
+export interface ListDocumentQuestionsResponse {
+  questions: DocumentQuestionRecord[];
+}
+
 export type DocumentErrorKind = "invalid_request" | "unsupported_media_type" | "body_too_large"
   | "request_timeout" | "method_not_allowed" | "storage_unavailable" | "database_failure"
   | "document_not_found" | "object_missing" | "extraction_not_found" | "source_hash_mismatch"
@@ -162,7 +218,11 @@ export type DocumentErrorKind = "invalid_request" | "unsupported_media_type" | "
   | "summary_not_found" | "summary_in_progress" | "summary_missing_configuration"
   | "summary_authentication" | "summary_quota_or_rate_limit" | "summary_model_access"
   | "summary_provider_failure" | "summary_timeout" | "summary_refusal"
-  | "summary_incomplete" | "summary_invalid_response";
+  | "summary_incomplete" | "summary_invalid_response"
+  | "question_in_progress" | "question_missing_configuration"
+  | "question_authentication" | "question_quota_or_rate_limit"
+  | "question_model_access" | "question_provider_failure" | "question_timeout"
+  | "question_refusal" | "question_incomplete" | "question_invalid_response";
 
 export interface DocumentErrorResponse {
   error: { kind: DocumentErrorKind; message: string };

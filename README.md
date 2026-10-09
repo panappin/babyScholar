@@ -1,8 +1,8 @@
 # AI Research Assistant
 
-Phase 4B adds a PDF workspace control for explicit, source-grounded summaries
-of persisted PDF text in private R2. The existing Papers and Library workflows
-remain unchanged; OCR and Q&A remain out of scope.
+Phase 5A adds backend-only, source-grounded Q&A over one selected uploaded
+PDF's persisted text. The existing Papers, Library, and PDF workspace UI remain
+unchanged; Q&A controls and OCR remain out of scope.
 
 ## Prerequisites
 
@@ -556,6 +556,67 @@ unchanged original PDF/text/metadata records. It uses a CC0 fixture and an
 owned UUID-scoped `.wrangler/summary-check/` state directory only; successful
 runs remove their state and retain sanitized evidence.
 
+### Source-grounded document questions (Phase 5A)
+
+`POST /api/documents/:id/questions` accepts exactly one uncompressed JSON body:
+
+```json
+{"question":"What does the included source establish?"}
+```
+
+The question must be a trimmed, nonempty string of at most **2 KiB UTF-8**.
+The complete uncompressed JSON body is independently limited to **3 KiB** and
+has the existing 10-second body-read deadline. Unknown fields, malformed JSON,
+non-JSON media types, compressed input, leading/trailing whitespace, and
+oversized input are rejected with sanitized `no-store` errors.
+
+`GET /api/documents/:id/questions` returns `{"questions": [...]}` in stable
+newest-first `createdAt`, then application-ID order. Both routes require the
+stored extraction but not metadata or a summary. Each result has an independent
+application UUID. A newly persisted result is returned by POST as HTTP **201**
+with `created:true`; an identical cache result is HTTP **200** with
+`created:false`, preserving its original UUID and timestamp. The cache key is
+the document ID, the question after NFC plus collapsed-whitespace normalization,
+and a SHA-256 fingerprint of the exact extraction provenance. This normalization
+preserves case, punctuation, and numbers.
+
+The Worker supplies only the persisted ordered extraction pages selected by the
+same **96 KiB UTF-8** source policy as summaries. It records page numbers/ranges,
+total pages, truncation, and a coverage warning with every answer. The provider
+must return either `answered`, containing one to four short answer parts with
+page-numbered exact quotes, or `insufficient_source`, containing no answer or
+citations and a clear reason. On partial coverage, insufficient-source reasons
+must explicitly refer to the included excerpt/pages; the stored coverage warning
+also says which text was omitted. Answers are limited to **300 words** total.
+
+Every quote is nonempty, trimmed, at most **600 UTF-8 bytes**, and matched only
+against its claimed included page using the existing NFC/collapsed-whitespace
+comparison plus the narrow ASCII physical-wrap-hyphen alternative. Wrong-page,
+invented, malformed, or oversized evidence is rejected before persistence. A
+matching quote establishes source presence, not that every paraphrased answer
+claim follows from it. No web search, embeddings, vector database, tools, or
+automatic provider retry is used.
+
+The Worker reuses the configured Worker-only OpenAI key/model and Responses
+handling with strict JSON schema, `store:false`, no tools, 2,048 output tokens,
+a 25-second deadline, and a 256 KiB response cap. A separate D1 claim keyed by
+the same cache identity prevents concurrent provider generation; expired claims
+are removed, failures release their claim, and conditional persistence returns
+the first immutable result. There is no Q&A frontend in this phase.
+
+```powershell
+# Loopback mock provider plus isolated Worker/D1/R2 state; zero OpenAI calls:
+npm.cmd run questions
+```
+
+`questions` verifies supported later-page evidence, insufficient-source and
+partial-coverage results, input limits, malformed/refusal/timeout responses,
+wrong-page/invented/oversized evidence, 300-word output bounds, concurrency,
+cache ID/timestamp preservation, restart and migration-reapplication
+persistence, and unchanged PDF/extraction/metadata/summary records. It restarts
+only its Worker with `OPENAI_API_KEY` explicitly empty before cached GET/POST
+checks, making a provider call impossible for that branch.
+
 ### PDFs
 
 Use the **PDFs** tab to reload stored document records, select a saved PDF, and
@@ -719,6 +780,10 @@ src/worker/document-summary.ts  Cached/claimed source-grounded summary API
 src/worker/summary-source.ts    Ordered 96 KiB persisted-text source selection
 src/worker/summary-openai.ts    Bounded strict-JSON summary Responses adapter
 src/worker/summary-validation.ts Runtime summary/evidence validation
+src/worker/document-questions.ts Cached/claimed source-grounded Q&A API
+src/worker/question-request.ts   Strict bounded question JSON validation
+src/worker/question-openai.ts    Bounded strict-JSON question Responses adapter
+src/worker/question-validation.ts Runtime question/evidence validation
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
@@ -727,6 +792,7 @@ scripts/integration-offline-check.mjs  Focused adapter failure-path checks
 scripts/metadata-check.mjs      Isolated metadata Worker/D1/R2/mock-provider check
 scripts/metadata-live-check.mjs One-request local live metadata verifier
 scripts/summary-check.mjs       Isolated source-grounded summary/mock-provider check
+scripts/question-check.mjs      Isolated source-grounded Q&A/mock-provider check
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
 scripts/document-check.mjs      Isolated local D1/R2 original-PDF persistence check

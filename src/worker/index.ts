@@ -7,6 +7,7 @@ import { handleDocumentPdf, handleDocuments } from "./documents.js";
 import { handleDocumentExtraction, handleDocumentText } from "./extractions.js";
 import { handleDocumentMetadata } from "./document-metadata.js";
 import { handleDocumentSummary } from "./document-summary.js";
+import { handleDocumentQuestions } from "./document-questions.js";
 
 const healthResponse = () =>
   new Response(JSON.stringify({ status: "ok" }), {
@@ -84,6 +85,11 @@ export default {
     const documentSummary = /^\/api\/documents\/([^/]+)\/summary$/u.exec(url.pathname);
     if (documentSummary) {
       return handleDocumentSummary(request, env, documentSummary[1]);
+    }
+
+    const documentQuestions = /^\/api\/documents\/([^/]+)\/questions$/u.exec(url.pathname);
+    if (documentQuestions) {
+      return handleDocumentQuestions(request, env, documentQuestions[1]);
     }
 
     const documentPdf = /^\/api\/documents\/([^/]+)\/pdf$/u.exec(url.pathname);
