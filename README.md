@@ -1,6 +1,6 @@
 # AI Research Assistant
 
-Phase 2B adds Save controls and a browsable Library UI to the existing React/TypeScript arXiv search page and Phase 2A persistent D1 paper-library API. PDF processing, summaries, and Q&A remain later work.
+Phase 3A adds backend-only original-PDF upload, private R2 retention, and D1 document records. Text/metadata extraction, an upload UI, summaries, and Q&A remain later work.
 
 ## Prerequisites
 
@@ -35,11 +35,22 @@ No Cloudflare login, hosted resource, or S3 credential is needed. These commands
 
 `db/schema.ts` defines `storage_probes(id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)`. Drizzle Kit generates SQL into `drizzle/*.sql` and generation history into `drizzle/meta/**`. The initial migration is `drizzle/0000_storage_probe.sql`; it contains only schema DDL. Wrangler separately tracks applied migrations in its D1 migration table. Probe inserts are never part of a migration or runtime initialization.
 
-The same schema now also defines `papers`. The additive
+The same schema also defines `papers`. The additive
 `drizzle/0001_paper_library.sql` creates that table and its unique
 `(source, arxiv_id)` index. It does not alter the probe table or rewrite the
 initial migration/snapshot. Run `npm.cmd run db:migrate:local` before ordinary
 development to apply any pending migrations to your persistent local database.
+
+The additive `drizzle/0002_uploaded_documents.sql` creates
+`uploaded_documents` without changing either earlier migration. It stores an
+application UUID, original display filename, byte count, SHA-256, private R2
+object key, upload time, and `stored` status. It has a stable newest-first
+lookup index. Apply this migration deliberately to a local database before
+using the document endpoints:
+
+```powershell
+npm.cmd run db:migrate:local
+```
 
 ```powershell
 # After a deliberate schema change, generate a NEW migration and inspect its SQL:
@@ -259,6 +270,73 @@ arXiv/OpenAI. It stops only owned processes, removes only its generated state
 after success, and retains sanitized `result.json` evidence. Failed state is
 retained for diagnosis. Normal `.wrangler/state` and user servers are untouched.
 
+## Original-PDF document API (Phase 3A)
+
+This backend-only slice adds private original-PDF retention. There is no upload
+control, PDF parsing, OCR, metadata extraction, or text extraction yet. The
+existing private Site boundary, `DB`, and `PAPER_BUCKET` bindings are reused;
+there is no new secret, public bucket route, CORS policy, or frontend request.
+
+`POST /api/documents` accepts uncompressed `multipart/form-data` containing
+**exactly one** field named `file`. The field must be a nonempty file with an
+original filename of at most 255 Unicode code points (and no NUL), a file size
+at most **10 MiB** (10,485,760 bytes), and bytes beginning with the ASCII PDF
+signature `%PDF-`. The Worker reads the raw stream itself before multipart
+parsing, with a 10-second deadline and a total cap of **10,551,296 bytes**
+(10 MiB plus a documented 64 KiB multipart-boundary/field allowance). It counts
+received bytes rather than trusting `Content-Length`. Signature validation is
+only a lightweight upload gate; it does not claim a later PDF parser will be
+able to process the document.
+
+On success, the Worker generates an application UUID and private R2 key
+`uploaded_documents/<UUID>.pdf`, stores the exact received file bytes, inserts
+the D1 row, and returns HTTP **201**:
+
+```json
+{"document":{"id":"application-uuid","filename":"original.pdf","byteCount":512,"sha256":"lowercase-sha256-hex","uploadedAt":"2026-10-08T00:00:00.000Z","status":"stored"}}
+```
+
+The R2 key is never included in a public response. `GET /api/documents` returns
+`{"documents": UploadedDocument[]}` in `uploadedAt DESC, id DESC` order.
+`GET /api/documents/:id/pdf` validates the application UUID and streams the
+original object only when its D1 document row exists. It returns
+`application/pdf`, `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`,
+and a safe server-generated attachment name (`document-<UUID>.pdf`), never the
+submitted filename.
+
+Every document error is sanitized JSON with `Cache-Control: no-store`:
+
+| Status | `error.kind` |
+| --- | --- |
+| 400 | `invalid_request` |
+| 404 | `document_not_found` or `object_missing` |
+| 408 | `request_timeout` |
+| 413 | `body_too_large` |
+| 415 | `unsupported_media_type` |
+| 405 | `method_not_allowed` (with the route's `Allow` header) |
+| 503 | `storage_unavailable` or `database_failure` |
+
+D1 and R2 do not share an atomic transaction. If R2 storage succeeds but the
+D1 insert fails, the Worker makes one best-effort deletion attempt for only the
+new request's generated key, then returns a sanitized 503. If that cleanup
+also fails, a private unreferenced R2 object can remain; no automatic write or
+cleanup retry is made. An R2 write failure never starts a D1 insert.
+
+After applying the migration, use the focused local check after a build:
+
+```powershell
+npm.cmd run build
+npm.cmd run documents:check
+```
+
+`documents:check` uses only a UUID-scoped `.wrangler/document-check/<UUID>/`
+state directory, a repository-authored 512-byte minimal PDF fixture released as
+CC0-1.0, and local Wrangler D1/R2 bindings. It verifies empty listing, two
+distinct uploads, returned byte/hash metadata, exact downloaded bytes, stable
+order, restart-before-new-upload persistence, migration reapplication, invalid
+multipart cases, raw body/file limits, and offline storage/cleanup failures.
+It never calls arXiv or OpenAI and never touches normal `.wrangler/state`.
+
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked
 upload can receive a proxy-generated `500 Network connection lost`, outside
@@ -360,7 +438,7 @@ isolated state are retained below `.wrangler/` for inspection.
 ## Structure
 
 ```text
-db/schema.ts                    Drizzle storage-probe and paper-library schema
+db/schema.ts                    Drizzle storage-probe, paper-library, and document schema
 drizzle.config.ts               SQLite migration generation configuration
 drizzle/*.sql                   Committed schema-only migrations
 drizzle/meta/                   Committed Drizzle generation history
@@ -375,6 +453,9 @@ src/worker/arxiv-identity.ts    Shared arXiv identity and safe-link rules
 src/worker/library-types.ts     Declaration-only save/list/error contracts
 src/worker/library-validation.ts  Bounded body reading and runtime validation
 src/worker/library.ts           Parameterized D1 save/list API
+src/worker/document-types.ts    Declaration-only uploaded-document contracts
+src/worker/document-validation.ts  Bounded multipart/PDF validation and SHA-256
+src/worker/documents.ts         Private R2 + parameterized D1 document API
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
@@ -382,6 +463,7 @@ scripts/integration-check.mjs  Isolated live Worker connectivity verification
 scripts/integration-offline-check.mjs  Focused adapter failure-path checks
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
+scripts/document-check.mjs      Isolated local D1/R2 original-PDF persistence check
 scripts/paper-search-live-check.mjs  One-request local Worker arXiv endpoint check
 scripts/frontend-search-browser-check.mjs  Isolated search/Library browser/proxy check
 worker-configuration.d.ts      Wrangler-generated binding/runtime types

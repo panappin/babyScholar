@@ -742,3 +742,98 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   hosted production is unaffected; no retry, dependency upgrade, runtime change,
   or masking of the diagnostic was added. The audit baseline remains 3 high and
   4 moderate development-tool findings, with zero production-only findings.
+
+## 2026-10-09 - Phase 3A: original-PDF upload and private retention backend
+
+### Scope and design
+
+- Inspected the project and ancestor instruction paths (no `AGENTS.md`), Git
+  status, README, existing development history, schema/migrations, Worker
+  router/storage helpers, generated binding types, and isolated checks before
+  editing. Work began at `d11d14a6e61fad7607923b6408eda74343d2693f` on a clean
+  tracked `main`; the pre-existing untracked Phase 0B.2 ZIP/folder were left
+  untouched.
+- Added `uploaded_documents` to `db/schema.ts` and generated the additive
+  `drizzle/0002_uploaded_documents.sql` plus `drizzle/meta/0002_snapshot.json`
+  and journal entry. The new table has an application UUID, original display
+  filename, original byte count, lowercase SHA-256, private object key, UTC
+  upload time, and `stored` status. A unique object-key index and
+  `(uploaded_at, id)` index support deterministic private storage and stable
+  newest-first listing. Earlier SQL, snapshots, journal entries, and tables
+  remain unchanged.
+- Added declaration-only public contracts in `src/worker/document-types.ts`.
+  `UploadedDocument` returns only ID, filename, byte count, SHA-256, upload
+  time, and `stored` status; the R2 object key is Worker-internal.
+- Added the collection routes `POST/GET /api/documents` and
+  `GET /api/documents/:id/pdf`. The POST body is read from the actual incoming
+  stream before multipart parsing, with a 10-second deadline and a
+  10,551,296-byte cap (10 MiB file plus 64 KiB multipart allowance), regardless
+  of `Content-Length`. The rebuilt bounded Request is then parsed for exactly
+  one `file` field. It rejects absent/multiple/extra fields, empty data,
+  filenames longer than 255 Unicode code points or containing NUL, files over
+  10 MiB, and data not beginning `%PDF-`. MIME type and filename alone are not
+  trusted. The header check is intentionally not PDF extraction or a claim that
+  later parsing will succeed.
+- The Worker generates `uploaded_documents/<application UUID>.pdf`, stores the
+  exact original bytes in `PAPER_BUCKET`, then inserts the parameterized D1 row.
+  It returns HTTP 201 only after both writes. If the D1 insert fails after a
+  successful R2 put, it attempts one delete of only that generated key and
+  returns a sanitized 503; D1/R2 are not atomic, so failed cleanup can leave a
+  private orphan with no D1 record. No write is retried. Stored rows also must
+  reference the deterministic key for their own UUID before a PDF can be read.
+- PDF retrieval validates a canonical application UUID, distinguishes a missing
+  D1 record from a missing R2 object, and sends only `application/pdf`,
+  `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, and a
+  server-generated `document-<UUID>.pdf` attachment name. Submitted filenames
+  are never used as paths or response attachment names.
+- Added `npm.cmd run documents:check` without dependencies or lockfile changes.
+  Its 512-byte minimal one-page fixture is authored in the repository script
+  and released as CC0-1.0. The check uses a UUID-scoped local D1/R2 state tree,
+  owns/stops only its Wrangler child processes, and removes only its successful
+  owned state while retaining sanitized result evidence.
+
+### Verification
+
+| Command/check | Result |
+| --- | --- |
+| `npm.cmd run db:generate -- --name=uploaded_documents` | Exit 0; generated only `0002_uploaded_documents.sql`, its snapshot, and the journal entry |
+| initial `npm.cmd run typecheck` | Found that generated Worker declarations do not name the DOM `FormDataEntryValue` alias |
+| corrected `npm.cmd run typecheck` | Exit 0; runtime file guard now accepts `unknown` at that generated-type boundary |
+| `node --check scripts/document-check.mjs` | Exit 0 |
+| `npm.cmd run build` | Final exit 0; type checks, Vite frontend, Worker ESM, and Sites staging passed |
+| `npm.cmd run documents:check` | Final exit 0; isolated D1/R2 document check passed |
+| `npm.cmd run sites` | Exit 0; callable Worker, static routing, bindings, and complete migration metadata passed |
+| `npm.cmd run papers:check` | Exit 0; offline parser/validation/cache/bounded-body checks passed |
+| `node scripts/library-check.mjs` | Exit 0; normal save/duplicate/restart/migration-reapply checks passed |
+
+- Final document evidence is
+  `.wrangler/document-check/027924b2-d126-4060-8141-0601e1accf3f/result.json`.
+  It verified an empty list; first upload ID
+  `83efb7c6-6fc0-4468-9907-5b56750c185b`, 512 bytes, SHA-256
+  `277b943327ca968c69c561692ecaf74ee84a266f2d96d5dd1b2be5623424d8d0`;
+  a distinct second upload; exact original-byte downloads; newest-first list;
+  a replacement Worker whose first document operation was a read; and migration
+  reapplication preserving both rows and hashes. It stopped only PIDs 69100,
+  119996, and 117680 and removed only its UUID-owned test state.
+- The same check exercised missing storage (503), failed R2 put without a D1
+  query (503), failed D1 insert with exactly one request-key cleanup attempt
+  (503), missing R2 object (404), a chunked dishonest-`Content-Length` body
+  overage before any storage access (413), stalled body timeout (408), missing
+  and multiple file fields, non-PDF/empty files, long filename, file limit, and
+  local raw body limit. Invalid cases retained the two successful records;
+  production object keys and errors were not logged.
+- Search/library checks were rerun because this phase changes the common Worker
+  router and migration set. Browser UI, live arXiv/OpenAI, generic storage,
+  normal user-state migration, deployment, hosted checks, and push were not
+  repeated. No normal `.wrangler/state`, secret, binding, dependency, lockfile,
+  frontend, or cloud resource changed.
+
+### Remaining limitation
+
+- The prior local Wrangler/Miniflare failure immediately after a rejected
+  oversized **chunked** upload remains an explicit failing diagnostic and was
+  not rerun or altered. The document check's direct built-Worker stream case
+  verifies the bounded handler without D1/R2 access, and its local body-limit
+  request used a fixed byte body; neither result clears the known local
+  transport limitation or establishes hosted behavior. No retry, runtime
+  experiment, dependency change, or diagnostic suppression was introduced.

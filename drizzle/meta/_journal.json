@@ -15,6 +15,13 @@
       "when": 1791499237186,
       "tag": "0001_paper_library",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791505731279,
+      "tag": "0002_uploaded_documents",
+      "breakpoints": true
     }
   ]
 }

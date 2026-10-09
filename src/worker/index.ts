@@ -3,6 +3,7 @@ import { handleLocalProbe } from "./local-probe.js";
 import { handleLocalIntegrationProbe } from "./local-integration-probe.js";
 import { paperSearchFailureStatus, publicPaperSearchError, searchArxivPapers } from "./arxiv.js";
 import { handleLibrary } from "./library.js";
+import { handleDocumentPdf, handleDocuments } from "./documents.js";
 
 const healthResponse = () =>
   new Response(JSON.stringify({ status: "ok" }), {
@@ -56,6 +57,15 @@ export default {
 
     if (url.pathname === "/api/library/papers") {
       return handleLibrary(request, env);
+    }
+
+    if (url.pathname === "/api/documents") {
+      return handleDocuments(request, env);
+    }
+
+    const documentPdf = /^\/api\/documents\/([^/]+)\/pdf$/u.exec(url.pathname);
+    if (documentPdf) {
+      return handleDocumentPdf(request, env, documentPdf[1]);
     }
 
     if (url.pathname.startsWith("/api/__local/storage-probe/")) {

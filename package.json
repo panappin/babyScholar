@@ -20,6 +20,7 @@
     "papers:check": "node scripts/paper-search-check.mjs",
     "papers:live": "node scripts/paper-search-live-check.mjs",
     "papers:ui:check": "node scripts/frontend-search-browser-check.mjs",
+    "documents:check": "node scripts/document-check.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.worker.json && tsc --noEmit --project tsconfig.vite.json",
     "build": "npm run typecheck && npm run build:frontend && npm run build:worker && npm run build:sites",
     "build:sites": "node scripts/prepare-sites-build.mjs",
