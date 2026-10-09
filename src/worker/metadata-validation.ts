@@ -17,6 +17,15 @@ const MAX_EVIDENCE_QUOTE_BYTES = 600;
 const MAX_WARNINGS = 16;
 const MAX_WARNING_BYTES = 500;
 
+type MetadataEvidenceRejectionReason =
+  | "quote_shape"
+  | "page_number_type"
+  | "page_number_integer"
+  | "quote_type"
+  | "quote_empty"
+  | "quote_untrimmed"
+  | "quote_too_large";
+
 export interface ValidatedMetadataOutput {
   title: string | null;
   authors: string[] | null;
@@ -28,6 +37,19 @@ export interface ValidatedMetadataOutput {
 
 function invalid(message: string): never {
   throw new DocumentError("metadata_invalid_response", 502, message);
+}
+
+/**
+ * Diagnostics deliberately contain only the fixed field name, array index, and
+ * a fixed rejection reason. Never attach a provider value, PDF text, or key.
+ */
+function invalidEvidence(
+  field: DocumentMetadataField,
+  index: number,
+  reason: MetadataEvidenceRejectionReason,
+): never {
+  console.warn(JSON.stringify({ event: "metadata_evidence_rejected", field, index, reason }));
+  invalid("OpenAI returned unsupported metadata evidence.");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -90,13 +112,21 @@ function warningNamesField(warnings: string[], field: DocumentMetadataField): bo
   return warnings.some((warning) => new RegExp(`\\b${field}\\b`, "iu").test(warning));
 }
 
-function validateEvidenceQuote(value: unknown, excerpt: MetadataSourceExcerpt): DocumentMetadataEvidenceQuote {
-  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "quote"])) invalid("OpenAI returned malformed metadata evidence.");
+function validateEvidenceQuote(
+  value: unknown,
+  excerpt: MetadataSourceExcerpt,
+  field: DocumentMetadataField,
+  index: number,
+): DocumentMetadataEvidenceQuote {
+  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "quote"])) invalidEvidence(field, index, "quote_shape");
   const pageNumber = value.pageNumber;
   const quote = value.quote;
-  if (typeof pageNumber !== "number" || !Number.isInteger(pageNumber) || typeof quote !== "string" || quote.length === 0 || quote !== quote.trim() || byteLength(quote) > MAX_EVIDENCE_QUOTE_BYTES) {
-    invalid("OpenAI returned unsupported metadata evidence.");
-  }
+  if (typeof pageNumber !== "number") invalidEvidence(field, index, "page_number_type");
+  if (!Number.isInteger(pageNumber)) invalidEvidence(field, index, "page_number_integer");
+  if (typeof quote !== "string") invalidEvidence(field, index, "quote_type");
+  if (quote.length === 0) invalidEvidence(field, index, "quote_empty");
+  if (quote !== quote.trim()) invalidEvidence(field, index, "quote_untrimmed");
+  if (byteLength(quote) > MAX_EVIDENCE_QUOTE_BYTES) invalidEvidence(field, index, "quote_too_large");
   const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
   if (!page || !pageContains(page.text, quote)) {
     invalid("OpenAI returned metadata evidence that does not match the selected PDF text.");
@@ -110,7 +140,7 @@ function validateEvidence(value: unknown, excerpt: MetadataSourceExcerpt): Docum
   for (const field of fields) {
     const quotes = value[field];
     if (!Array.isArray(quotes) || quotes.length > MAX_EVIDENCE_PER_FIELD) invalid("OpenAI returned too much metadata evidence.");
-    const validated = quotes.map((quote) => validateEvidenceQuote(quote, excerpt));
+    const validated = quotes.map((quote, index) => validateEvidenceQuote(quote, excerpt, field, index));
     if (new Set(validated.map((quote) => `${quote.pageNumber}\u0000${quote.quote}`)).size !== validated.length) {
       invalid("OpenAI returned duplicate metadata evidence.");
     }

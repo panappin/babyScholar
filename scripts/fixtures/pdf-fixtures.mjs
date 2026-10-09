@@ -128,6 +128,15 @@ export function createTextPdfFixture() {
 }
 
 export function createMetadataPdfFixture() {
+  // Exactly 600 UTF-8 bytes: a boundary fixture for short evidence quotes.
+  const multibyteEvidenceWords = [...Array(198).fill("\u00e9"), "\u00e9abcd"];
+  const multibyteEvidenceQuote = multibyteEvidenceWords.join(" ");
+  // Keep individual PDF text-showing operations short so the fixture exercises
+  // the application's whitespace normalization rather than PDF layout width.
+  const multibyteEvidenceLines = Array.from(
+    { length: Math.ceil(multibyteEvidenceWords.length / 16) },
+    (_, index) => multibyteEvidenceWords.slice(index * 16, (index + 1) * 16).join(" "),
+  );
   const expected = {
     title: "Source-Grounded Metadata Fixture",
     authors: ["Avery Example", "Bao Example"],
@@ -147,10 +156,12 @@ export function createMetadataPdfFixture() {
         "Published: 2024",
         "Abstract: This controlled fixture evaluates",
         "source-grounded bibliographic metadata extraction.",
+        ...multibyteEvidenceLines,
       ]),
       multiLineTextStream(["This second page is retained as ordered source text."]),
     ]),
     expected,
+    multibyteEvidenceQuote,
   };
 }
 

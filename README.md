@@ -445,6 +445,18 @@ rejected. A hard ASCII hyphen at a physical line end can be typographically
 ambiguous in some PDFs; this narrow rule does not infer meaning beyond the exact
 joined character sequence.
 
+Each evidence quote is still strict: it must be a non-empty, trimmed string from
+its claimed selected page and must not exceed **600 UTF-8 bytes**. New uncached
+metadata requests use prompt version `document-metadata-v2`, which explicitly
+asks for the shortest supporting excerpts and states that byte limit; it does not
+truncate a quote or invalidate an immutable result already in the cache. If an
+early evidence-shape check rejects a response, the Worker records only the fixed
+event name, field, evidence-array index, and fixed reason (`quote_shape`,
+`page_number_type`, `page_number_integer`, `quote_type`, `quote_empty`,
+`quote_untrimmed`, or `quote_too_large`). It never records quote text, PDF text,
+provider payloads, headers, or keys. Source matching remains a separate later
+validation step.
+
 Only the Worker reads `OPENAI_API_KEY`; Vite/frontend code never receives the
 key, source excerpt, or provider implementation. The Responses request uses
 `store:false`, no tools, one bounded 25-second operation, a 256 KiB bounded
@@ -468,10 +480,12 @@ npm.cmd run metadata:live:offline
 
 `metadata:check` uses only the CC0 repository fixture, a loopback Responses
 mock, and UUID-scoped local state. It verifies all nullable/known fields and
-evidence, missing storage/configuration/text, cache and concurrent claims,
-restart/migration persistence, three-page clipping, refusal/incomplete/malformed
-responses, invalid evidence, provider failure, and unchanged original PDF/text
-records. It leaves normal `.wrangler/state` untouched.
+evidence, the explicit evidence-quote instruction, valid 600-byte multibyte
+evidence, every early evidence diagnostic reason, missing
+storage/configuration/text, cache and concurrent claims, restart/migration
+persistence, three-page clipping, refusal/incomplete/malformed responses,
+invalid evidence, provider failure, and unchanged original PDF/text records. It
+leaves normal `.wrangler/state` untouched.
 
 `metadata:live:offline` specifically verifies the live verifier's sanitized
 evidence: a successful persisted result, a fixture-field mismatch that still

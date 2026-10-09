@@ -1211,3 +1211,43 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   `.wrangler/metadata-check/a6644969-522d-4fca-8f5c-6bfabd578772/result.json`.
   It made zero external OpenAI/arXiv requests, did not touch normal state, and
   retained claim/cache/schema/provider-bound behavior.
+
+## 2026-10-09 â€” Metadata evidence diagnostics and short-quote safeguard
+
+- A hosted metadata POST for the already saved Bespoke OLAP PDF returned
+  `502 metadata_invalid_response` with `OpenAI returned unsupported metadata
+  evidence.` The later metadata GET returned `404 metadata_not_found`. The
+  provider output was intentionally not retained, so its field, evidence index,
+  and exact early validation condition are unknown. This rejection occurs before
+  page-source matching and abstract validation; it does **not** establish that
+  the prior wrapped-abstract comparison repair failed.
+- Kept validation and cached results strict and unchanged. For the early
+  evidence-quote checks only, the Worker now logs a fixed, sanitized diagnostic:
+  event name, metadata field, evidence-array index, and one fixed reason
+  (`quote_shape`, `page_number_type`, `page_number_integer`, `quote_type`,
+  `quote_empty`, `quote_untrimmed`, or `quote_too_large`). It logs no provider
+  value, quote/PDF text, header, or key. Existing source matching, including the
+  raw NFC/whitespace and ASCII wrap-hyphen alternatives, remains later in the
+  validation path.
+- New uncached calls record prompt version `document-metadata-v2`. The bounded
+  prompt now requires trimmed, non-empty quotes of at most 600 UTF-8 bytes and
+  asks for the shortest supporting excerpt rather than a complete abstract when
+  a shorter quote supports the field. Quotes are never truncated; cached rows
+  remain immutable and are returned without a provider call.
+- Verification on Windows: `npm.cmd run typecheck` passed. The first sandboxed
+  `npm.cmd run build` could not read Vite's configuration; rerunning the exact
+  build with the required local-process permission passed (type checks, Vite,
+  Wrangler dry-run, and Sites staging; no upload). `node --check` passed for the
+  modified metadata scripts. The first two new `metadata:check` runs exposed
+  fixture/verifier-only issues (a single overly long synthetic PDF text operation
+  did not extract fully, then an invalid Unicode-regex escape in the new log
+  assertion); their UUID-owned failure state/evidence was retained. Splitting
+  the same 600-byte multibyte fixture across ordinary source lines and correcting
+  the assertion produced a passing final isolated check at
+  `.wrangler/metadata-check/fbc374a5-baa9-42aa-928b-ad10929487f8/result.json`.
+  It verified a valid 600-byte multibyte quote, a rejected 601-byte quote, and
+  every listed diagnostic reason against a loopback mock. No live OpenAI/arXiv
+  request, key access/change, upload to normal state, migration, deployment, or
+  retry occurred. The final `npm.cmd run sites` check also passed: callable
+  Worker/static routing, disabled probes, declared bindings, packaged UnPDF,
+  parser-free frontend, and unchanged migration metadata.

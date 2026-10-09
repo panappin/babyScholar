@@ -63,6 +63,20 @@ function validOutput() {
   };
 }
 
+function invalidEvidenceOutput(mode) {
+  const output = validOutput();
+  const quote = output.evidence.title[0];
+  if (mode === "evidence_quote_shape") output.evidence.title = [{ pageNumber: 1 }];
+  else if (mode === "evidence_page_number_type") quote.pageNumber = "1";
+  else if (mode === "evidence_page_number_integer") quote.pageNumber = 1.5;
+  else if (mode === "evidence_quote_type") quote.quote = 1;
+  else if (mode === "evidence_quote_empty") quote.quote = "";
+  else if (mode === "evidence_quote_untrimmed") quote.quote = ` ${expected.title}`;
+  else if (mode === "evidence_quote_600_multibyte") quote.quote = fixture.multibyteEvidenceQuote;
+  else if (mode === "evidence_quote_601_multibyte") quote.quote = `${fixture.multibyteEvidenceQuote}x`;
+  return output;
+}
+
 function wrappedOutput() {
   const expectedWrapped = wrappedFixture.expected;
   return {
@@ -157,6 +171,9 @@ async function startProvider() {
         maxOutputTokens: body.max_output_tokens,
         hasTools: Object.hasOwn(body, "tools"),
         strictSchema: format?.type === "json_schema" && format?.strict === true && format?.schema?.additionalProperties === false,
+        hasEvidenceQuoteLimitInstruction: typeof userInput === "string"
+          && userInput.includes("at most 600 UTF-8 bytes")
+          && userInput.includes("Prefer the shortest supporting excerpt"),
         pageMarkers: markers,
       });
       providerCalls += 1;
@@ -170,6 +187,7 @@ async function startProvider() {
       }
       let payload;
       if (providerMode === "unknown") payload = providerResponse(unknownOutput());
+      else if (providerMode.startsWith("evidence_")) payload = providerResponse(invalidEvidenceOutput(providerMode));
       else if (providerMode === "wrapped") payload = providerResponse(wrappedOutput());
       else if (providerMode === "wrapped_literal") payload = providerResponse(wrappedLiteralOutput());
       else if (providerMode === "wrapped_compound_deleted") {
@@ -357,6 +375,23 @@ async function expectFailure(mode, kind, status) {
   assert.equal(recovered.body.created, true, `${mode} must release only its own claim for a later explicit request`);
 }
 
+async function expectEvidenceFailure(mode, reason) {
+  const prepared = await uploadAndExtract();
+  providerMode = mode;
+  const logStart = worker.log.length;
+  const beforeCalls = providerCalls;
+  const failed = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, 502);
+  assert.equal(failed.body.error.kind, "metadata_invalid_response");
+  assert.equal(providerCalls, beforeCalls + 1);
+  const diagnosticLog = worker.log.slice(logStart);
+  assert.match(diagnosticLog, new RegExp(`metadata_evidence_rejected.*"field":"title","index":0,"reason":"${reason}"`, "u"));
+  const get = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, undefined, 404);
+  assert.equal(get.body.error.kind, "metadata_not_found");
+  providerMode = "valid";
+  const recovered = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(recovered.body.created, true, `${mode} must release only its own claim for a later explicit request`);
+}
+
 async function main() {
   await mkdir(state, { recursive: true });
   await startProvider();
@@ -385,7 +420,7 @@ async function main() {
   assert.equal(first.body.metadata.sourceSha256, primary.document.sha256);
   assert.equal(first.body.metadata.extractionExtractedAt, primary.extraction.extractedAt);
   assert.match(first.body.metadata.model, /\S/u);
-  assert.equal(first.body.metadata.promptVersion, "document-metadata-v1");
+  assert.equal(first.body.metadata.promptVersion, "document-metadata-v2");
   for (const field of ["title", "authors", "year", "abstract"]) assert.equal(first.body.metadata.evidence[field].length, 1);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/text`, undefined, 200)).body.extraction, primary.extraction);
   await download(primary.document, fixture.bytes);
@@ -456,6 +491,29 @@ async function main() {
   providerMode = "valid";
   record("wrapped-word-literal-and-joined-comparison-preserves-dashes-compounds-numbers-evidence-and-cache", { documentId: wrapped.document.id });
 
+  assert.equal(new TextEncoder().encode(fixture.multibyteEvidenceQuote).byteLength, 600);
+  const exactLimit = await uploadAndExtract(fixture.bytes, "evidence-600-utf8-bytes.pdf");
+  providerMode = "evidence_quote_600_multibyte";
+  const exactLimitResult = await jsonRequest(`/api/documents/${exactLimit.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(exactLimitResult.body.metadata.evidence.title[0].quote, fixture.multibyteEvidenceQuote);
+  for (const [mode, reason] of [
+    ["evidence_quote_shape", "quote_shape"],
+    ["evidence_page_number_type", "page_number_type"],
+    ["evidence_page_number_integer", "page_number_integer"],
+    ["evidence_quote_type", "quote_type"],
+    ["evidence_quote_empty", "quote_empty"],
+    ["evidence_quote_untrimmed", "quote_untrimmed"],
+    ["evidence_quote_601_multibyte", "quote_too_large"],
+  ]) {
+    await expectEvidenceFailure(mode, reason);
+  }
+  providerMode = "valid";
+  record("evidence-diagnostics-and-600-utf8-byte-boundary-passed", {
+    acceptedQuoteBytes: 600,
+    rejectedQuoteBytes: 601,
+    rejectionReasons: ["quote_shape", "page_number_type", "page_number_integer", "quote_type", "quote_empty", "quote_untrimmed", "quote_too_large"],
+  });
+
   const unknown = await uploadAndExtract();
   providerMode = "unknown";
   const unknownResult = await jsonRequest(`/api/documents/${unknown.document.id}/metadata`, { method: "POST" }, 201);
@@ -485,6 +543,7 @@ async function main() {
     assert.equal(request.maxOutputTokens, 4096);
     assert.equal(request.hasTools, false);
     assert.equal(request.strictSchema, true);
+    assert.equal(request.hasEvidenceQuoteLimitInstruction, true);
   }
   evidence.result = "passed";
 }

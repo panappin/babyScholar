@@ -302,7 +302,7 @@ function fixtureMismatches(metadata, extraction, expectedSha256) {
   if (!addComparison("sourceSha256", expectedSha256, typeof metadata?.sourceSha256 === "string" ? metadata.sourceSha256 : "invalid")) mismatches.push("sourceSha256");
   if (!addComparison("selectedPageNumbers", [1, 2], summary.selectedPageNumbers)) mismatches.push("selectedPageNumbers");
   if (!addComparison("sourceExcerptClipped", false, summary.sourceExcerptClipped)) mismatches.push("sourceExcerptClipped");
-  if (!addComparison("promptVersion", "document-metadata-v1", summary.promptVersion)) mismatches.push("promptVersion");
+  if (!addComparison("promptVersion", "document-metadata-v2", summary.promptVersion)) mismatches.push("promptVersion");
   if (!addComparison("modelPresent", true, summary.modelPresent)) mismatches.push("model");
 
   const pages = new Map(Array.isArray(extraction?.pages) ? extraction.pages.map((page) => [page.pageNumber, normalize(page.text)]) : []);
