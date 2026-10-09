@@ -50,14 +50,22 @@ export function normalizeMetadataWhitespace(value: string): string {
 
 /**
  * PDF text extraction can expose a presentation-only line-end hyphen, e.g.
- * `interpreta-\ntion`. Join only that exact physical line-break form on the
+ * `interpreta-\ntion`. Join only an ASCII hyphen in that exact physical line-break form on the
  * persisted source side before comparison. Same-line compound hyphens and all
  * punctuation remain literal; an ordinary hyphen deletion never matches.
  */
 export function normalizeMetadataSourcePresentation(value: string): string {
   return normalizeMetadataWhitespace(
-    value.normalize("NFC").replace(/(\p{L})[\u00ad\u2010-\u2015-][\t \f\v]*\r?\n[\t \f\v]*(\p{L})/gu, "$1$2"),
+    value.normalize("NFC").replace(/(\p{L})-[\t \f\v]*\r?\n[\t \f\v]*(\p{L})/gu, "$1$2"),
   );
+}
+
+/** Accept literal PDF text or only the documented ASCII line-wrap equivalent. */
+function pageContains(pageText: string, value: string): boolean {
+  const target = normalizeMetadataWhitespace(value);
+  if (target.length === 0) return false;
+  return normalizeMetadataWhitespace(pageText).includes(target)
+    || normalizeMetadataSourcePresentation(pageText).includes(target);
 }
 
 function boundedSourceString(value: unknown, maximumBytes: number, name: string): string {
@@ -68,8 +76,7 @@ function boundedSourceString(value: unknown, maximumBytes: number, name: string)
 }
 
 function sourceContains(excerpt: MetadataSourceExcerpt, value: string): boolean {
-  const target = normalizeMetadataWhitespace(value);
-  return target.length > 0 && excerpt.pages.some((page) => normalizeMetadataSourcePresentation(page.text).includes(target));
+  return excerpt.pages.some((page) => pageContains(page.text, value));
 }
 
 function validateWarnings(value: unknown): string[] {
@@ -91,7 +98,7 @@ function validateEvidenceQuote(value: unknown, excerpt: MetadataSourceExcerpt): 
     invalid("OpenAI returned unsupported metadata evidence.");
   }
   const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
-  if (!page || !normalizeMetadataSourcePresentation(page.text).includes(normalizeMetadataWhitespace(quote))) {
+  if (!page || !pageContains(page.text, quote)) {
     invalid("OpenAI returned metadata evidence that does not match the selected PDF text.");
   }
   return { pageNumber, quote };
@@ -117,13 +124,19 @@ function validateAuthors(value: unknown, excerpt: MetadataSourceExcerpt): string
   if (!Array.isArray(value) || value.length === 0 || value.length > MAX_AUTHOR_COUNT) invalid("OpenAI returned unsupported authors.");
   const authors = value.map((author) => boundedSourceString(author, MAX_AUTHOR_BYTES, "author"));
   if (new Set(authors).size !== authors.length) invalid("OpenAI returned duplicate authors.");
-  let previous = -1;
-  const source = excerpt.pages.map((page) => normalizeMetadataWhitespace(page.text)).join(" ");
-  for (const author of authors) {
-    const index = source.indexOf(normalizeMetadataWhitespace(author), previous + 1);
-    if (index < 0) invalid("OpenAI returned authors unsupported by the selected PDF text.");
-    previous = index;
-  }
+  const sources = [
+    excerpt.pages.map((page) => normalizeMetadataWhitespace(page.text)).join(" "),
+    excerpt.pages.map((page) => normalizeMetadataSourcePresentation(page.text)).join(" "),
+  ];
+  if (!sources.some((source) => {
+    let previous = -1;
+    for (const author of authors) {
+      const index = source.indexOf(normalizeMetadataWhitespace(author), previous + 1);
+      if (index < 0) return false;
+      previous = index;
+    }
+    return true;
+  })) invalid("OpenAI returned authors unsupported by the selected PDF text.");
   return authors;
 }
 

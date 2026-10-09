@@ -181,6 +181,33 @@ export function createWrappedMetadataPdfFixture() {
   };
 }
 
+/** CC0 fixture whose WinAnsi line-end en/em dashes must remain literal. */
+export function createDashBoundaryPdfFixture() {
+  const expected = {
+    title: "Dash Boundary Fixture",
+    authors: ["Avery Example"],
+    year: 2024,
+    abstract: "This en–\ndash and em—\ndash remain literal.",
+  };
+  return {
+    bytes: buildPdf([
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      multiLineTextStream([
+        expected.title,
+        "Authors: Avery Example",
+        "Published: 2024",
+        "Abstract: This en\x96",
+        "dash and em\x97",
+        "dash remain literal.",
+      ]),
+    ]),
+    expected,
+  };
+}
+
 export function createMetadataClippedPdfFixture() {
   return buildPdf([
     "<< /Type /Catalog /Pages 2 0 R >>",

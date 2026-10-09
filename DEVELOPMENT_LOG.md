@@ -1187,3 +1187,27 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   local state and a loopback provider mock; evidence:
   `.wrangler/metadata-check/8f3ef209-d107-4392-9e78-a35cfcec6c52/result.json`.
   It made zero external OpenAI/arXiv requests and left normal state untouched.
+
+## 2026-10-09 — Phase 3 metadata comparison safeguards
+
+- Independent offline review found two defects in the first wrap repair. Its
+  source-wrap normalization replaced, rather than supplemented, the original
+  NFC/whitespace comparison, rejecting literal `interpreta-\ntion` values and
+  evidence. Its Unicode dash range also accepted removal of an en or em dash at
+  a physical line break. No provider output was inspected or retried.
+- The production change remains confined to metadata comparison helpers. A page
+  now matches when either the original NFC/collapsed-whitespace source form or
+  the additional source-side ASCII `-` plus physical-line-break form matches.
+  This helper is shared by known textual fields, page evidence, and ordered
+  authors. Only ASCII `-` participates in joining; en/em/figure dashes, soft
+  hyphens, same-line compounds, and other punctuation remain literal. Stored
+  extraction text remains untouched. The documented hard-ASCII-hyphen-at-line-
+  end ambiguity remains explicit and conservative.
+- Extended the CC0 isolated regression with literal and joined wrapped abstract
+  values/evidence, a WinAnsi en/em-dash boundary fixture, wrong-page evidence,
+  compound deletion, invented wording, changed numbers, clean fixture, and
+  cached-result checks. `npm.cmd run metadata:check` passed with loopback-only
+  provider behavior and UUID-owned state; evidence:
+  `.wrangler/metadata-check/a6644969-522d-4fca-8f5c-6bfabd578772/result.json`.
+  It made zero external OpenAI/arXiv requests, did not touch normal state, and
+  retained claim/cache/schema/provider-bound behavior.

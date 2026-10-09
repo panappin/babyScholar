@@ -7,7 +7,7 @@ import { createServer as createTcpServer } from "node:net";
 import { dirname, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import workerArtifact from "../dist/worker/index.js";
-import { createMetadataClippedPdfFixture, createMetadataPdfFixture, createWrappedMetadataPdfFixture } from "./fixtures/pdf-fixtures.mjs";
+import { createDashBoundaryPdfFixture, createMetadataClippedPdfFixture, createMetadataPdfFixture, createWrappedMetadataPdfFixture } from "./fixtures/pdf-fixtures.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
@@ -18,6 +18,7 @@ const children = new Set();
 const fixture = createMetadataPdfFixture();
 const expected = fixture.expected;
 const wrappedFixture = createWrappedMetadataPdfFixture();
+const dashBoundaryFixture = createDashBoundaryPdfFixture();
 const evidence = {
   id,
   state,
@@ -74,6 +75,30 @@ function wrappedOutput() {
       authors: [{ pageNumber: 1, quote: "Avery Example; Bao Example" }],
       year: [{ pageNumber: 1, quote: "Published: 2024" }],
       abstract: [{ pageNumber: 1, quote: "Abstract: This controlled interpretation evaluates state-of-the-art performance on 17 source-grounded records." }],
+    },
+    warnings: [],
+  };
+}
+
+function wrappedLiteralOutput() {
+  const output = wrappedOutput();
+  output.abstract = "This controlled interpreta-\ntion evaluates state-of-the-art per-\nformance on 17 source-grounded records.";
+  output.evidence.abstract = [{ pageNumber: 1, quote: `Abstract: ${output.abstract}` }];
+  return output;
+}
+
+function dashRemovalOutput() {
+  const expectedDash = dashBoundaryFixture.expected;
+  return {
+    title: expectedDash.title,
+    authors: expectedDash.authors,
+    year: expectedDash.year,
+    abstract: "This endash and emdash remain literal.",
+    evidence: {
+      title: [{ pageNumber: 1, quote: expectedDash.title }],
+      authors: [{ pageNumber: 1, quote: "Avery Example" }],
+      year: [{ pageNumber: 1, quote: "Published: 2024" }],
+      abstract: [{ pageNumber: 1, quote: "Abstract: This endash and emdash remain literal." }],
     },
     warnings: [],
   };
@@ -146,6 +171,7 @@ async function startProvider() {
       let payload;
       if (providerMode === "unknown") payload = providerResponse(unknownOutput());
       else if (providerMode === "wrapped") payload = providerResponse(wrappedOutput());
+      else if (providerMode === "wrapped_literal") payload = providerResponse(wrappedLiteralOutput());
       else if (providerMode === "wrapped_compound_deleted") {
         const output = wrappedOutput();
         output.abstract = output.abstract.replace("state-of-the-art", "state of the art");
@@ -158,6 +184,12 @@ async function startProvider() {
         const output = wrappedOutput();
         output.abstract = output.abstract.replace("controlled", "invented");
         payload = providerResponse(output);
+      } else if (providerMode === "wrapped_wrong_page") {
+        const output = wrappedOutput();
+        output.evidence.abstract = [{ pageNumber: 2, quote: output.evidence.abstract[0].quote }];
+        payload = providerResponse(output);
+      } else if (providerMode === "dash_removed") {
+        payload = providerResponse(dashRemovalOutput());
       }
       else if (providerMode === "wrong_evidence") {
         const output = validOutput();
@@ -405,14 +437,24 @@ async function main() {
   assert.equal(wrappedCached.body.created, false);
   assert.deepEqual(wrappedCached.body.metadata, wrappedResult.body.metadata);
   assert.equal((await jsonRequest(`/api/documents/${wrapped.document.id}/text`, undefined, 200)).body.extraction.pages[0].text.includes("interpreta-\ntion"), true);
-  for (const mode of ["wrapped_compound_deleted", "wrapped_number_changed", "wrapped_word_changed"]) {
+  const wrappedLiteral = await uploadAndExtract(wrappedFixture.bytes, "wrapped-literal-metadata.pdf");
+  providerMode = "wrapped_literal";
+  const literalResult = await jsonRequest(`/api/documents/${wrappedLiteral.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(literalResult.body.metadata.abstract, "This controlled interpreta-\ntion evaluates state-of-the-art per-\nformance on 17 source-grounded records.");
+  assert.equal(literalResult.body.metadata.evidence.abstract[0].quote, `Abstract: ${literalResult.body.metadata.abstract}`);
+  for (const mode of ["wrapped_compound_deleted", "wrapped_number_changed", "wrapped_word_changed", "wrapped_wrong_page"]) {
     const rejected = await uploadAndExtract(wrappedFixture.bytes, `${mode}.pdf`);
     providerMode = mode;
     const response = await jsonRequest(`/api/documents/${rejected.document.id}/metadata`, { method: "POST" }, 502);
     assert.equal(response.body.error.kind, "metadata_invalid_response");
   }
+  const dashBoundary = await uploadAndExtract(dashBoundaryFixture.bytes, "dash-boundary.pdf");
+  assert.equal((await jsonRequest(`/api/documents/${dashBoundary.document.id}/text`, undefined, 200)).body.extraction.pages[0].text.includes("en–\ndash and em—\ndash"), true);
+  providerMode = "dash_removed";
+  const dashRejected = await jsonRequest(`/api/documents/${dashBoundary.document.id}/metadata`, { method: "POST" }, 502);
+  assert.equal(dashRejected.body.error.kind, "metadata_invalid_response");
   providerMode = "valid";
-  record("wrapped-word-comparison-preserves-compounds-numbers-evidence-and-cache", { documentId: wrapped.document.id });
+  record("wrapped-word-literal-and-joined-comparison-preserves-dashes-compounds-numbers-evidence-and-cache", { documentId: wrapped.document.id });
 
   const unknown = await uploadAndExtract();
   providerMode = "unknown";
