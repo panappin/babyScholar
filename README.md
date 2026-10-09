@@ -1,8 +1,8 @@
 # AI Research Assistant
 
-Phase 4A adds backend-only, source-grounded summaries of persisted PDF text in
-private R2. The existing Papers and PDFs views have no summary control yet;
-OCR and Q&A remain out of scope.
+Phase 4B adds a PDF workspace control for explicit, source-grounded summaries
+of persisted PDF text in private R2. The existing Papers and Library workflows
+remain unchanged; OCR and Q&A remain out of scope.
 
 ## Prerequisites
 
@@ -300,11 +300,11 @@ retained for diagnosis. Normal `.wrangler/state` and user servers are untouched.
 
 ## Original-PDF document API (Phases 3A–3C)
 
-This backend-only slice retains private original PDFs and extracts readable text
-only on the Worker. Metadata generation is available only through the Worker
-API; there is no upload or text frontend control, OCR, summary, or Q&A feature.
-The existing private Site boundary, `DB`, and `PAPER_BUCKET` bindings are reused;
-there is no new public bucket route or CORS policy.
+This slice retains private original PDFs and extracts readable text only on the
+Worker. The PDFs workspace offers explicit upload, extraction/metadata
+processing, and summary generation controls; all provider-facing work remains
+on the Worker. The existing private Site boundary, `DB`, and `PAPER_BUCKET`
+bindings are reused; there is no new public bucket route or CORS policy.
 
 `POST /api/documents` accepts uncompressed `multipart/form-data` containing
 **exactly one** field named `file`. The field must be a nonempty file with an
@@ -539,7 +539,8 @@ tokens, a 25-second deadline, a 256 KiB response cap, and no automatic retry.
 It treats supplied PDF text as untrusted data, asks for short supporting excerpts
 rather than an abstract-sized quote, and returns sanitized configuration,
 authentication, quota/rate-limit, model-access, timeout, refusal, invalid, and
-provider failure errors. There is no frontend summary UI in this phase.
+provider failure errors. Phase 4B renders saved summaries in the selected-PDF
+workspace without adding a new request beyond its read-only summary GET.
 
 ```powershell
 # Loopback mock provider plus isolated Worker/D1/R2 state; zero OpenAI calls:
@@ -566,10 +567,30 @@ it never automatically retries a POST. The selected record offers the original
 PDF download, full page-numbered extracted text, source-grounded title/authors/
 year/abstract, warnings, and collapsible page-numbered evidence.
 
+The selected PDF also has a **Summary** section. Loading a record, selecting it,
+and choosing **Reload summary** use `GET /api/documents/:id/summary` only. When
+saved text exists, **Generate summary** is an explicit one-shot `POST`; it is
+available even when metadata is unavailable or failed. The UI never retries a
+summary POST automatically. If an interrupted or malformed response leaves the
+result uncertain, it first performs a read-only summary GET and clearly asks
+the user to choose any later generation attempt.
+
+A saved summary remains visible after reload. It labels the included page ranges
+and total page count. A truncated source is explicitly marked **Partial source
+coverage** and explains that text outside the 96 KiB source budget was omitted;
+it is never presented as a complete-paper summary. Overview, contributions,
+methods, findings, stated limitations, warnings, and native expandable
+page-numbered supporting quotes use the stored backend result. The quotes show
+only that cited text occurs on the listed page, not that every paraphrased claim
+is entailed.
+
 `npm.cmd run documents:ui:check` runs the dependency-free Chrome check against
 isolated local D1/R2 state. Its real browser path uses the relative Vite proxy,
-actual Worker PDF extraction, and a loopback metadata mock with an offline
-sentinel key; it makes no OpenAI or arXiv request.
+actual Worker PDF extraction, and loopback metadata and summary mocks with
+offline sentinel keys; it makes no OpenAI or arXiv request. It covers saved and
+missing summaries, partial coverage/evidence rendering, stale selections,
+in-progress/failure/uncertain summary states, explicit generation, and
+GET-only refresh persistence.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked

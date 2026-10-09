@@ -7,7 +7,7 @@ import { createServer as createHttpServer } from "node:http";
 import { createServer } from "node:net";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
-import { createMetadataPdfFixture } from "./fixtures/pdf-fixtures.mjs";
+import { createMetadataPdfFixture, createSummaryPdfFixture } from "./fixtures/pdf-fixtures.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
@@ -21,6 +21,7 @@ const browserPath = browserCandidates.find(existsSync);
 const children = new Set();
 const evidence = { startedAt: new Date().toISOString(), state, steps: [], result: "running" };
 const documentFixture = createMetadataPdfFixture();
+const summaryFixture = createSummaryPdfFixture();
 let worker;
 let frontend;
 let browser;
@@ -28,6 +29,8 @@ let metadataProvider;
 let metadataProviderOrigin;
 let metadataProviderCalls = 0;
 let metadataProviderMode = "success";
+let summaryProviderCalls = 0;
+let summaryProviderMode = "success";
 
 const existingPaper = {
   id: "11111111-1111-4111-8111-111111111111",
@@ -78,6 +81,16 @@ const unknownMetadata = (documentId) => ({
   title: null, authors: null, year: null, abstract: null,
   evidence: { title: [], authors: [], year: [], abstract: [] }, warnings: ["title is unknown in the selected source."],
 });
+const partialSummary = (documentId) => ({
+  documentId, sourceSha256: "a".repeat(64), extractionParser: "unpdf", extractionParserVersion: "unpdf@1.8.1", extractionExtractedAt: "2026-01-02T03:04:05.000Z",
+  totalPageCount: 5, includedPageNumbers: [1, 2, 3], includedPageRanges: [{ startPage: 1, endPage: 3 }], sourceExcerptByteCount: 98_304,
+  sourceExcerptTruncated: true, sourceCoverageWarning: "Partial source coverage: pages 1-3 of 5 were included within the 98304-byte budget.",
+  model: "local-summary-mock", promptVersion: "document-summary-v1", schemaVersion: "document-summary-schema-v1", createdAt: "2026-01-02T03:04:07.000Z",
+  overview: { text: "The partial fixture is summarized from selected persisted pages only.", evidence: [{ pageNumber: 1, quote: "Current selected PDF text" }] },
+  contributions: [{ text: "It labels the limited source coverage.", evidence: [{ pageNumber: 2, quote: "Current selected PDF text" }] }],
+  methods: [], findings: [], limitations: [],
+  warnings: ["methods are unavailable in the selected source.", "findings are unavailable in the selected source.", "limitations are unavailable in the selected source.", "Partial source coverage: pages 1-3 of 5 were included within the 98304-byte budget."],
+});
 
 function record(step, details = {}) {
   evidence.steps.push({ step, ...details });
@@ -101,11 +114,55 @@ function metadataProviderOutput() {
   };
 }
 
+function summaryProviderOutput() {
+  const expected = summaryFixture.expected;
+  return {
+    overview: {
+      text: "The fixture evaluates an ordered approach to source-grounded research-paper summaries.",
+      evidence: [{ pageNumber: 1, quote: expected.overviewQuote }],
+    },
+    contributions: [{
+      text: "It separates persisted source selection from summary generation.",
+      evidence: [{ pageNumber: 2, quote: expected.contributionQuote }],
+    }],
+    methods: [{
+      text: "Its method keeps ordered page text with page-numbered evidence.",
+      evidence: [{ pageNumber: 3, quote: expected.methodQuote }],
+    }],
+    findings: [{
+      text: "Later-page findings can remain represented in the resulting summary.",
+      evidence: [{ pageNumber: 4, quote: expected.findingQuote }],
+    }],
+    limitations: [{
+      text: "Supporting quotes do not establish every implication of a paraphrase.",
+      evidence: [{ pageNumber: 4, quote: expected.limitationQuote }],
+    }],
+    warnings: [],
+  };
+}
+
 async function startMetadataProvider() {
-  metadataProvider = createHttpServer((request, response) => {
-    if (request.method !== "POST" || request.url !== "/v1/responses" || request.headers.authorization !== "Bearer local-metadata-test-key") {
+  metadataProvider = createHttpServer(async (request, response) => {
+    const chunks = [];
+    for await (const chunk of request) chunks.push(chunk);
+    let body;
+    try { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { body = undefined; }
+    const isSummary = body?.text?.format?.name === "document_summary";
+    const expectedAuthorization = isSummary ? "Bearer local-summary-test-key" : "Bearer local-metadata-test-key";
+    if (request.method !== "POST" || request.url !== "/v1/responses" || request.headers.authorization !== expectedAuthorization) {
       response.writeHead(400, { "content-type": "application/json" });
-      response.end(JSON.stringify({ error: { message: "unexpected local metadata request" } }));
+      response.end(JSON.stringify({ error: { message: "unexpected local provider request" } }));
+      return;
+    }
+    if (isSummary) {
+      summaryProviderCalls += 1;
+      if (summaryProviderMode === "failure") {
+        response.writeHead(500, { "content-type": "application/json" });
+        response.end(JSON.stringify({ error: { message: "local summary provider failure" } }));
+        return;
+      }
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(JSON.stringify({ status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(summaryProviderOutput()) }] }] }));
       return;
     }
     metadataProviderCalls += 1;
@@ -268,7 +325,7 @@ async function main() {
   await startMetadataProvider();
   await migrate();
   worker = launch(process.execPath, [wrangler, "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
-    "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`,
+    "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_SUMMARY_PROVIDER_URL:${metadataProviderOrigin}`,
     "--ip", "127.0.0.1", "--port", String(workerPort), "--inspector-port", "0", "--show-interactive-dev-session=false"]);
   await waitForServer(worker, `${workerOrigin}/api/health`);
   frontend = launch(process.execPath, [vite, "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], { LOCAL_WORKER_ORIGIN: workerOrigin });
@@ -298,7 +355,10 @@ async function main() {
     return result.result.value;
   };
   const waitFor = async (expression, description) => {
-    const deadline = Date.now() + 12_000;
+    // Vite can need more than the former 12 seconds when rebuilding after this
+    // browser has exercised a large intercepted mock sequence. This remains a
+    // bounded readiness wait, not a request retry.
+    const deadline = Date.now() + 30_000;
     while (Date.now() < deadline) {
       if (await evaluate(`Boolean(${expression})`)) return;
       await delay(40);
@@ -358,6 +418,8 @@ async function main() {
   const isDocumentMetadataGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/metadata`;
   const isDocumentExtractPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/extract`;
   const isDocumentMetadataPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/metadata`;
+  const isDocumentSummaryGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/summary`;
+  const isDocumentSummaryPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/summary`;
   const fulfillJson = async (request, status, body) => {
     record("mock-response", { method: request.request.method, path: new URL(request.request.url).pathname, status });
     return cdp.send("Fetch.fulfillRequest", {
@@ -579,40 +641,77 @@ async function main() {
   assert.equal(await click(`[data-document-id="${mockDocumentOne.id}"]`), true);
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentOne.id), "unknown-metadata text GET"), 200, { extraction: mockExtraction(mockDocumentOne.id, "Current selected PDF text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentOne.id), "unknown-metadata GET"), 200, { metadata: unknownMetadata(mockDocumentOne.id) });
+  await waitFor("document.body.innerText.includes('Loading saved summary')", "summary loading state");
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentOne.id), "not-generated summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await waitFor("document.body.innerText.includes('Title unavailable') && document.body.innerText.includes('title is unknown')", "unknown metadata fallbacks");
+  await waitFor("document.body.innerText.includes('No summary has been generated')", "not-generated summary state");
+  assert.equal(await click('[data-generate-summary]'), true);
+  await waitFor("document.body.innerText.includes('Generating a source-grounded summary')", "summary generation feedback");
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryPost(request, mockDocumentOne.id), "partial summary POST"), 201, { summary: partialSummary(mockDocumentOne.id), created: true });
+  await waitFor("document.body.innerText.includes('Partial source coverage') && document.body.innerText.includes('Text outside the source budget was omitted')", "partial summary coverage rendering");
+  await evaluate("document.querySelector('.summary-evidence').open = true");
+  await waitFor("document.body.innerText.includes('Supporting quotes') && document.body.innerText.includes('Page 1:')", "summary page-numbered evidence");
+  const summaryPostsAfterCreate = allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentOne.id}/summary`)).length;
+  assert.equal(await click('[data-summary-reload]'), true);
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentOne.id), "saved summary reload GET"), 200, { summary: partialSummary(mockDocumentOne.id) });
+  await waitFor("document.body.innerText.includes('Partial source coverage')", "saved summary after explicit GET reload");
+  assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentOne.id}/summary`)).length, summaryPostsAfterCreate, "summary reload must use GET only");
 
   // A superseded detail response must not overwrite a newer selection.
   assert.equal(await click(`[data-document-id="${mockDocumentTwo.id}"]`), true);
   const staleText = await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "stale document text request");
   const staleMetadata = await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "stale document metadata request");
+  const staleSummary = await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "stale document summary request");
   assert.equal(await click(`[data-document-id="${mockDocumentOne.id}"]`), true);
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentOne.id), "current document text request"), 200, { extraction: mockExtraction(mockDocumentOne.id, "Current selected PDF text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentOne.id), "current document metadata request"), 200, { metadata: unknownMetadata(mockDocumentOne.id) });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentOne.id), "current document summary request"), 200, { summary: partialSummary(mockDocumentOne.id) });
   await cdp.send("Fetch.failRequest", { requestId: staleText.requestId, errorReason: "Aborted" }).catch(() => undefined);
   await cdp.send("Fetch.failRequest", { requestId: staleMetadata.requestId, errorReason: "Aborted" }).catch(() => undefined);
-  await waitFor("document.querySelector('.document-text pre')?.textContent.includes('Current selected PDF text')", "stale document selection ignored");
+  await cdp.send("Fetch.failRequest", { requestId: staleSummary.requestId, errorReason: "Aborted" }).catch(() => undefined);
+  await waitFor("document.querySelector('.document-text pre')?.textContent.includes('Current selected PDF text') && document.body.innerText.includes('Partial source coverage')", "stale document and summary selection ignored");
 
   // Resume reads first, then surfaces in-progress and interrupted POSTs without
   // retrying them. The interrupted case reconciles through read-only GETs.
   assert.equal(await click(`[data-document-id="${mockDocumentTwo.id}"]`), true);
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "resume candidate text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "resume candidate metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "resume candidate summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await waitFor("document.body.innerText.includes('Resume processing')", "resume action");
+  assert.equal(await click('[data-generate-summary]'), true);
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryPost(request, mockDocumentTwo.id), "summary in-progress POST"), 409, { error: { kind: "summary_in_progress", message: "Summary generation is in progress; try again after the active request finishes." } });
+  await waitFor("document.body.innerText.includes('Summary generation is in progress')", "summary in-progress feedback");
   assert.equal(await click("#pdfs-view .document-detail .save-button"), true);
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "resume preflight text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "resume preflight metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "resume preflight summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataPost(request, mockDocumentTwo.id), "in-progress metadata POST"), 409, { error: { kind: "metadata_in_progress", message: "Metadata generation is in progress; try again after the active request finishes." } });
   await waitFor("document.querySelector('[role=alert]')?.textContent.includes('Metadata generation is in progress')", "metadata in-progress feedback");
   const postsBeforeInterrupt = allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/metadata`)).length;
   assert.equal(await click("#pdfs-view .document-detail .save-button"), true);
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "interrupted preflight text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "interrupted preflight metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "interrupted preflight summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataPost(request, mockDocumentTwo.id), "interrupted metadata POST"), 200, { unexpected: true });
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "interrupted reconciliation text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "interrupted reconciliation metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "interrupted reconciliation summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await waitFor("document.body.innerText.includes('saved results are shown')", "interrupted processing reconciliation");
   assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/metadata`)).length, postsBeforeInterrupt + 1, "interrupted metadata POST must not retry automatically");
-  record("mocked-pdfs-loading-empty-errors-unknown-stale-inprogress-and-interrupted-passed");
+
+  assert.equal(await click('[data-summary-reload]'), true);
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "malformed summary GET"), 200, { unexpected: true });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('Saved summary returned an unexpected response')", "malformed summary feedback");
+  assert.equal(await click('[data-generate-summary]'), true);
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryPost(request, mockDocumentTwo.id), "summary provider failure POST"), 502, { error: { kind: "summary_provider_failure", message: "The summary provider returned an error." } });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('summary provider returned an error')", "summary provider failure feedback");
+  const summaryPostsBeforeUncertain = allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/summary`)).length;
+  assert.equal(await click('[data-generate-summary]'), true);
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryPost(request, mockDocumentTwo.id), "uncertain summary POST"), 200, { unexpected: true });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "uncertain summary reconciliation GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('No saved summary was found')", "uncertain summary reconciliation");
+  assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/summary`)).length, summaryPostsBeforeUncertain + 1, "uncertain summary POST must not retry automatically");
+  record("mocked-pdfs-summary-loading-partial-evidence-get-only-stale-and-inprogress-passed");
 
   // Real isolated PDF flow: browser FormData crosses the relative Vite proxy,
   // Worker uploads to isolated R2, extracts with the real parser, and reaches
@@ -625,10 +724,10 @@ async function main() {
   await waitFor("document.querySelector('#pdf-upload')", "PDF upload form");
   await waitFor("document.body.innerText.includes('No PDFs have been uploaded yet')", "empty PDFs state");
   const fixtureBase64 = Buffer.from(documentFixture.bytes).toString("base64");
-  const choosePdf = async (filename) => evaluate(`(() => {
+  const choosePdf = async (filename, base64 = fixtureBase64) => evaluate(`(() => {
     const input = document.querySelector('#pdf-upload');
     if (!(input instanceof HTMLInputElement)) return false;
-    const bytes = Uint8Array.from(atob(${JSON.stringify(fixtureBase64)}), (character) => character.charCodeAt(0));
+    const bytes = Uint8Array.from(atob(${JSON.stringify(base64)}), (character) => character.charCodeAt(0));
     const file = new File([bytes], ${JSON.stringify(filename)}, { type: 'application/pdf' });
     const files = new DataTransfer();
     files.items.add(file);
@@ -679,12 +778,41 @@ async function main() {
   metadataProviderMode = "success";
   record("actual-browser-metadata-failure-retains-upload-and-text-passed", { providerCalls: metadataProviderCalls });
 
+  // A separate actual Worker flow proves that an explicit summary works from
+  // saved text even when this fixture's bibliographic metadata is unavailable.
+  const summaryFixtureBase64 = Buffer.from(summaryFixture.bytes).toString("base64");
+  assert.equal(await choosePdf("summary-browser-fixture.pdf", summaryFixtureBase64), true);
+  assert.equal(await click("#pdfs-view button[type=submit]"), true);
+  await waitFor("document.querySelector('[role=alert]')?.textContent.includes('metadata') && document.body.innerText.includes('Extracted page text')", "summary fixture text retained after unavailable metadata");
+  await waitFor("document.body.innerText.includes('No summary has been generated')", "actual summary not-generated state");
+  const summaryDocumentId = await evaluate("document.querySelector('.document-select')?.dataset.documentId");
+  assert.match(summaryDocumentId, /^[0-9a-f-]{36}$/u);
+  assert.equal(await click('[data-generate-summary]'), true);
+  await waitFor("document.body.innerText.includes('Later-page findings can remain represented in the resulting summary.') && document.body.innerText.includes('Full source coverage')", "actual summary generation and evidence");
+  assert.equal(summaryProviderCalls, 1, "explicit summary generation must make exactly one loopback provider request");
+  await evaluate("document.querySelectorAll('.summary-evidence')[3]?.setAttribute('open', '')");
+  await waitFor("document.body.innerText.includes('Supporting quotes') && document.body.innerText.includes('Page 4:')", "actual summary expandable evidence");
+  await cdp.send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }, sessionId);
+  await delay(50);
+  const summaryMobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
+  assert.ok(summaryMobileMetrics.scrollWidth <= summaryMobileMetrics.width, "narrow summary layout must not require horizontal scrolling");
+  await cdp.send("Emulation.clearDeviceMetricsOverride", {}, sessionId);
+  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await waitFor("document.querySelector('#pdfs-tab')", "summary browser refresh");
+  assert.equal(await click("#pdfs-tab"), true);
+  await waitFor(`document.querySelector('[data-document-id=${JSON.stringify(summaryDocumentId)}]')`, "persisted summary PDF after refresh");
+  assert.equal(await click(`[data-document-id="${summaryDocumentId}"]`), true);
+  await waitFor("document.body.innerText.includes('Later-page findings can remain represented in the resulting summary.')", "persisted summary after GET-only refresh");
+  assert.equal(summaryProviderCalls, 1, "browser refresh and selection must not regenerate a saved summary");
+  record("actual-browser-vite-proxy-summary-explicit-generation-refresh-and-evidence-passed", { documentId: summaryDocumentId, summaryProviderCalls, metadataProviderCalls });
+
   cdp.close();
   evidence.result = "passed";
   evidence.browser = browserPath;
   evidence.workerOrigin = workerOrigin;
   evidence.viteOrigin = viteOrigin;
   evidence.metadataProviderCalls = metadataProviderCalls;
+  evidence.summaryProviderCalls = summaryProviderCalls;
   evidence.desktopScreenshotPath = desktopScreenshotPath;
   evidence.mobileScreenshotPath = mobileScreenshotPath;
 } catch (error) {

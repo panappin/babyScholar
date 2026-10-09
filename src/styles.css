@@ -548,10 +548,68 @@ a:focus-visible {
 
 .document-detail,
 .document-metadata,
+.document-summary,
 .document-text,
 .metadata-evidence,
+.summary-evidence,
 .document-warnings {
   margin-top: 1.25rem;
+}
+
+.document-metadata .paper-metadata {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.document-metadata .paper-metadata dd {
+  overflow-wrap: anywhere;
+}
+
+.summary-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.document-summary {
+  padding: 1rem;
+  border: 1px solid #dce2ec;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.summary-coverage {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-left: 0.25rem solid #4f7eaf;
+  color: #2a3548;
+  background: #f2f7fc;
+  line-height: 1.55;
+}
+
+.summary-coverage--partial {
+  border-left-color: #a45d12;
+  background: #fff8ed;
+}
+
+.summary-overview,
+.summary-section,
+.summary-warnings {
+  margin-top: 1.25rem;
+}
+
+.summary-overview > p,
+.summary-section > p,
+.summary-section li > p {
+  color: #364157;
+  line-height: 1.6;
+}
+
+.summary-section > ol {
+  display: grid;
+  gap: 0.875rem;
+  margin: 0.75rem 0 0;
+  padding-left: 1.3rem;
 }
 
 .document-detail {
@@ -562,7 +620,8 @@ a:focus-visible {
 }
 
 .document-text,
-.metadata-evidence {
+.metadata-evidence,
+.summary-evidence {
   padding: 0.875rem 1rem;
   border: 1px solid #dce2ec;
   border-radius: 0.65rem;
@@ -570,7 +629,8 @@ a:focus-visible {
 }
 
 .document-text summary,
-.metadata-evidence summary {
+.metadata-evidence summary,
+.summary-evidence summary {
   cursor: pointer;
   color: #124f94;
   font-weight: 700;
@@ -594,6 +654,7 @@ a:focus-visible {
 }
 
 .metadata-evidence ol,
+.summary-evidence ol,
 .document-warnings ul {
   display: grid;
   gap: 0.5rem;
@@ -610,6 +671,18 @@ a:focus-visible {
   .upload-controls input,
   .upload-controls button {
     flex: 0 1 auto;
+    width: 100%;
+  }
+
+  .document-metadata .paper-metadata {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-heading {
+    flex-direction: column;
+  }
+
+  .summary-heading .reload-button {
     width: 100%;
   }
 }

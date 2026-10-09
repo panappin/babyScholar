@@ -1317,3 +1317,63 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   migration, frontend work, dependency/lockfile change, upload to normal state,
   push, deployment, or transport investigation occurred. The documented local
   Wrangler/Miniflare oversized-upload transport limitation remains unchanged.
+
+## 2026-10-09 - Phase 4B PDF summary workspace UI
+
+### Scope and implementation
+
+- Began on local `main` at `7f9873a5f1b5f064a6d0f949aa0146a378cee8cc`.
+  It and the earlier locally unpublished
+  `cd7287c` (`Diagnose metadata evidence rejections`) were both ahead of
+  `origin/main`; this UI slice does not assume or change the other commit's
+  contents. The untracked Phase 0B.2 ZIP/folder, normal `.wrangler/state`,
+  D1/R2 data, migrations, key/model configuration, and existing workflows were
+  preserved.
+- Added a selected-PDF **Summary** section using only relative
+  `/api/documents/:id/summary` routes. Initial detail reads, selection, and
+  **Reload summary** use GET only. **Generate summary** is an explicit one-shot
+  POST and is available whenever extraction exists, including after unavailable
+  or failed metadata. The UI never retries that POST automatically.
+- The view handles loading, no saved summary, missing extraction, active
+  generation, another request's in-progress claim, sanitized failures,
+  malformed responses, and uncertain POST outcomes. On uncertain output it
+  performs a read-only GET reconciliation before offering a later explicit
+  attempt. Request controllers/revisions prevent stale results after selection
+  changes and are aborted on unmount.
+- Saved summaries render backend overview, contributions, methods, findings,
+  stated limitations, warnings, included ranges/page count, and native
+  expandable page-numbered quotes. Partial coverage explicitly says text beyond
+  the 96 KiB budget was omitted. The UI also states that quote presence is not
+  proof of every paraphrased claim. A small PDFs metadata grid adjustment avoids
+  a narrow-screen title-column overflow without changing the rest of the
+  Search/Library/PDF behavior.
+
+### Windows verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `node --check scripts/frontend-search-browser-check.mjs` | Exit 0 |
+| `npm.cmd run documents:ui` | Exit 1: the existing package has no script by that exact name; no package script was added for this focused slice |
+| `npm.cmd run documents:ui:check` | Exit 0; final sanitized evidence at `.wrangler/frontend-search-browser-check/65aac736-2410-4813-9664-9abfe74dde95/result.json` |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build` | Exit 0; TypeScript, Vite, Worker dry-run, and Sites staging passed; no upload |
+| `npm.cmd run sites` | Exit 0; binding-fixture artifact check passed |
+
+- The final dependency-free Chrome check used fresh isolated local D1/R2 state,
+  relative Vite proxy requests, an actual local Worker, and loopback-only
+  metadata/summary Responses mocks. Mocked coverage included summary loading,
+  absent/partial/saved results, GET-only reload, stale selection, in-progress,
+  malformed, provider-failure, and uncertain/reconciliation states. Its actual
+  fixture flow extracted a saved PDF with unavailable metadata, made exactly one
+  explicit loopback summary-provider request, rendered full coverage and
+  expandable page-four evidence, passed a narrow mobile overflow check,
+  refreshed/reselected the record through GET only, and retained the saved
+  summary without another summary-provider request. It recorded three loopback
+  metadata requests for existing PDF workflow paths and one loopback summary
+  request; it made zero OpenAI or arXiv calls and stopped only its owned
+  Worker/Vite/Chrome processes.
+- The unchanged backend `summaries` suite and prior extraction/metadata/storage
+  checks were deliberately reused, not rerun. No backend, schema/migration,
+  dependency/lockfile, secret/key, normal-state, push, deployment, Q&A, or
+  transport change occurred. The documented local Wrangler/Miniflare
+  oversized-upload transport limitation remains open and unchanged.

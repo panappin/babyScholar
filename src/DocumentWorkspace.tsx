@@ -4,6 +4,11 @@ import type {
   DocumentExtraction,
   DocumentMetadata,
   DocumentMetadataResponse,
+  DocumentSummary,
+  DocumentSummaryEvidenceQuote,
+  DocumentSummaryItem,
+  DocumentSummaryPageRange,
+  DocumentSummaryResponse,
   GetDocumentTextResponse,
   ListDocumentsResponse,
   UploadedDocument,
@@ -15,6 +20,7 @@ const READ_TIMEOUT_MS = 10_000;
 const UPLOAD_TIMEOUT_MS = 35_000;
 const EXTRACTION_TIMEOUT_MS = 45_000;
 const METADATA_TIMEOUT_MS = 35_000;
+const SUMMARY_TIMEOUT_MS = 35_000;
 
 type ListState = {
   status: "initial" | "loading" | "empty" | "loaded" | "error";
@@ -26,6 +32,13 @@ type DetailState = {
   status: "initial" | "loading" | "loaded" | "error";
   extraction: DocumentExtraction | null;
   metadata: DocumentMetadata | null;
+  summary: SummaryState;
+  message?: string;
+};
+
+type SummaryState = {
+  status: "initial" | "loading" | "not_generated" | "missing_extraction" | "generating" | "in_progress" | "loaded" | "error" | "uncertain";
+  summary: DocumentSummary | null;
   message?: string;
 };
 
@@ -38,7 +51,7 @@ type ProcessingState =
   | { status: "uncertain"; documentId?: string; message: string }
   | { status: "error"; documentId?: string; message: string };
 
-type StoredResults = { extraction: DocumentExtraction | null; metadata: DocumentMetadata | null };
+type StoredResults = { extraction: DocumentExtraction | null; metadata: DocumentMetadata | null; summary: SummaryState };
 
 class DocumentResponseError extends Error {}
 
@@ -100,6 +113,45 @@ function isMetadata(value: unknown): value is DocumentMetadata {
   });
 }
 
+function isSummaryEvidenceQuote(value: unknown): value is DocumentSummaryEvidenceQuote {
+  return isRecord(value) && typeof value.pageNumber === "number" && typeof value.quote === "string";
+}
+
+function isSummaryItem(value: unknown): value is DocumentSummaryItem {
+  return isRecord(value) && typeof value.text === "string" && Array.isArray(value.evidence) && value.evidence.every(isSummaryEvidenceQuote);
+}
+
+function isSummaryPageRange(value: unknown): value is DocumentSummaryPageRange {
+  return isRecord(value) && typeof value.startPage === "number" && typeof value.endPage === "number";
+}
+
+function isSummary(value: unknown): value is DocumentSummary {
+  if (!isRecord(value)
+    || typeof value.documentId !== "string"
+    || typeof value.sourceSha256 !== "string"
+    || value.extractionParser !== "unpdf"
+    || typeof value.extractionParserVersion !== "string"
+    || typeof value.extractionExtractedAt !== "string"
+    || typeof value.totalPageCount !== "number"
+    || !Array.isArray(value.includedPageNumbers) || !value.includedPageNumbers.every((page) => typeof page === "number")
+    || !Array.isArray(value.includedPageRanges) || !value.includedPageRanges.every(isSummaryPageRange)
+    || typeof value.sourceExcerptByteCount !== "number"
+    || typeof value.sourceExcerptTruncated !== "boolean"
+    || typeof value.sourceCoverageWarning !== "string"
+    || typeof value.model !== "string"
+    || typeof value.promptVersion !== "string"
+    || typeof value.schemaVersion !== "string"
+    || typeof value.createdAt !== "string"
+    || !isSummaryItem(value.overview)
+    || ![value.contributions, value.methods, value.findings, value.limitations].every((items) => Array.isArray(items) && items.every(isSummaryItem))
+    || !Array.isArray(value.warnings) || !value.warnings.every((warning) => typeof warning === "string")) return false;
+  return true;
+}
+
+function isSummaryResponse(value: unknown): value is DocumentSummaryResponse {
+  return isRecord(value) && isSummary(value.summary) && (value.created === undefined || typeof value.created === "boolean");
+}
+
 function documentError(value: unknown): DocumentErrorResponse["error"] | undefined {
   if (!isRecord(value) || !isRecord(value.error) || typeof value.error.kind !== "string" || typeof value.error.message !== "string") return undefined;
   return value.error as DocumentErrorResponse["error"];
@@ -118,6 +170,10 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(bytes < 1024 * 1024 ? 2 : 1)} MiB`;
 }
 
+function formatPageRanges(ranges: DocumentSummaryPageRange[]): string {
+  return ranges.map((range) => range.startPage === range.endPage ? `Page ${range.startPage}` : `Pages ${range.startPage}-${range.endPage}`).join(", ");
+}
+
 function mergeDocument(documents: UploadedDocument[], next: UploadedDocument): UploadedDocument[] {
   return [...documents.filter((document) => document.id !== next.id), next]
     .sort((left, right) => right.uploadedAt.localeCompare(left.uploadedAt) || right.id.localeCompare(left.id));
@@ -129,10 +185,45 @@ function selectionLabel(extraction: DocumentExtraction | null, metadata: Documen
   return "Stored PDF — processing not started";
 }
 
+function SummaryQuotes({ evidence }: { evidence: DocumentSummaryEvidenceQuote[] }) {
+  return <details className="summary-evidence">
+    <summary>Supporting quotes ({evidence.length})</summary>
+    <ol>{evidence.map((quote, index) => <li key={`${quote.pageNumber}-${index}`}><strong>Page {quote.pageNumber}:</strong> {quote.quote}</li>)}</ol>
+  </details>;
+}
+
+function SummaryItems({ title, items, emptyCopy }: { title: string; items: DocumentSummaryItem[]; emptyCopy: string }) {
+  return <section className="summary-section">
+    <h5>{title}</h5>
+    {items.length ? <ol>{items.map((item, index) => <li key={`${item.text}-${index}`}><p>{item.text}</p><SummaryQuotes evidence={item.evidence} /></li>)}</ol> : <p>{emptyCopy}</p>}
+  </section>;
+}
+
+function SummaryContent({ summary }: { summary: DocumentSummary }) {
+  const coverage = formatPageRanges(summary.includedPageRanges);
+  return <>
+    <p className={summary.sourceExcerptTruncated ? "summary-coverage summary-coverage--partial" : "summary-coverage"}>
+      <strong>{summary.sourceExcerptTruncated ? "Partial source coverage." : "Full source coverage."}</strong>{" "}
+      {summary.sourceCoverageWarning} Included extracted pages: {coverage || "none"} of {summary.totalPageCount}. {summary.sourceExcerptTruncated ? "Text outside the source budget was omitted." : "No extracted page text was omitted by the summary source budget."}
+    </p>
+    <p className="results-note">Supporting quotes show that cited text occurs on the listed source page. They do not prove every paraphrased summary claim.</p>
+    <section className="summary-overview" aria-labelledby="summary-overview-title">
+      <h5 id="summary-overview-title">Overview</h5>
+      <p>{summary.overview.text}</p>
+      <SummaryQuotes evidence={summary.overview.evidence} />
+    </section>
+    <SummaryItems title="Contributions" items={summary.contributions} emptyCopy="No contributions were returned; see the summary warnings." />
+    <SummaryItems title="Methods" items={summary.methods} emptyCopy="No methods were returned; see the summary warnings." />
+    <SummaryItems title="Findings" items={summary.findings} emptyCopy="No findings were returned; see the summary warnings." />
+    <SummaryItems title="Stated limitations" items={summary.limitations} emptyCopy="No stated limitations were returned; see the summary warnings." />
+    {summary.warnings.length > 0 && <section className="document-warnings summary-warnings" aria-labelledby="summary-warnings-title"><h5 id="summary-warnings-title">Warnings</h5><ul>{summary.warnings.map((warning, index) => <li key={`${warning}-${index}`}>{warning}</li>)}</ul></section>}
+  </>;
+}
+
 export function DocumentWorkspace() {
   const [listState, setListState] = useState<ListState>({ status: "initial", documents: [] });
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [detailState, setDetailState] = useState<DetailState>({ status: "initial", extraction: null, metadata: null });
+  const [detailState, setDetailState] = useState<DetailState>({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null } });
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<ProcessingState>({ status: "idle" });
@@ -140,16 +231,27 @@ export function DocumentWorkspace() {
   const listRequest = useRef<AbortController | null>(null);
   const detailRequest = useRef<AbortController | null>(null);
   const pipelineRequest = useRef<AbortController | null>(null);
+  const summaryRequest = useRef<AbortController | null>(null);
   const listRevision = useRef(0);
   const detailRevision = useRef(0);
   const pipelineRevision = useRef(0);
+  const summaryRevision = useRef(0);
 
   const selectedDocument = selectedId ? listState.documents.find((document) => document.id === selectedId) ?? null : null;
   const pipelineBusy = processing.status === "uploading" || processing.status === "extracting" || processing.status === "metadata";
   const processingDocumentId = processing.status === "extracting" || processing.status === "metadata" ? processing.documentId : undefined;
+  const summaryBusy = detailState.summary.status === "generating";
 
   function isCurrentPipeline(id: number, controller: AbortController) {
     return mounted.current && pipelineRevision.current === id && pipelineRequest.current === controller && !controller.signal.aborted;
+  }
+
+  function ownsSummaryRequest(id: number, documentId: string, controller: AbortController) {
+    return mounted.current && selectedId === documentId && summaryRevision.current === id && summaryRequest.current === controller;
+  }
+
+  function isCurrentSummary(id: number, documentId: string, controller: AbortController) {
+    return ownsSummaryRequest(id, documentId, controller) && !controller.signal.aborted;
   }
 
   async function readJson(response: Response): Promise<unknown> {
@@ -188,10 +290,30 @@ export function DocumentWorkspace() {
     }
   }
 
+  async function getStoredSummary(id: string, signal: AbortSignal): Promise<SummaryState> {
+    try {
+      const response = await fetch(`/api/documents/${encodeURIComponent(id)}/summary`, { signal });
+      const body = await readJson(response);
+      if (response.ok) {
+        if (!isSummaryResponse(body) || body.summary.documentId !== id) {
+          return { status: "error", summary: null, message: "Saved summary returned an unexpected response. Reload summary to try again." };
+        }
+        return { status: "loaded", summary: body.summary };
+      }
+      const error = documentError(body);
+      if (error?.kind === "summary_not_found") return { status: "not_generated", summary: null };
+      if (error?.kind === "extraction_not_found") return { status: "missing_extraction", summary: null };
+      return { status: "error", summary: null, message: messageForResponse(response, body, "Saved summary could not be loaded") };
+    } catch (error) {
+      return { status: "error", summary: null, message: error instanceof Error ? `Saved summary could not be loaded: ${error.message}` : "Saved summary could not be loaded. Reload summary to try again." };
+    }
+  }
+
   async function getStoredResults(id: string, signal: AbortSignal): Promise<StoredResults> {
-    const [textResponse, metadataResponse] = await Promise.all([
+    const [textResponse, metadataResponse, summary] = await Promise.all([
       fetch(`/api/documents/${encodeURIComponent(id)}/text`, { signal }),
       fetch(`/api/documents/${encodeURIComponent(id)}/metadata`, { signal }),
+      getStoredSummary(id, signal),
     ]);
     const [textBody, metadataBody] = await Promise.all([readJson(textResponse), readJson(metadataResponse)]);
     let extraction: DocumentExtraction | null = null;
@@ -208,7 +330,7 @@ export function DocumentWorkspace() {
     } else if (!["metadata_not_found", "extraction_not_found"].includes(documentError(metadataBody)?.kind ?? "")) {
       throw new Error(messageForResponse(metadataResponse, metadataBody, "Stored metadata could not be loaded"));
     }
-    return { extraction, metadata };
+    return { extraction, metadata, summary };
   }
 
   async function loadDetails(id: string) {
@@ -219,7 +341,7 @@ export function DocumentWorkspace() {
     detailRequest.current = controller;
     let timedOut = false;
     const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, READ_TIMEOUT_MS);
-    if (mounted.current) setDetailState((current) => ({ status: "loading", extraction: current.extraction, metadata: current.metadata }));
+    if (mounted.current) setDetailState((current) => ({ status: "loading", extraction: current.extraction, metadata: current.metadata, summary: { status: "loading", summary: current.summary.summary } }));
     try {
       const results = await getStoredResults(id, controller.signal);
       if (!mounted.current || controller.signal.aborted || revision !== detailRevision.current) return results;
@@ -231,6 +353,7 @@ export function DocumentWorkspace() {
         status: "error",
         extraction: current.extraction,
         metadata: current.metadata,
+        summary: current.summary,
         message: timedOut ? "Reading this PDF took too long. Select it again or reload the PDFs view." : error instanceof Error ? error.message : "This PDF could not be read.",
       }));
       return undefined;
@@ -241,9 +364,11 @@ export function DocumentWorkspace() {
   }
 
   function selectDocument(id: string) {
-    if (pipelineBusy) return;
+    if (pipelineBusy || summaryBusy) return;
+    summaryRevision.current += 1;
+    summaryRequest.current?.abort();
     setSelectedId(id);
-    setDetailState({ status: "loading", extraction: null, metadata: null });
+    setDetailState({ status: "loading", extraction: null, metadata: null, summary: { status: "loading", summary: null } });
     setProcessing({ status: "idle" });
     void loadDetails(id);
   }
@@ -269,8 +394,107 @@ export function DocumentWorkspace() {
     }
   }
 
+  async function loadSummary(id: string) {
+    if (summaryBusy) return;
+    const revision = summaryRevision.current + 1;
+    summaryRevision.current = revision;
+    summaryRequest.current?.abort();
+    const controller = new AbortController();
+    summaryRequest.current = controller;
+    let timedOut = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, READ_TIMEOUT_MS);
+    setDetailState((current) => current.status === "initial" ? current : {
+      ...current,
+      summary: { status: "loading", summary: current.summary.summary },
+    });
+    try {
+      const summary = await getStoredSummary(id, controller.signal);
+      if (!ownsSummaryRequest(revision, id, controller)) return;
+      setDetailState((current) => ({ ...current, summary: timedOut && summary.status === "error"
+        ? { status: "error", summary: current.summary.summary, message: "Loading the saved summary took too long. Reload summary to try again." }
+        : summary.status === "error"
+          ? { ...summary, summary: current.summary.summary }
+          : summary }));
+    } finally {
+      window.clearTimeout(timeout);
+      if (summaryRequest.current === controller) summaryRequest.current = null;
+    }
+  }
+
+  async function reconcileSummary(id: string, revision: number, controller: AbortController, message: string) {
+    if (!ownsSummaryRequest(revision, id, controller)) return;
+    setDetailState((current) => ({ ...current, summary: { status: "uncertain", summary: current.summary.summary, message } }));
+    const reconciliation = new AbortController();
+    summaryRequest.current = reconciliation;
+    const timeout = window.setTimeout(() => reconciliation.abort(), READ_TIMEOUT_MS);
+    try {
+      const saved = await getStoredSummary(id, reconciliation.signal);
+      if (!isCurrentSummary(revision, id, reconciliation)) return;
+      if (saved.status === "loaded") {
+        setDetailState((current) => ({ ...current, summary: saved }));
+      } else {
+        setDetailState((current) => ({
+          ...current,
+          summary: {
+            status: "uncertain",
+            summary: current.summary.summary,
+            message: saved.status === "error"
+              ? `${message} The saved summary could not be confirmed; reload summary before generating again.`
+              : `${message} No saved summary was found. Reload summary before choosing another explicit generation attempt.`,
+          },
+        }));
+      }
+    } finally {
+      window.clearTimeout(timeout);
+      if (summaryRequest.current === reconciliation) summaryRequest.current = null;
+    }
+  }
+
+  async function generateSummary(document: UploadedDocument) {
+    if (!detailState.extraction || summaryBusy || pipelineBusy) return;
+    const revision = summaryRevision.current + 1;
+    summaryRevision.current = revision;
+    summaryRequest.current?.abort();
+    const controller = new AbortController();
+    summaryRequest.current = controller;
+    let timedOut = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, SUMMARY_TIMEOUT_MS);
+    setDetailState((current) => ({ ...current, summary: { status: "generating", summary: current.summary.summary, message: "Generating a source-grounded summary from saved extracted text..." } }));
+    try {
+      const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}/summary`, { method: "POST", signal: controller.signal });
+      const body = await readJson(response);
+      if (!isCurrentSummary(revision, document.id, controller)) return;
+      if (!response.ok) {
+        const error = documentError(body);
+        if (error?.kind === "summary_in_progress") {
+          setDetailState((current) => ({ ...current, summary: { status: "in_progress", summary: current.summary.summary, message: error.message } }));
+        } else {
+          setDetailState((current) => ({ ...current, summary: { status: "error", summary: current.summary.summary, message: messageForResponse(response, body, "Summary generation could not be completed") } }));
+        }
+        return;
+      }
+      if (!isSummaryResponse(body) || body.summary.documentId !== document.id) {
+        await reconcileSummary(document.id, revision, controller, "Summary generation returned an unexpected response. Checking saved summary without generating again.");
+        return;
+      }
+      setDetailState((current) => ({ ...current, summary: { status: "loaded", summary: body.summary } }));
+    } catch {
+      await reconcileSummary(
+        document.id,
+        revision,
+        controller,
+        timedOut
+          ? "Summary generation took too long and may have completed. Checking saved summary without generating again."
+          : "Summary generation may have been interrupted. Checking saved summary without generating again.",
+      );
+    } finally {
+      window.clearTimeout(timeout);
+      if (summaryRequest.current === controller) summaryRequest.current = null;
+    }
+  }
+
   async function resumeProcessing(document: UploadedDocument) {
-    if (pipelineBusy) return;
+    if (pipelineBusy || summaryBusy) return;
     const revision = pipelineRevision.current + 1;
     pipelineRevision.current = revision;
     pipelineRequest.current?.abort();
@@ -294,7 +518,14 @@ export function DocumentWorkspace() {
         setPhaseTimeout(EXTRACTION_TIMEOUT_MS);
         const { body } = await postEmpty(`/api/documents/${encodeURIComponent(document.id)}/extract`, controller.signal);
         if (!isRecord(body) || !isExtraction(body.extraction)) throw new Error("Text extraction returned an unexpected response.");
-        results = { ...results, extraction: body.extraction };
+        // The earlier read can only report `extraction_not_found` before this
+        // successful extraction. It is now safe to present the same absent
+        // summary as not generated; this does not start a summary request.
+        results = {
+          ...results,
+          extraction: body.extraction,
+          summary: results.summary.status === "missing_extraction" ? { status: "not_generated", summary: null } : results.summary,
+        };
         if (!isCurrentPipeline(revision, controller)) return;
         setDetailState({ status: "loaded", ...results });
       }
@@ -357,7 +588,7 @@ export function DocumentWorkspace() {
         return { status: "loaded", documents };
       });
       setSelectedId(document.id);
-      setDetailState({ status: "initial", extraction: null, metadata: null });
+      setDetailState({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null } });
       setFile(null);
       await resumeProcessing(document);
     } catch (error) {
@@ -385,6 +616,7 @@ export function DocumentWorkspace() {
       listRequest.current?.abort();
       detailRequest.current?.abort();
       pipelineRequest.current?.abort();
+      summaryRequest.current?.abort();
     };
   }, []);
 
@@ -437,9 +669,35 @@ export function DocumentWorkspace() {
           <div><dt>Size</dt><dd>{formatBytes(selectedDocument.byteCount)}</dd></div>
           <div><dt>Status</dt><dd>{selectionLabel(detailState.extraction, detailState.metadata)}</dd></div>
         </dl>
-        {detailState.status === "loading" && <p className="search-feedback" role="status">Reading saved text and metadata...</p>}
+        {detailState.status === "loading" && <p className="search-feedback" role="status">Reading saved text, metadata, and summary...</p>}
         {detailState.status === "error" && <p className="search-feedback search-feedback--error" role="alert">{detailState.message}</p>}
         {detailState.status !== "loading" && !(pipelineBusy && processingDocumentId === selectedDocument.id) && !(detailState.extraction && detailState.metadata) && <button type="button" className="save-button" onClick={() => void resumeProcessing(selectedDocument)}>Resume processing</button>}
+        <section className="document-summary" aria-labelledby="document-summary-title">
+          <div className="summary-heading">
+            <div><p className="eyebrow">Source-grounded summary</p><h4 id="document-summary-title">Summary</h4></div>
+            <button type="button" className="reload-button" data-summary-reload onClick={() => void loadSummary(selectedDocument.id)} disabled={detailState.summary.status === "loading" || summaryBusy}>Reload summary</button>
+          </div>
+          {detailState.status === "loading" && <p className="search-feedback" role="status">Loading saved summary...</p>}
+          {detailState.status !== "loading" && !detailState.extraction && <p className="search-feedback" role="status">Text extraction is required before a summary can be generated.</p>}
+          {detailState.status !== "loading" && detailState.extraction && detailState.summary.status === "initial" && <p className="search-feedback" role="status">Summary status has not loaded yet.</p>}
+          {detailState.extraction && detailState.summary.status === "loading" && <p className="search-feedback" role="status">Loading saved summary...</p>}
+          {detailState.extraction && detailState.summary.status === "missing_extraction" && <p className="search-feedback" role="status">Text extraction is required before a summary can be generated.</p>}
+          {detailState.extraction && detailState.summary.status === "not_generated" && <>
+            <p className="results-note">No summary has been generated. Generation is explicit and uses saved extracted text; metadata is not required.</p>
+            <button type="button" className="save-button" data-generate-summary onClick={() => void generateSummary(selectedDocument)} disabled={pipelineBusy || summaryBusy}>Generate summary</button>
+          </>}
+          {detailState.extraction && detailState.summary.status === "generating" && <p className="search-feedback" role="status">{detailState.summary.message}</p>}
+          {detailState.extraction && detailState.summary.status === "in_progress" && <p className="search-feedback" role="status">{detailState.summary.message} Reload summary to check for the saved result.</p>}
+          {detailState.extraction && detailState.summary.status === "error" && <>
+            <p className="search-feedback search-feedback--error" role="alert">{detailState.summary.message}</p>
+            <button type="button" className="save-button" data-generate-summary onClick={() => void generateSummary(selectedDocument)} disabled={pipelineBusy || summaryBusy}>Generate summary</button>
+          </>}
+          {detailState.extraction && detailState.summary.status === "uncertain" && <>
+            <p className="search-feedback search-feedback--error" role="alert">{detailState.summary.message}</p>
+            <button type="button" className="save-button" data-generate-summary onClick={() => void generateSummary(selectedDocument)} disabled={pipelineBusy || summaryBusy}>Generate summary again</button>
+          </>}
+          {detailState.summary.summary && <SummaryContent summary={detailState.summary.summary} />}
+        </section>
         {detailState.extraction && <details className="document-text"><summary>Extracted page text ({detailState.extraction.pageCount} {detailState.extraction.pageCount === 1 ? "page" : "pages"})</summary>
           {detailState.extraction.pages.map((page) => <section key={page.pageNumber}><h4>Page {page.pageNumber}</h4><pre>{page.text || "No text was extracted from this page."}</pre></section>)}
         </details>}
