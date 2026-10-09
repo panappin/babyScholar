@@ -1,8 +1,8 @@
 # AI Research Assistant
 
-Phase 3C adds backend-only, source-grounded title/authors/year/abstract
-generation from persisted PDF text retained in private R2. There is still no
-upload or text UI, OCR, summaries, or Q&A.
+Phase 4A adds backend-only, source-grounded summaries of persisted PDF text in
+private R2. The existing Papers and PDFs views have no summary control yet;
+OCR and Q&A remain out of scope.
 
 ## Prerequisites
 
@@ -66,6 +66,12 @@ The additive `drizzle/0004_document_metadata.sql` creates immutable
 It preserves the existing papers, uploaded-document, and extraction tables.
 Apply it with the same deliberate local migration command before requesting
 metadata.
+
+The additive `drizzle/0005_document_summaries.sql` creates immutable
+`document_summaries` results and short-lived `document_summary_claims` leases.
+It preserves all migrations `0000` through `0004`, original PDFs, extracted
+text, and metadata. Apply committed migrations deliberately before requesting
+summaries.
 
 ```powershell
 # After a deliberate schema change, generate a NEW migration and inspect its SQL:
@@ -494,6 +500,61 @@ restarts only its owned Worker with `OPENAI_API_KEY` explicitly empty, GETs the
 saved result before any cached POST, and then verifies HTTP 200 with
 `created:false`. It never uses the real local key or contacts OpenAI.
 
+### Source-grounded PDF summaries (Phase 4A)
+
+`POST /api/documents/:id/summary` accepts **no request body** and requires an
+existing completed extraction. It neither uploads, extracts, nor generates
+metadata, so it also works when bibliographic metadata is unavailable. A new
+immutable summary returns HTTP **201** with `created:true`; a cached request
+returns HTTP **200** with `created:false`. `GET /api/documents/:id/summary`
+returns only the saved result and makes no provider request. Unknown document,
+missing extraction, absent summary, and concurrent generation remain distinct
+(`document_not_found`, `extraction_not_found`, `summary_not_found`, and
+`summary_in_progress`). A D1 claim lease permits only one generation attempt
+for a document at a time.
+
+The Worker supplies all persisted extraction pages in one-based order until a
+**96 KiB UTF-8** source budget is full, retaining complete Unicode code points
+only. It records total page count, every included page number and contiguous
+page range, source byte count, source SHA-256, extraction parser/version/time,
+model, prompt/schema versions, UTC creation time, and a full or partial source
+coverage warning. `sourceExcerptTruncated:true` plus the persisted `Partial
+source coverage` warning marks a partial result. The existing extraction limit
+of at most 100 pages still bounds the candidate source.
+
+Each response contains a brief overview plus short `contributions`, `methods`,
+`findings`, and `limitations` arrays. Missing categories are empty and require
+a warning naming the category. Summary prose targets 300--500 words when the
+source supports it and is conservatively capped at 500 words; overview, points,
+warnings, counts, and evidence are independently byte/count bounded. Each item
+has one or two non-empty, trimmed, page-numbered exact quotes of at most **600
+UTF-8 bytes**. Quote validation uses the same raw NFC/collapsed-whitespace and
+narrow ASCII physical-wrap-hyphen policy documented for metadata. A quote proves
+that cited text is present in the selected page; it does **not** prove that every
+paraphrased summary claim is entailed by that text.
+
+Only the Worker can read `OPENAI_API_KEY` and its configured model. The Responses
+request uses strict JSON schema, `store:false`, no tools, at most 2,048 output
+tokens, a 25-second deadline, a 256 KiB response cap, and no automatic retry.
+It treats supplied PDF text as untrusted data, asks for short supporting excerpts
+rather than an abstract-sized quote, and returns sanitized configuration,
+authentication, quota/rate-limit, model-access, timeout, refusal, invalid, and
+provider failure errors. There is no frontend summary UI in this phase.
+
+```powershell
+# Loopback mock provider plus isolated Worker/D1/R2 state; zero OpenAI calls:
+npm.cmd run summaries
+```
+
+`summaries` verifies missing extraction/storage/configuration handling, opening
+and later-page source inclusion, valid and invalid evidence (including wrong
+page and invented text), 600/601-byte multibyte quote boundaries, output word
+limits, malformed/refusal/incomplete/provider-timeout failures, one-claim
+concurrency, cache behavior, restart persistence, migration reapplication, and
+unchanged original PDF/text/metadata records. It uses a CC0 fixture and an
+owned UUID-scoped `.wrangler/summary-check/` state directory only; successful
+runs remove their state and retain sanitized evidence.
+
 ### PDFs
 
 Use the **PDFs** tab to reload stored document records, select a saved PDF, and
@@ -633,6 +694,10 @@ src/worker/document-metadata.ts Cached/claimed source-grounded metadata API
 src/worker/metadata-source.ts   Bounded persisted-text excerpt selection
 src/worker/metadata-openai.ts   Bounded strict-JSON Responses adapter
 src/worker/metadata-validation.ts Runtime source/evidence validation
+src/worker/document-summary.ts  Cached/claimed source-grounded summary API
+src/worker/summary-source.ts    Ordered 96 KiB persisted-text source selection
+src/worker/summary-openai.ts    Bounded strict-JSON summary Responses adapter
+src/worker/summary-validation.ts Runtime summary/evidence validation
 src/worker/openai.ts            Bounded OpenAI Responses API probe
 src/worker/local-integration-probe.ts  Gated local integration routes
 scripts/storage-check.mjs      Isolated persistence and HTTP verification
@@ -640,6 +705,7 @@ scripts/integration-check.mjs  Isolated live Worker connectivity verification
 scripts/integration-offline-check.mjs  Focused adapter failure-path checks
 scripts/metadata-check.mjs      Isolated metadata Worker/D1/R2/mock-provider check
 scripts/metadata-live-check.mjs One-request local live metadata verifier
+scripts/summary-check.mjs       Isolated source-grounded summary/mock-provider check
 scripts/paper-search-check.mjs  Offline arXiv search adapter and route checks
 scripts/library-check.mjs       Offline real-D1 duplicate/persistence check
 scripts/document-check.mjs      Isolated local D1/R2 original-PDF persistence check

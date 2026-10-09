@@ -1251,3 +1251,69 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   retry occurred. The final `npm.cmd run sites` check also passed: callable
   Worker/static routing, disabled probes, declared bindings, packaged UnPDF,
   parser-free frontend, and unchanged migration metadata.
+
+## 2026-10-09 - Phase 4A source-grounded PDF summary backend
+
+### Scope and implementation
+
+- Started from local `main` at `cd7287c` (one local commit ahead of
+  `origin/main`; handed-off `020cb2793e3a6c65de2f8292c6ae6dbd1727b70b` remains
+  an ancestor). The existing untracked Phase 0B.2 ZIP/folder, normal
+  `.wrangler/state`, D1/R2 data, migrations `0000`--`0004`, key/model
+  configuration, and prior application behavior were not changed.
+- Added `GET` and bodyless `POST /api/documents/:id/summary`. Both require a
+  completed stored extraction; they do not upload a PDF, run extraction, or
+  generate metadata. POST returns `201` for a saved result and `200` for the
+  immutable cache; GET reads only the cache. Claim rows prevent concurrent
+  duplicate generation and failures do not save a successful summary.
+- Added additive migration `0005_document_summaries.sql` plus Drizzle snapshot
+  and journal entry. It adds immutable summary provenance/content rows and
+  short-lived summary claim rows only; earlier migration files are untouched.
+- The Worker supplies ordered persisted extraction pages through a 96 KiB UTF-8
+  budget without splitting Unicode code points. It returns included page numbers
+  and ranges, total page count, byte count, `sourceExcerptTruncated`, and a
+  retained full/partial coverage warning. It persists source SHA-256,
+  extraction parser/version/timestamp, configured model, prompt/schema versions,
+  and UTC creation time.
+- The strict Responses adapter uses the configured Worker-only key/model, no
+  tools, `store:false`, 2,048 output tokens, 25-second deadline, 256 KiB
+  response cap, and no automatic retry. Local checks route only to an explicit
+  loopback provider with a test sentinel instead of the real key. Validation
+  bounds output/quotes, checks selected-page references and exact evidence using
+  the existing NFC/whitespace plus ASCII physical-wrap-hyphen policy, and keeps
+  the explicit limit that quotes establish source presence rather than full
+  paraphrase entailment.
+
+### Windows verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `npm.cmd run db:generate -- --name=document_summaries` | Exit 0; generated additive `0005_document_summaries.sql`, snapshot, and journal entry |
+| `node --check scripts/summary-check.mjs` | Exit 0 |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run build` | Exit 0; TypeScript, Vite, Wrangler dry-run Worker bundle, and Sites staging passed; no upload |
+| `npm.cmd run summaries` | Exit 0; final sanitized evidence at `.wrangler/summary-check/be6f6e29-891a-4cf3-95b4-da108d163277/result.json` |
+| `npm.cmd run sites` | Exit 0; binding-fixture artifact check passed |
+
+- The final `summaries` check used only CC0 fixtures, local Wrangler D1/R2
+  state, and a loopback Responses mock. It verified opening and later-page
+  inclusion, 96 KiB partial source coverage, valid evidence, wrong-page and
+  invented-evidence rejection, 600/601-byte multibyte quote boundaries, the
+  500-word cap, malformed/refusal/incomplete/provider/timeout failures, missing
+  extraction, concurrency, cached POST/GET, restart-before-read persistence,
+  migration reapplication, and unchanged original PDF/text/metadata. It stopped
+  only its owned Worker/provider and removed only its final UUID-owned state.
+- Three preliminary `summaries` executions exited 1 before exercising a
+  completed application result because their new synthetic fixture contained a
+  metadata line or evidence line longer than the simple fixture reliably
+  extracted, then because a two-page fixture did not exceed the source budget.
+  They are retained as ignored diagnostic evidence at
+  `.wrangler/summary-check/7d44d49d-507d-43b2-a443-d5d25649362a/result.json`,
+  `.wrangler/summary-check/a7bcfe6c-c17a-4023-975a-8787e85f0dad/result.json`,
+  and `.wrangler/summary-check/a7f1bd35-388c-45e3-930a-692dab34ce42/result.json`.
+  The fixtures were made short/reliably extracted and expanded to four persisted
+  pages; no production summary behavior was weakened or changed to mask them.
+- No live OpenAI/arXiv request, secret/key access or change, normal-state
+  migration, frontend work, dependency/lockfile change, upload to normal state,
+  push, deployment, or transport investigation occurred. The documented local
+  Wrangler/Miniflare oversized-upload transport limitation remains unchanged.

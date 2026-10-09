@@ -97,6 +97,60 @@ export interface DocumentMetadataResponse {
   created?: boolean;
 }
 
+/** Inclusive, one-based source-page interval supplied to the summary provider. */
+export interface DocumentSummaryPageRange {
+  startPage: number;
+  endPage: number;
+}
+
+/** A short exact quotation that establishes presence in one selected source page. */
+export interface DocumentSummaryEvidenceQuote {
+  pageNumber: number;
+  quote: string;
+}
+
+/** Summary prose may paraphrase; its attached quotes establish only source presence. */
+export interface DocumentSummaryItem {
+  text: string;
+  evidence: DocumentSummaryEvidenceQuote[];
+}
+
+export type DocumentSummarySection = "contributions" | "methods" | "findings" | "limitations";
+
+/** Immutable summary of persisted extracted PDF text, independent of metadata. */
+export interface DocumentSummary {
+  documentId: string;
+  sourceSha256: string;
+  extractionParser: "unpdf";
+  extractionParserVersion: string;
+  extractionExtractedAt: string;
+  totalPageCount: number;
+  /** Every persisted source page sent, including a possibly final partial page. */
+  includedPageNumbers: number[];
+  includedPageRanges: DocumentSummaryPageRange[];
+  /** UTF-8 bytes of supplied extracted text before prompt framing. */
+  sourceExcerptByteCount: number;
+  /** True when the 96 KiB source budget cut off remaining source text. */
+  sourceExcerptTruncated: boolean;
+  /** Explicit full/partial source-coverage note retained with the result. */
+  sourceCoverageWarning: string;
+  model: string;
+  promptVersion: string;
+  schemaVersion: string;
+  createdAt: string;
+  overview: DocumentSummaryItem;
+  contributions: DocumentSummaryItem[];
+  methods: DocumentSummaryItem[];
+  findings: DocumentSummaryItem[];
+  limitations: DocumentSummaryItem[];
+  warnings: string[];
+}
+
+export interface DocumentSummaryResponse {
+  summary: DocumentSummary;
+  created?: boolean;
+}
+
 export type DocumentErrorKind = "invalid_request" | "unsupported_media_type" | "body_too_large"
   | "request_timeout" | "method_not_allowed" | "storage_unavailable" | "database_failure"
   | "document_not_found" | "object_missing" | "extraction_not_found" | "source_hash_mismatch"
@@ -104,7 +158,11 @@ export type DocumentErrorKind = "invalid_request" | "unsupported_media_type" | "
   | "parser_error" | "metadata_not_found" | "metadata_in_progress"
   | "metadata_missing_configuration" | "metadata_authentication" | "metadata_quota_or_rate_limit"
   | "metadata_model_access" | "metadata_provider_failure" | "metadata_timeout"
-  | "metadata_refusal" | "metadata_incomplete" | "metadata_invalid_response";
+  | "metadata_refusal" | "metadata_incomplete" | "metadata_invalid_response"
+  | "summary_not_found" | "summary_in_progress" | "summary_missing_configuration"
+  | "summary_authentication" | "summary_quota_or_rate_limit" | "summary_model_access"
+  | "summary_provider_failure" | "summary_timeout" | "summary_refusal"
+  | "summary_incomplete" | "summary_invalid_response";
 
 export interface DocumentErrorResponse {
   error: { kind: DocumentErrorKind; message: string };

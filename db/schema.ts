@@ -78,3 +78,36 @@ export const documentMetadataClaims = sqliteTable("document_metadata_claims", {
   ownerToken: text("owner_token").notNull(),
   expiresAt: text("expires_at").notNull(),
 });
+
+// One immutable summary per persisted text extraction. Coverage is retained with
+// the result so a later reader can distinguish full from partial source input.
+export const documentSummaries = sqliteTable("document_summaries", {
+  documentId: text("document_id").primaryKey().notNull(),
+  sourceSha256: text("source_sha256").notNull(),
+  extractionParser: text("extraction_parser").notNull(),
+  extractionParserVersion: text("extraction_parser_version").notNull(),
+  extractionExtractedAt: text("extraction_extracted_at").notNull(),
+  totalPageCount: integer("total_page_count").notNull(),
+  includedPageNumbersJson: text("included_page_numbers_json").notNull(),
+  includedPageRangesJson: text("included_page_ranges_json").notNull(),
+  sourceExcerptByteCount: integer("source_excerpt_byte_count").notNull(),
+  sourceExcerptTruncated: integer("source_excerpt_truncated").notNull(),
+  sourceCoverageWarning: text("source_coverage_warning").notNull(),
+  model: text("model").notNull(),
+  promptVersion: text("prompt_version").notNull(),
+  schemaVersion: text("schema_version").notNull(),
+  createdAt: text("created_at").notNull(),
+  overviewJson: text("overview_json").notNull(),
+  contributionsJson: text("contributions_json").notNull(),
+  methodsJson: text("methods_json").notNull(),
+  findingsJson: text("findings_json").notNull(),
+  limitationsJson: text("limitations_json").notNull(),
+  warningsJson: text("warnings_json").notNull(),
+});
+
+// Independent from metadata claims: either feature can run without the other.
+export const documentSummaryClaims = sqliteTable("document_summary_claims", {
+  documentId: text("document_id").primaryKey().notNull(),
+  ownerToken: text("owner_token").notNull(),
+  expiresAt: text("expires_at").notNull(),
+});

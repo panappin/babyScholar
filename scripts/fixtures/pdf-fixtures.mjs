@@ -235,6 +235,68 @@ export function createMetadataClippedPdfFixture() {
   ]);
 }
 
+/** A four-page CC0 paper fixture proving summaries receive later persisted pages. */
+export function createSummaryPdfFixture() {
+  const expected = {
+    title: "Ordered Source Summary Fixture",
+    authors: ["Avery Example", "Bao Example"],
+    year: 2024,
+    // Keep this metadata field within the simple fixture line's reliably
+    // extracted width; summary coverage uses the separate later-page quotes.
+    abstract: "This fixture evaluates source-grounded summaries.",
+    overviewQuote: "Opening context: staged evaluation.",
+    contributionQuote: "Contribution: text selection.",
+    methodQuote: "Method: ordered pages.",
+    findingQuote: "Finding: later pages remain visible.",
+    limitationQuote: "Limitation: paraphrase support is limited.",
+  };
+  return {
+    bytes: buildPdf([
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R 4 0 R 5 0 R 6 0 R] /Count 4 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 8 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 9 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 10 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 11 0 R >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      multiLineTextStream([
+        expected.title,
+        "Authors: Avery Example; Bao Example",
+        "Published: 2024",
+        `Abstract: ${expected.abstract}`,
+        expected.overviewQuote,
+      ]),
+      multiLineTextStream([expected.contributionQuote]),
+      multiLineTextStream([expected.methodQuote]),
+      multiLineTextStream([expected.findingQuote, expected.limitationQuote]),
+    ]),
+    expected,
+  };
+}
+
+/** A CC0 four-page fixture whose ordered extracted text exceeds the 96 KiB summary source budget. */
+export function createSummaryClippedPdfFixture() {
+  // Many short text operations avoid PDF.js's per-operator simple-font cap and
+  // make the first persisted page larger than the summary source allowance.
+  const operators = Array.from({ length: 13_000 }, () => "(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) Tj 0 -1 Td").join(" ");
+  return {
+    bytes: buildPdf([
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R 4 0 R 5 0 R 6 0 R] /Count 4 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 8 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 9 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 10 0 R >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 11 0 R >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      streamObject(latin1(`BT /F1 12 Tf 72 720 Td (Summary clipping anchor.) Tj 0 -14 Td ${operators} ET`)),
+      streamObject(latin1(`BT /F1 12 Tf 72 720 Td ${operators} ET`)),
+      streamObject(latin1(`BT /F1 12 Tf 72 720 Td ${operators} ET`)),
+      streamObject(latin1(`BT /F1 12 Tf 72 720 Td ${operators} ET`)),
+    ]),
+    expected: { quote: "Summary clipping anchor." },
+  };
+}
+
 export function createImageOnlyPdfFixture() {
   const image = Uint8Array.of(0xff);
   return buildPdf([

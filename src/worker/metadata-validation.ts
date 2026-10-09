@@ -13,7 +13,7 @@ const MAX_AUTHOR_COUNT = 32;
 const MAX_AUTHOR_BYTES = 500;
 const MAX_ABSTRACT_BYTES = 12_000;
 const MAX_EVIDENCE_PER_FIELD = 3;
-const MAX_EVIDENCE_QUOTE_BYTES = 600;
+export const METADATA_EVIDENCE_QUOTE_BYTES = 600;
 const MAX_WARNINGS = 16;
 const MAX_WARNING_BYTES = 500;
 
@@ -83,7 +83,7 @@ export function normalizeMetadataSourcePresentation(value: string): string {
 }
 
 /** Accept literal PDF text or only the documented ASCII line-wrap equivalent. */
-function pageContains(pageText: string, value: string): boolean {
+export function metadataPageContains(pageText: string, value: string): boolean {
   const target = normalizeMetadataWhitespace(value);
   if (target.length === 0) return false;
   return normalizeMetadataWhitespace(pageText).includes(target)
@@ -98,7 +98,7 @@ function boundedSourceString(value: unknown, maximumBytes: number, name: string)
 }
 
 function sourceContains(excerpt: MetadataSourceExcerpt, value: string): boolean {
-  return excerpt.pages.some((page) => pageContains(page.text, value));
+  return excerpt.pages.some((page) => metadataPageContains(page.text, value));
 }
 
 function validateWarnings(value: unknown): string[] {
@@ -126,9 +126,9 @@ function validateEvidenceQuote(
   if (typeof quote !== "string") invalidEvidence(field, index, "quote_type");
   if (quote.length === 0) invalidEvidence(field, index, "quote_empty");
   if (quote !== quote.trim()) invalidEvidence(field, index, "quote_untrimmed");
-  if (byteLength(quote) > MAX_EVIDENCE_QUOTE_BYTES) invalidEvidence(field, index, "quote_too_large");
+  if (byteLength(quote) > METADATA_EVIDENCE_QUOTE_BYTES) invalidEvidence(field, index, "quote_too_large");
   const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
-  if (!page || !pageContains(page.text, quote)) {
+  if (!page || !metadataPageContains(page.text, quote)) {
     invalid("OpenAI returned metadata evidence that does not match the selected PDF text.");
   }
   return { pageNumber, quote };
