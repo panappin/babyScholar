@@ -292,7 +292,9 @@ async function startWorker() {
   const port = await availablePort();
   origin = `http://127.0.0.1:${port}`;
   worker = launch(["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
-    "--var", `LOCAL_METADATA_PROVIDER_URL:${providerOrigin}`, "--ip", "127.0.0.1", "--port", String(port),
+    // A fixed inert value keeps this loopback-only verifier independent from
+    // the user's Worker-only .dev.vars secret.
+    "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${providerOrigin}`, "--ip", "127.0.0.1", "--port", String(port),
     "--inspector-port", "0", "--show-interactive-dev-session=false"], "Worker");
   const deadline = Date.now() + 45_000;
   while (Date.now() < deadline) {

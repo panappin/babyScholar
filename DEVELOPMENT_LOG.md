@@ -1495,3 +1495,54 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   dependency change, normal-state migration, push, deployment, or transport
   investigation occurred. The documented local Wrangler/Miniflare oversized
   upload transport limitation remains unchanged.
+
+## 2026-10-10 - PDF workflow and reproducible evaluator setup repair
+
+- Started from `2882fe678b64858c06bc1a7cf6a8089dc92778c5`. The existing
+  untracked Phase 0B.2 ZIP/folder, normal local state, historical migrations,
+  configured Worker-only key/model, and hosted resources were left untouched.
+- Replaced the visible original-PDF link with an explicit, bounded same-origin
+  download action. It reports busy/sanitized failure state, uses an in-memory
+  Blob with a safe filename, revokes its object URL, and aborts/ignores stale
+  work when the selection changes. It neither changes the original endpoint nor
+  alters stored PDF bytes.
+- Summary generation now gives the model short server-issued, page-bound
+  reference IDs. The Worker resolves each accepted reference back into the
+  exact persisted quote and applies the existing strict comparison before
+  persistence. Invalid reference shape, page, or ID emits only sanitized
+  item/index/reason diagnostics. Cached public summary records retain their
+  existing response shape and are not rewritten.
+- Q&A now recognizes non-application 401/403 responses as a private-site
+  access state, preserves the question, and offers an explicit GET-only reload
+  after the evaluator signs in through the normal site flow. This is UI recovery
+  only; the hosted 401/403 cause remains unconfirmed.
+- The summary and metadata loopback verifiers now pass fixed inert
+  `OPENAI_API_KEY` test bindings, so they do not rely on `.dev.vars`. The Q&A
+  verifier's nested summary fixture was aligned with server-issued evidence
+  references. These fixed values are used only with loopback endpoints; no real
+  key was read, printed, changed, or sent.
+
+### Windows verification
+
+| Exact command/check | Result |
+| --- | --- |
+| Disposable clean copy: `npm.cmd ci` | Exit 0; 145 packages installed; existing audit baseline remained 4 moderate/3 high development-tool findings |
+| Clean copy: `npm.cmd run typecheck`, `npm.cmd run build`, `npm.cmd run sites` | All exit 0; Worker build was dry-run only and Sites validation passed |
+| Clean copy: `npm.cmd run storage:check` | Exit 0; direct and Vite-proxy health/storage, disabled probes, restart persistence, and migration reapplication passed |
+| Clean copy: `npm.cmd run summaries` | Exit 0; 13 loopback provider requests, server-issued evidence references, cache/restart, and unchanged PDF/text/metadata checks passed |
+| Clean copy: `npm.cmd run questions` | Exit 0; 15 loopback provider requests, grounded/insufficient outcomes, cache/restart, and unchanged PDF/text/metadata/summary checks passed |
+| Clean copy: `npm.cmd run documents:ui:check` | Exit 0; Chrome captured an explicit original-PDF click and byte-for-byte 1,752-byte fixture download; mocked download failure/stale selection, 401/403 recovery, and actual loopback summary/Q&A flows passed |
+| Clean copy: `npm.cmd run db:migrate:local`, `npm.cmd run dev`, local `GET /`, `/api/health`, `/api/storage/status` through `http://localhost:5173` | All passed: page 200 with the app title; health/D1/R2 all `ok`; the owned dev process was stopped with Ctrl+C |
+
+- The clean copy contained no inherited `.dev.vars`, `.env`, `.wrangler`,
+  `node_modules`, build output, Git data, or handoff files. A deeply nested
+  disposable Windows path produced Wrangler's sanitized local-D1 internal error
+  before application code ran; the same commands passed from a short disposable
+  `C:\tmp` path. README now records that bounded setup workaround. The verified
+  disposable copy/state was removed after recording its sanitized evidence.
+- No live OpenAI/arXiv call, upload to hosted storage, normal-state migration,
+  dependency/lockfile change, push, deployment, or transport investigation was
+  performed. The unknown original hosted summary rejection is not attributed to
+  the prior wrapped-abstract repair: provider output was not retained. The
+  documented oversized chunked-upload local runtime limitation remains open and
+  unchanged.

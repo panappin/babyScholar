@@ -1,5 +1,58 @@
 # AI Research Assistant
 
+## Evaluator quick start
+
+Start from the committed-source handoff ZIP (for this checkpoint,
+`babyScholar-slice-5-2882fe6-source.zip`), not a copied working directory. You
+need Node.js **22.12+** and npm; Node 24.11.1/npm 11.6.2 were used here. The
+commands below create only local Wrangler state. They do not provision
+Cloudflare resources or change a hosted Site.
+
+On Windows PowerShell:
+
+```powershell
+Expand-Archive .\babyScholar-slice-5-2882fe6-source.zip -DestinationPath .\babyScholar
+Set-Location .\babyScholar
+Copy-Item .dev.vars.example .dev.vars       # only when .dev.vars is absent
+# Open .dev.vars in an editor. Enter your own OPENAI_API_KEY and choose OPENAI_MODEL.
+npm.cmd ci
+npm.cmd run db:migrate:local
+npm.cmd run dev
+```
+
+For reliable local D1 setup on Windows, prefer a short extraction path such as
+`C:\src\babyScholar` or `C:\tmp\babyScholar`. In this environment Wrangler
+4.148.0 returned a sanitized internal error when a disposable copy was deeply
+nested, while the same clean source and commands passed from a short path.
+Re-extracting to a short path is the safe local workaround; it does not affect
+the hosted application or its data.
+
+On macOS or Linux:
+
+```sh
+unzip babyScholar-slice-5-2882fe6-source.zip -d babyScholar
+cd babyScholar
+cp .dev.vars.example .dev.vars              # only when .dev.vars is absent
+# Open .dev.vars in an editor. Enter your own OPENAI_API_KEY and choose OPENAI_MODEL.
+npm ci
+npm run db:migrate:local
+npm run dev
+```
+
+Open <http://localhost:5173>. The Vite frontend proxies relative `/api` calls
+to the local Worker on port 8787. `.dev.vars` is ignored and Worker-only: do
+not put the key in `VITE_` variables, source, logs, or evidence. Stop the local
+frontend and Worker with `Ctrl+C`; `.wrangler/state` persists local D1/R2 data
+across a later `npm.cmd run dev` / `npm run dev` restart. Delete or replace that
+state only when you intentionally want a fresh local database and bucket.
+
+The normal PDF processing, summary, and question actions use the evaluator's
+configured live model when explicitly invoked. By contrast, `npm.cmd run
+summaries`, `npm.cmd run questions`, and `npm.cmd run documents:ui:check` use
+only isolated local Workers and loopback mock providers; they make **zero** live
+OpenAI or arXiv calls. They are reproducibility checks, not proof of hosted or
+live-model behavior.
+
 Phase 5B adds source-grounded Q&A controls and saved history for one selected
 uploaded PDF's persisted text. The existing Papers, Library, PDF, summary, and
 metadata workflows remain unchanged; OCR remains out of scope.
@@ -526,12 +579,20 @@ Each response contains a brief overview plus short `contributions`, `methods`,
 `findings`, and `limitations` arrays. Missing categories are empty and require
 a warning naming the category. Summary prose targets 300--500 words when the
 source supports it and is conservatively capped at 500 words; overview, points,
-warnings, counts, and evidence are independently byte/count bounded. Each item
-has one or two non-empty, trimmed, page-numbered exact quotes of at most **600
-UTF-8 bytes**. Quote validation uses the same raw NFC/collapsed-whitespace and
-narrow ASCII physical-wrap-hyphen policy documented for metadata. A quote proves
-that cited text is present in the selected page; it does **not** prove that every
-paraphrased summary claim is entailed by that text.
+warnings, counts, and evidence are independently byte/count bounded.
+
+For newly generated summaries, the Worker breaks each included persisted page
+into short, page-bound source references (preferring extracted-line boundaries;
+each is non-empty, trimmed, and at most **600 UTF-8 bytes**). The model returns
+only `pageNumber` plus one of those server-issued reference IDs. The Worker then
+resolves the public `quote` field from the original persisted text itself; the
+model does not reproduce quote text. Invalid/missing reference IDs are rejected
+with fixed, sanitized Worker diagnostics containing only the item label, index,
+and reason. Resolved quotes are still checked with the same raw
+NFC/collapsed-whitespace and narrow ASCII physical-wrap-hyphen policy documented
+for metadata. Existing immutable cached summaries retain their original public
+quote records. A quote proves that cited text is present in the selected page; it
+does **not** prove that every paraphrased summary claim is entailed by that text.
 
 Only the Worker can read `OPENAI_API_KEY` and its configured model. The Responses
 request uses strict JSON schema, `store:false`, no tools, at most 2,048 output
@@ -548,13 +609,13 @@ npm.cmd run summaries
 ```
 
 `summaries` verifies missing extraction/storage/configuration handling, opening
-and later-page source inclusion, valid and invalid evidence (including wrong
-page and invented text), 600/601-byte multibyte quote boundaries, output word
-limits, malformed/refusal/incomplete/provider-timeout failures, one-claim
-concurrency, cache behavior, restart persistence, migration reapplication, and
-unchanged original PDF/text/metadata records. It uses a CC0 fixture and an
-owned UUID-scoped `.wrangler/summary-check/` state directory only; successful
-runs remove their state and retain sanitized evidence.
+and later-page source inclusion, server-issued evidence references, rejected
+unissued/shape-invalid references with sanitized diagnostics, UTF-8-bounded
+resolved excerpts, output word limits, malformed/refusal/incomplete/provider-
+timeout failures, one-claim concurrency, cache behavior, restart persistence,
+migration reapplication, and unchanged original PDF/text/metadata records. It
+uses a CC0 fixture and an owned UUID-scoped `.wrangler/summary-check/` state
+directory only; successful runs remove their state and retain sanitized evidence.
 
 ### Source-grounded document questions (Phase 5A)
 
@@ -624,9 +685,12 @@ read its stored text and metadata without starting processing. Choose one
 nonempty PDF up to 10 MiB, then select **Upload and process** to make the
 explicit one-shot upload, text-extraction, and metadata requests. A later
 **Resume processing** first reads saved results and submits only missing work;
-it never automatically retries a POST. The selected record offers the original
-PDF download, full page-numbered extracted text, source-grounded title/authors/
-year/abstract, warnings, and collapsible page-numbered evidence.
+it never automatically retries a POST. **Download original PDF** is also an
+explicit action: it fetches the same-origin private PDF with a 10 MiB bound,
+creates a short-lived Blob download using a sanitized filename, reports busy or
+sanitized failure feedback, and aborts/cleans up if selection changes. The
+selected record also offers full page-numbered extracted text, source-grounded
+title/authors/year/abstract, warnings, and collapsible page-numbered evidence.
 
 The selected PDF also has a **Summary** section. Loading a record, selecting it,
 and choosing **Reload summary** use `GET /api/documents/:id/summary` only. When
@@ -666,7 +730,12 @@ claim.
 Interrupted, malformed, or in-progress POST outcomes are reconciled through a
 read-only GET. The submitted question remains in the input while its result is
 unknown. A failed history reload retains any already confirmed cards and reports
-the reload problem separately.
+the reload problem separately. A non-application HTTP 401/403 (for example, a
+private Site session/gateway response) is shown as an access-recovery state
+rather than an application result. The submitted question remains available;
+sign in again through the private Site's normal flow, then choose the explicit
+GET-only **Reload question history** action. This does not bypass access control
+or resend the question.
 
 `npm.cmd run documents:ui:check` runs the dependency-free Chrome check against
 isolated local D1/R2 state. Its real browser path uses the relative Vite proxy,
@@ -674,7 +743,9 @@ actual Worker PDF extraction, and loopback metadata, summary, and question
 mocks with offline sentinel keys; it makes no OpenAI or arXiv request. It covers
 saved and missing summaries/questions, partial coverage/evidence rendering,
 stale selections, in-progress/failure/uncertain outcomes, explicit generation,
-GET-only refresh persistence, and cached question identity preservation.
+GET-only refresh persistence, cached question identity preservation, clicked
+original-PDF downloads with byte comparison, download failure/stale selection,
+and non-application Q&A 401/403 recovery.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked

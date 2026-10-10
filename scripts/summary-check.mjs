@@ -4,7 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, realpath, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { createServer as createTcpServer } from "node:net";
-import { dirname, resolve, sep } from "node:path";
+import { dirname, relative, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import workerArtifact from "../dist/worker/index.js";
 import { createMetadataPdfFixture, createSummaryClippedPdfFixture, createSummaryPdfFixture } from "./fixtures/pdf-fixtures.mjs";
@@ -14,6 +14,7 @@ const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
 const id = randomUUID();
 const evidenceDirectory = resolve(root, ".wrangler/summary-check", id);
 const state = resolve(evidenceDirectory, "state");
+const stateArgument = relative(root, state).split(sep).join("/") || ".";
 const children = new Set();
 const fixture = createSummaryPdfFixture();
 const expected = fixture.expected;
@@ -68,30 +69,30 @@ function validSummaryOutput() {
   return {
     overview: {
       text: "The paper evaluates a staged approach to creating summaries from persisted paper text while retaining page-level support.",
-      evidence: [{ pageNumber: 1, quote: expected.overviewQuote }],
+      evidence: [{ pageNumber: 1, referenceId: 5 }],
     },
     contributions: [{
       text: "Its stated contribution separates selecting retained source text from generating the summary.",
-      evidence: [{ pageNumber: 2, quote: expected.contributionQuote }],
+      evidence: [{ pageNumber: 2, referenceId: 1 }],
     }],
     methods: [{
       text: "The method processes pages in order and retains page-numbered supporting excerpts.",
-      evidence: [{ pageNumber: 3, quote: expected.methodQuote }],
+      evidence: [{ pageNumber: 3, referenceId: 1 }],
     }],
     findings: [{
       text: "The reported result is that findings from later selected pages can remain represented in the summary.",
-      evidence: [{ pageNumber: 4, quote: expected.findingQuote }],
+      evidence: [{ pageNumber: 4, referenceId: 1 }],
     }],
     limitations: [{
       text: "The stated limitation is that quotations do not establish every implication of a paraphrase.",
-      evidence: [{ pageNumber: 4, quote: expected.limitationQuote }],
+      evidence: [{ pageNumber: 4, referenceId: 2 }],
     }],
     warnings: [],
   };
 }
 
 function clippedSummaryOutput() {
-  const evidence = [{ pageNumber: 1, quote: clippedFixture.expected.quote }];
+  const evidence = [{ pageNumber: 1, referenceId: 1 }];
   return {
     overview: { text: "The bounded source begins with a clipping marker before a large first page.", evidence },
     contributions: [{ text: "The fixture demonstrates a bounded ordered source selection.", evidence }],
@@ -102,10 +103,9 @@ function clippedSummaryOutput() {
   };
 }
 
-function multibyteSummaryOutput(extraByte = false) {
-  const quote = `${multibyteFixture.multibyteEvidenceQuote}${extraByte ? "x" : ""}`;
+function multibyteSummaryOutput() {
   return {
-    overview: { text: "The stored extraction includes multibyte source text used for an exact evidence-boundary check.", evidence: [{ pageNumber: 1, quote }] },
+    overview: { text: "The stored extraction includes multibyte source text used for an exact evidence-boundary check.", evidence: [{ pageNumber: 1, referenceId: 1 }] },
     contributions: [], methods: [], findings: [], limitations: [],
     warnings: [
       "contributions are unavailable in the selected source.",
@@ -122,11 +122,10 @@ function providerResponse(output) {
 
 function summaryOutputForMode() {
   const output = validSummaryOutput();
-  if (summaryMode === "wrong_page") output.overview.evidence = [{ pageNumber: 2, quote: expected.overviewQuote }];
+  if (summaryMode === "unissued_reference") output.overview.evidence = [{ pageNumber: 2, referenceId: 999 }];
   else if (summaryMode === "invented_evidence") output.overview.evidence = [{ pageNumber: 1, quote: "Invented summary evidence." }];
   else if (summaryMode === "too_many_words") output.overview.text = Array.from({ length: 501 }, () => "word").join(" ");
-  else if (summaryMode === "multibyte_600") return multibyteSummaryOutput(false);
-  else if (summaryMode === "multibyte_601") return multibyteSummaryOutput(true);
+  else if (summaryMode === "multibyte_600") return multibyteSummaryOutput();
   else if (summaryMode === "clipped") return clippedSummaryOutput();
   return output;
 }
@@ -153,7 +152,9 @@ async function startProvider() {
       const body = await readRequestBody(request);
       const format = body.text?.format;
       const input = body.input?.[1]?.content;
-      const pageMarkers = typeof input === "string" ? [...input.matchAll(/\[Page (\d+)\]/gu)].map((match) => Number(match[1])) : [];
+      const pageMarkers = typeof input === "string"
+        ? [...new Set([...input.matchAll(/\[Page (\d+); evidence \d+\]/gu)].map((match) => Number(match[1])))]
+        : [];
       const isSummary = format?.name === "document_summary";
       evidence.providerRequests.push({
         kind: isSummary ? "summary" : "metadata",
@@ -167,7 +168,11 @@ async function startProvider() {
         hasSummaryInstructions: !isSummary || (typeof input === "string"
           && input.includes("all supplied pages in their given order")
           && input.includes("300 to 500 words")
-          && input.includes("at most 600 UTF-8 bytes")),
+          && input.includes("Return only the pageNumber and evidence referenceId")),
+        usesServerEvidenceReferences: !isSummary || (
+          format?.schema?.properties?.overview?.properties?.evidence?.items?.properties?.referenceId?.type === "integer"
+          && format?.schema?.properties?.overview?.properties?.evidence?.items?.properties?.quote === undefined
+        ),
       });
       if (!isSummary) {
         metadataProviderCalls += 1;
@@ -253,7 +258,7 @@ async function availablePort() {
 }
 
 async function migrate() {
-  const child = launch(["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state], "migration");
+  const child = launch(["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument], "migration");
   await Promise.race([child.done, delay(45_000, undefined, { ref: false }).then(() => { throw new Error("Local migration timed out."); })]);
   assert.equal(child.exitCode, 0, `Isolated migration failed: ${child.log}`);
   await stop(child);
@@ -263,8 +268,11 @@ async function migrate() {
 async function startWorker() {
   const port = await availablePort();
   origin = `http://127.0.0.1:${port}`;
-  worker = launch(["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
-    "--var", `LOCAL_SUMMARY_PROVIDER_URL:${providerOrigin}`, "--var", `LOCAL_METADATA_PROVIDER_URL:${providerOrigin}`,
+  worker = launch(["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument,
+    // The mock endpoints use fixed sentinel authorization internally. Supply a
+    // non-secret binding only to satisfy the application's configuration gate;
+    // this isolated check must never depend on a developer's .dev.vars file.
+    "--var", "OPENAI_API_KEY:offline-summary-test-key", "--var", `LOCAL_SUMMARY_PROVIDER_URL:${providerOrigin}`, "--var", `LOCAL_METADATA_PROVIDER_URL:${providerOrigin}`,
     "--ip", "127.0.0.1", "--port", String(port), "--inspector-port", "0", "--show-interactive-dev-session=false"], "Worker");
   const deadline = Date.now() + 45_000;
   while (Date.now() < deadline) {
@@ -372,8 +380,8 @@ async function main() {
   assert.equal(first.body.summary.findings[0].evidence[0].pageNumber, 4);
   assert.notEqual(first.body.summary.overview.text, expected.overviewQuote, "summary prose may paraphrase");
   assert.match(first.body.summary.model, /\S/u);
-  assert.equal(first.body.summary.promptVersion, "document-summary-v1");
-  assert.equal(first.body.summary.schemaVersion, "document-summary-schema-v1");
+  assert.equal(first.body.summary.promptVersion, "document-summary-v2");
+  assert.equal(first.body.summary.schemaVersion, "document-summary-schema-v2");
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/metadata`, undefined, 200)).body.metadata, metadata.body.metadata);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/text`, undefined, 200)).body.extraction, textBeforeSummary.body.extraction);
   await download(primary.document, fixture.bytes);
@@ -438,12 +446,13 @@ async function main() {
   const unicodeLimit = await uploadAndExtract(multibyteFixture.bytes, "summary-evidence-600-utf8-bytes.pdf");
   summaryMode = "multibyte_600";
   const unicodeAccepted = await jsonRequest(`/api/documents/${unicodeLimit.document.id}/summary`, { method: "POST" }, 201);
-  assert.equal(unicodeAccepted.body.summary.overview.evidence[0].quote, multibyteFixture.multibyteEvidenceQuote);
-  await expectSummaryFailure("multibyte_601", "summary_invalid_response", 502, multibyteFixture.bytes);
-  await expectSummaryFailure("wrong_page", "summary_invalid_response", 502);
+  assert.ok(new TextEncoder().encode(unicodeAccepted.body.summary.overview.evidence[0].quote).byteLength <= 600);
+  await expectSummaryFailure("unissued_reference", "summary_invalid_response", 502);
   await expectSummaryFailure("invented_evidence", "summary_invalid_response", 502);
   await expectSummaryFailure("too_many_words", "summary_invalid_response", 502);
-  record("summary-evidence-wrong-page-invented-and-utf8-output-limits-passed", { acceptedQuoteBytes: 600, rejectedQuoteBytes: 601, proseWordLimit: 500 });
+  assert.match(worker.log, /"event":"summary_evidence_rejected"[^\n]*"reason":"reference_not_issued"/u);
+  assert.match(worker.log, /"event":"summary_evidence_rejected"[^\n]*"reason":"reference_shape"/u);
+  record("summary-evidence-server-references-invalid-reference-diagnostics-and-utf8-output-limits-passed", { maximumResolvedQuoteBytes: 600, proseWordLimit: 500 });
 
   await expectSummaryFailure("malformed", "summary_invalid_response", 502);
   await expectSummaryFailure("refusal", "summary_refusal", 422);
@@ -458,6 +467,7 @@ async function main() {
     assert.equal(request.hasTools, false);
     assert.equal(request.strictSchema, true);
     assert.equal(request.hasSummaryInstructions, true);
+    assert.equal(request.usesServerEvidenceReferences, true);
   }
   evidence.result = "passed";
 }

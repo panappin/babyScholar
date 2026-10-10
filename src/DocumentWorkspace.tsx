@@ -27,6 +27,7 @@ const EXTRACTION_TIMEOUT_MS = 45_000;
 const METADATA_TIMEOUT_MS = 35_000;
 const SUMMARY_TIMEOUT_MS = 35_000;
 const QUESTION_TIMEOUT_MS = 35_000;
+const DOWNLOAD_TIMEOUT_MS = 35_000;
 const MAX_QUESTION_BYTES = 2 * 1024;
 
 type ListState = {
@@ -55,6 +56,14 @@ type QuestionState = {
   questions: DocumentQuestionRecord[];
   message?: string;
   submittedQuestion?: string;
+  /** A gateway/session response, rather than the documented Worker contract. */
+  accessDenied?: boolean;
+};
+
+type DownloadState = {
+  status: "idle" | "downloading" | "error";
+  documentId?: string;
+  message?: string;
 };
 
 type ProcessingState =
@@ -224,6 +233,15 @@ function messageForResponse(response: Response, body: unknown, fallback: string)
   return documentError(body)?.message ?? `${fallback} (HTTP ${response.status}).`;
 }
 
+function nonApplicationQuestionAccessMessage(response: Response, body: unknown): string | null {
+  // The Worker does not issue 401/403 from the question contract. Do not show
+  // a gateway's HTML/body; keep the submitted question for explicit recovery.
+  if ((response.status === 401 || response.status === 403) && !documentError(body)) {
+    return `The private site denied access to Q&A (HTTP ${response.status}) before the application could confirm this question. Use the site's normal sign-in flow, then reload question history. No question was retried.`;
+  }
+  return null;
+}
+
 function formatTime(value: string): string {
   const date = new Date(value);
   return Number.isNaN(date.valueOf()) ? "Time unavailable" : date.toLocaleString();
@@ -231,6 +249,42 @@ function formatTime(value: string): string {
 
 function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(bytes < 1024 * 1024 ? 2 : 1)} MiB`;
+}
+
+function safeDownloadFilename(filename: string): string {
+  const safe = filename.replace(/[<>:"/\\|?*\u0000-\u001f]/gu, "_").replace(/\s+/gu, " ").trim().replace(/[. ]+$/u, "");
+  const base = safe || "original.pdf";
+  return /\.pdf$/iu.test(base) ? base : `${base}.pdf`;
+}
+
+async function readBoundedPdf(response: Response): Promise<Blob> {
+  const contentType = response.headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase();
+  if (contentType && contentType !== "application/pdf") throw new Error("The original download did not return a PDF file.");
+  if (!response.body) throw new Error("The original download had no file body.");
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let byteCount = 0;
+  let complete = false;
+  try {
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      byteCount += chunk.value.byteLength;
+      if (byteCount > MAX_PDF_BYTES) throw new Error("The original download exceeded the 10 MiB PDF limit.");
+      chunks.push(chunk.value);
+    }
+    complete = true;
+  } finally {
+    if (!complete) await reader.cancel().catch(() => undefined);
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(new ArrayBuffer(byteCount));
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new Blob([bytes.buffer], { type: "application/pdf" });
 }
 
 function formatPageRanges(ranges: DocumentSummaryPageRange[]): string {
@@ -333,6 +387,7 @@ export function DocumentWorkspace() {
   const [detailState, setDetailState] = useState<DetailState>({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null }, questions: initialQuestionState() });
   const [questionInput, setQuestionInput] = useState("");
   const [questionInputMessage, setQuestionInputMessage] = useState<string | null>(null);
+  const [downloadState, setDownloadState] = useState<DownloadState>({ status: "idle" });
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<ProcessingState>({ status: "idle" });
@@ -342,11 +397,14 @@ export function DocumentWorkspace() {
   const pipelineRequest = useRef<AbortController | null>(null);
   const summaryRequest = useRef<AbortController | null>(null);
   const questionRequest = useRef<AbortController | null>(null);
+  const downloadRequest = useRef<AbortController | null>(null);
+  const downloadObjectUrl = useRef<string | null>(null);
   const listRevision = useRef(0);
   const detailRevision = useRef(0);
   const pipelineRevision = useRef(0);
   const summaryRevision = useRef(0);
   const questionRevision = useRef(0);
+  const downloadRevision = useRef(0);
 
   const selectedDocument = selectedId ? listState.documents.find((document) => document.id === selectedId) ?? null : null;
   const pipelineBusy = processing.status === "uploading" || processing.status === "extracting" || processing.status === "metadata";
@@ -372,6 +430,17 @@ export function DocumentWorkspace() {
 
   function isCurrentQuestion(id: number, documentId: string, controller: AbortController) {
     return ownsQuestionRequest(id, documentId, controller) && !controller.signal.aborted;
+  }
+
+  function ownsDownloadRequest(id: number, documentId: string, controller: AbortController) {
+    return mounted.current && selectedId === documentId && downloadRevision.current === id && downloadRequest.current === controller;
+  }
+
+  function revokeDownloadObjectUrl() {
+    if (downloadObjectUrl.current) {
+      URL.revokeObjectURL(downloadObjectUrl.current);
+      downloadObjectUrl.current = null;
+    }
   }
 
   async function readJson(response: Response): Promise<unknown> {
@@ -441,6 +510,8 @@ export function DocumentWorkspace() {
       }
       const error = documentError(body);
       if (error?.kind === "extraction_not_found") return { status: "missing_extraction", questions: [] };
+      const accessMessage = nonApplicationQuestionAccessMessage(response, body);
+      if (accessMessage) return { status: "error", questions: [], message: accessMessage, accessDenied: true };
       return { status: "error", questions: [], message: messageForResponse(response, body, "Saved questions could not be loaded") };
     } catch (error) {
       return { status: "error", questions: [], message: error instanceof Error ? `Saved questions could not be loaded: ${error.message}` : "Saved questions could not be loaded. Reload question history to try again." };
@@ -509,12 +580,67 @@ export function DocumentWorkspace() {
     summaryRequest.current?.abort();
     questionRevision.current += 1;
     questionRequest.current?.abort();
+    downloadRevision.current += 1;
+    downloadRequest.current?.abort();
+    revokeDownloadObjectUrl();
+    setDownloadState({ status: "idle" });
     setSelectedId(id);
     setDetailState({ status: "loading", extraction: null, metadata: null, summary: { status: "loading", summary: null }, questions: { status: "loading", questions: [] } });
     setQuestionInput("");
     setQuestionInputMessage(null);
     setProcessing({ status: "idle" });
     void loadDetails(id);
+  }
+
+  async function downloadOriginal(document: UploadedDocument) {
+    const revision = downloadRevision.current + 1;
+    downloadRevision.current = revision;
+    downloadRequest.current?.abort();
+    revokeDownloadObjectUrl();
+    const controller = new AbortController();
+    downloadRequest.current = controller;
+    let timedOut = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, DOWNLOAD_TIMEOUT_MS);
+    setDownloadState({ status: "downloading", documentId: document.id, message: "Preparing the original PDF download..." });
+    try {
+      const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}/pdf`, {
+        headers: { accept: "application/pdf" },
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        const body = await readJson(response);
+        throw new DocumentResponseError(messageForResponse(response, body, "The original PDF could not be downloaded"));
+      }
+      const blob = await readBoundedPdf(response);
+      if (!ownsDownloadRequest(revision, document.id, controller)) return;
+      const objectUrl = URL.createObjectURL(blob);
+      downloadObjectUrl.current = objectUrl;
+      const anchor = window.document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = safeDownloadFilename(document.filename);
+      anchor.hidden = true;
+      window.document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => {
+        if (downloadObjectUrl.current === objectUrl) revokeDownloadObjectUrl();
+      }, 0);
+      setDownloadState({ status: "idle", documentId: document.id, message: "Original PDF download started." });
+    } catch (error) {
+      if (!ownsDownloadRequest(revision, document.id, controller)) return;
+      setDownloadState({
+        status: "error",
+        documentId: document.id,
+        message: controller.signal.aborted
+          ? timedOut
+            ? "Preparing the original PDF download took too long. Try the explicit download again."
+            : "The original PDF download was interrupted. Try the explicit download again."
+          : error instanceof Error ? error.message : "The original PDF could not be downloaded.",
+      });
+    } finally {
+      window.clearTimeout(timeout);
+      if (downloadRequest.current === controller) downloadRequest.current = null;
+    }
   }
 
   async function postEmpty(path: string, signal: AbortSignal): Promise<{ response: Response; body: unknown }> {
@@ -750,7 +876,17 @@ export function DocumentWorkspace() {
         if (error?.kind === "question_in_progress") {
           await reconcileQuestion(document.id, revision, submittedQuestion, "in_progress", `${error.message} Checking saved question history without generating again.`);
         } else {
-          setDetailState((current) => ({ ...current, questions: { status: "error", questions: current.questions.questions, submittedQuestion, message: messageForResponse(response, body, "Question could not be completed") } }));
+          const accessMessage = nonApplicationQuestionAccessMessage(response, body);
+          setDetailState((current) => ({
+            ...current,
+            questions: {
+              status: "error",
+              questions: current.questions.questions,
+              submittedQuestion,
+              accessDenied: Boolean(accessMessage),
+              message: accessMessage ?? messageForResponse(response, body, "Question could not be completed"),
+            },
+          }));
         }
         return;
       }
@@ -907,6 +1043,8 @@ export function DocumentWorkspace() {
       pipelineRequest.current?.abort();
       summaryRequest.current?.abort();
       questionRequest.current?.abort();
+      downloadRequest.current?.abort();
+      revokeDownloadObjectUrl();
     };
   }, []);
 
@@ -952,8 +1090,17 @@ export function DocumentWorkspace() {
       {selectedDocument && <section className="document-detail" aria-live="polite" aria-labelledby="selected-pdf-title">
         <div className="results-heading">
           <div><p className="eyebrow">Selected PDF</p><h3 id="selected-pdf-title">{selectedDocument.filename || "Unnamed PDF"}</h3></div>
-          <a className="paper-link" href={`/api/documents/${encodeURIComponent(selectedDocument.id)}/pdf`} download>Download original PDF</a>
+          <button
+            type="button"
+            className="paper-link"
+            data-download-original
+            onClick={() => void downloadOriginal(selectedDocument)}
+            disabled={downloadState.status === "downloading" && downloadState.documentId === selectedDocument.id}
+          >
+            {downloadState.status === "downloading" && downloadState.documentId === selectedDocument.id ? "Preparing download..." : "Download original PDF"}
+          </button>
         </div>
+        {downloadState.documentId === selectedDocument.id && downloadState.message && <p className={downloadState.status === "error" ? "search-feedback search-feedback--error" : "search-feedback"} role={downloadState.status === "error" ? "alert" : "status"}>{downloadState.message}</p>}
         <dl className="paper-metadata">
           <div><dt>Uploaded</dt><dd><time dateTime={selectedDocument.uploadedAt}>{formatTime(selectedDocument.uploadedAt)}</time></dd></div>
           <div><dt>Size</dt><dd>{formatBytes(selectedDocument.byteCount)}</dd></div>
@@ -1012,7 +1159,13 @@ export function DocumentWorkspace() {
           {detailState.extraction && detailState.questions.status === "asking" && <p className="search-feedback" role="status">{detailState.questions.message}</p>}
           {detailState.extraction && detailState.questions.status === "in_progress" && <p className="search-feedback" role="status">{detailState.questions.message} Reload question history to check for the saved result.</p>}
           {detailState.extraction && detailState.questions.status === "uncertain" && <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message} The submitted question remains in the input; no additional question was sent.</p>}
-          {detailState.extraction && detailState.questions.status === "error" && <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message}</p>}
+          {detailState.extraction && detailState.questions.status === "error" && <>
+            <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message}</p>
+            {detailState.questions.accessDenied && <div className="question-access-recovery">
+              <p className="results-note">After signing in again through the private site&apos;s normal access flow, use this read-only reload to confirm saved questions. It will not ask the question again.</p>
+              <button type="button" className="reload-button" data-question-access-reload onClick={() => void loadQuestions(selectedDocument.id)} disabled={questionBusy}>Reload question history</button>
+            </div>}
+          </>}
           {detailState.questions.questions.length > 0 && <>
             <p className="results-note">Saved questions, newest first. A reload uses GET only and does not ask a question.</p>
             <ol className="question-list">{detailState.questions.questions.map((question) => <li key={question.id}><QuestionCard question={question} /></li>)}</ol>

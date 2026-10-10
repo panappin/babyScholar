@@ -385,6 +385,20 @@ a:focus-visible {
   font-weight: 700;
 }
 
+button.paper-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.paper-link:disabled {
+  color: #59667a;
+  cursor: progress;
+}
+
 .paper-link:hover {
   color: #0d3d71;
 }
@@ -720,6 +734,10 @@ a:focus-visible {
   border: 1px solid #b8d1ed;
   border-radius: 0.75rem;
   background: #f9fcff;
+}
+
+.question-access-recovery {
+  margin: 0.75rem 0;
 }
 
 .document-text,

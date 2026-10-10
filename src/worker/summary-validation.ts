@@ -4,8 +4,8 @@ import type {
   DocumentSummarySection,
 } from "./document-types.js";
 import { DocumentError } from "./document-validation.js";
-import { METADATA_EVIDENCE_QUOTE_BYTES, metadataPageContains } from "./metadata-validation.js";
-import type { SummarySourceExcerpt } from "./summary-source.js";
+import { metadataPageContains } from "./metadata-validation.js";
+import { SUMMARY_EVIDENCE_REFERENCE_BYTES, type SummarySourceExcerpt } from "./summary-source.js";
 
 const sections: DocumentSummarySection[] = ["contributions", "methods", "findings", "limitations"];
 const encoder = new TextEncoder();
@@ -28,8 +28,29 @@ export interface ValidatedSummaryOutput {
   warnings: string[];
 }
 
+type SummaryEvidenceRejectionReason =
+  | "reference_shape"
+  | "page_number_type"
+  | "page_number_integer"
+  | "reference_id_type"
+  | "reference_id_integer"
+  | "reference_not_issued"
+  | "resolved_quote_empty"
+  | "resolved_quote_too_large"
+  | "resolved_quote_mismatch"
+  | "duplicate_reference";
+
 function invalid(message: string): never {
   throw new DocumentError("summary_invalid_response", 502, message);
+}
+
+/**
+ * Keep provider/PDF content out of diagnostics. The fixed item label, index,
+ * and reason are enough to identify a malformed reference in Worker logs.
+ */
+function invalidEvidence(item: string, index: number, reason: SummaryEvidenceRejectionReason): never {
+  console.warn(JSON.stringify({ event: "summary_evidence_rejected", item, index, reason }));
+  invalid("OpenAI returned unsupported summary evidence.");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -52,20 +73,28 @@ function boundedText(value: unknown, maximumBytes: number, name: string): string
   return value;
 }
 
-function validateEvidenceQuote(value: unknown, excerpt: SummarySourceExcerpt): DocumentSummaryEvidenceQuote {
-  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "quote"])) invalid("OpenAI returned malformed summary evidence.");
+function validateEvidenceReference(
+  value: unknown,
+  excerpt: SummarySourceExcerpt,
+  item: string,
+  index: number,
+): DocumentSummaryEvidenceQuote {
+  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "referenceId"])) invalidEvidence(item, index, "reference_shape");
   const pageNumber = value.pageNumber;
-  const quote = value.quote;
-  if (typeof pageNumber !== "number" || !Number.isInteger(pageNumber)
-    || typeof quote !== "string" || quote.length === 0 || quote !== quote.trim()
-    || byteLength(quote) > METADATA_EVIDENCE_QUOTE_BYTES) {
-    invalid("OpenAI returned unsupported summary evidence.");
-  }
+  const referenceId = value.referenceId;
+  if (typeof pageNumber !== "number") invalidEvidence(item, index, "page_number_type");
+  if (!Number.isInteger(pageNumber)) invalidEvidence(item, index, "page_number_integer");
+  if (typeof referenceId !== "number") invalidEvidence(item, index, "reference_id_type");
+  if (!Number.isInteger(referenceId)) invalidEvidence(item, index, "reference_id_integer");
+  const reference = excerpt.evidenceReferences.find((candidate) => (
+    candidate.pageNumber === pageNumber && candidate.referenceId === referenceId
+  ));
+  if (!reference) invalidEvidence(item, index, "reference_not_issued");
   const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
-  if (!page || !metadataPageContains(page.text, quote)) {
-    invalid("OpenAI returned summary evidence that does not match the selected PDF text.");
-  }
-  return { pageNumber, quote };
+  if (!reference.quote || reference.quote !== reference.quote.trim()) invalidEvidence(item, index, "resolved_quote_empty");
+  if (byteLength(reference.quote) > SUMMARY_EVIDENCE_REFERENCE_BYTES) invalidEvidence(item, index, "resolved_quote_too_large");
+  if (!page || !metadataPageContains(page.text, reference.quote)) invalidEvidence(item, index, "resolved_quote_mismatch");
+  return { pageNumber, quote: reference.quote };
 }
 
 function validateItem(value: unknown, excerpt: SummarySourceExcerpt, name: string, maximumBytes: number): DocumentSummaryItem {
@@ -74,9 +103,9 @@ function validateItem(value: unknown, excerpt: SummarySourceExcerpt, name: strin
   if (!Array.isArray(value.evidence) || value.evidence.length === 0 || value.evidence.length > MAX_EVIDENCE_PER_ITEM) {
     invalid("OpenAI returned unsupported summary evidence.");
   }
-  const evidence = value.evidence.map((quote) => validateEvidenceQuote(quote, excerpt));
+  const evidence = value.evidence.map((reference, index) => validateEvidenceReference(reference, excerpt, name, index));
   if (new Set(evidence.map((quote) => `${quote.pageNumber}\u0000${quote.quote}`)).size !== evidence.length) {
-    invalid("OpenAI returned duplicate summary evidence.");
+    invalidEvidence(name, -1, "duplicate_reference");
   }
   return { text, evidence };
 }

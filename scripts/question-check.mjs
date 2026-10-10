@@ -4,7 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, realpath, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { createServer as createTcpServer } from "node:net";
-import { dirname, resolve, sep } from "node:path";
+import { dirname, relative, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { createSummaryClippedPdfFixture, createSummaryPdfFixture } from "./fixtures/pdf-fixtures.mjs";
 
@@ -13,6 +13,7 @@ const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
 const id = randomUUID();
 const evidenceDirectory = resolve(root, ".wrangler/question-check", id);
 const state = resolve(evidenceDirectory, "state");
+const stateArgument = relative(root, state).split(sep).join("/") || ".";
 const children = new Set();
 const fixture = createSummaryPdfFixture();
 const clippedFixture = createSummaryClippedPdfFixture();
@@ -73,11 +74,13 @@ function metadataOutput() {
 
 function summaryOutput() {
   return {
-    overview: { text: "The fixture retains ordered source text with page-level support.", evidence: [{ pageNumber: 1, quote: expected.overviewQuote }] },
-    contributions: [{ text: "It selects stored source text before generating output.", evidence: [{ pageNumber: 2, quote: expected.contributionQuote }] }],
-    methods: [{ text: "It retains ordered pages for grounded output.", evidence: [{ pageNumber: 3, quote: expected.methodQuote }] }],
-    findings: [{ text: "Later findings remain visible in selected source text.", evidence: [{ pageNumber: 4, quote: expected.findingQuote }] }],
-    limitations: [{ text: "Quotes do not prove every paraphrased implication.", evidence: [{ pageNumber: 4, quote: expected.limitationQuote }] }],
+    // Summary evidence is now a server-issued page/reference pair; the Worker
+    // resolves the exact public quote after strict validation.
+    overview: { text: "The fixture retains ordered source text with page-level support.", evidence: [{ pageNumber: 1, referenceId: 5 }] },
+    contributions: [{ text: "It selects stored source text before generating output.", evidence: [{ pageNumber: 2, referenceId: 1 }] }],
+    methods: [{ text: "It retains ordered pages for grounded output.", evidence: [{ pageNumber: 3, referenceId: 1 }] }],
+    findings: [{ text: "Later findings remain visible in selected source text.", evidence: [{ pageNumber: 4, referenceId: 1 }] }],
+    limitations: [{ text: "Quotes do not prove every paraphrased implication.", evidence: [{ pageNumber: 4, referenceId: 2 }] }],
     warnings: [],
   };
 }
@@ -243,7 +246,7 @@ async function availablePort() {
 }
 
 async function migrate() {
-  const child = launch(["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state], "migration");
+  const child = launch(["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument], "migration");
   await Promise.race([child.done, delay(45_000, undefined, { ref: false }).then(() => { throw new Error("Local migration timed out."); })]);
   assert.equal(child.exitCode, 0, `Isolated migration failed: ${child.log}`);
   await stop(child);
@@ -253,7 +256,7 @@ async function migrate() {
 async function startWorker(apiKey = "offline-question-test-key") {
   const port = await availablePort();
   origin = `http://127.0.0.1:${port}`;
-  worker = launch(["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
+  worker = launch(["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument,
     "--var", `OPENAI_API_KEY:${apiKey}`, "--var", `LOCAL_QUESTION_PROVIDER_URL:${providerOrigin}`,
     "--var", `LOCAL_SUMMARY_PROVIDER_URL:${providerOrigin}`, "--var", `LOCAL_METADATA_PROVIDER_URL:${providerOrigin}`,
     "--ip", "127.0.0.1", "--port", String(port), "--inspector-port", "0", "--show-interactive-dev-session=false"], "Worker");

@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createServer as createHttpServer } from "node:http";
 import { createServer } from "node:net";
-import { resolve } from "node:path";
+import { relative, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { createMetadataPdfFixture, createSummaryPdfFixture } from "./fixtures/pdf-fixtures.mjs";
 
@@ -13,6 +13,7 @@ const root = resolve(import.meta.dirname, "..");
 const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
 const vite = resolve(root, "node_modules/vite/bin/vite.js");
 const state = resolve(root, ".wrangler/frontend-search-browser-check", randomUUID());
+const stateArgument = relative(root, state).split(sep).join("/") || ".";
 const browserCandidates = [
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
@@ -142,23 +143,23 @@ function summaryProviderOutput() {
   return {
     overview: {
       text: "The fixture evaluates an ordered approach to source-grounded research-paper summaries.",
-      evidence: [{ pageNumber: 1, quote: expected.overviewQuote }],
+      evidence: [{ pageNumber: 1, referenceId: 5 }],
     },
     contributions: [{
       text: "It separates persisted source selection from summary generation.",
-      evidence: [{ pageNumber: 2, quote: expected.contributionQuote }],
+      evidence: [{ pageNumber: 2, referenceId: 1 }],
     }],
     methods: [{
       text: "Its method keeps ordered page text with page-numbered evidence.",
-      evidence: [{ pageNumber: 3, quote: expected.methodQuote }],
+      evidence: [{ pageNumber: 3, referenceId: 1 }],
     }],
     findings: [{
       text: "Later-page findings can remain represented in the resulting summary.",
-      evidence: [{ pageNumber: 4, quote: expected.findingQuote }],
+      evidence: [{ pageNumber: 4, referenceId: 1 }],
     }],
     limitations: [{
       text: "Supporting quotes do not establish every implication of a paraphrase.",
-      evidence: [{ pageNumber: 4, quote: expected.limitationQuote }],
+      evidence: [{ pageNumber: 4, referenceId: 2 }],
     }],
     warnings: [],
   };
@@ -290,7 +291,7 @@ async function waitForServer(child, url) {
 }
 
 async function migrate() {
-  const child = launch(process.execPath, [wrangler, "d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state]);
+  const child = launch(process.execPath, [wrangler, "d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument]);
   child.stdin.end();
   await Promise.race([child.done, delay(45_000, undefined, { ref: false }).then(() => { throw new Error("Isolated local migration timed out."); })]);
   assert.equal(child.exitCode, 0, "Isolated local migration failed.");
@@ -367,7 +368,7 @@ async function main() {
 
   await startMetadataProvider();
   await migrate();
-  worker = launch(process.execPath, [wrangler, "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
+  worker = launch(process.execPath, [wrangler, "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument,
     "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_SUMMARY_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_QUESTION_PROVIDER_URL:${metadataProviderOrigin}`,
     "--ip", "127.0.0.1", "--port", String(workerPort), "--inspector-port", "0", "--show-interactive-dev-session=false"]);
   await waitForServer(worker, `${workerOrigin}/api/health`);
@@ -382,6 +383,17 @@ async function main() {
   const target = await cdp.send("Target.createTarget", { url: "about:blank" });
   const attached = await cdp.send("Target.attachToTarget", { targetId: target.targetId, flatten: true });
   const sessionId = attached.sessionId;
+  const downloadDirectory = resolve(state, "browser-downloads");
+  await mkdir(downloadDirectory, { recursive: true });
+  await cdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: downloadDirectory, eventsEnabled: true });
+  const downloads = new Map();
+  cdp.on("Browser.downloadWillBegin", (params) => {
+    downloads.set(params.guid, { ...params, state: "started" });
+  });
+  cdp.on("Browser.downloadProgress", (params) => {
+    const current = downloads.get(params.guid) ?? {};
+    downloads.set(params.guid, { ...current, ...params });
+  });
   await cdp.send("Page.enable", {}, sessionId);
   await cdp.send("Runtime.enable", {}, sessionId);
   const paused = [];
@@ -451,6 +463,15 @@ async function main() {
     }
     throw new Error(`Timed out waiting for ${description}.`);
   };
+  const waitForCompletedDownload = async (beforeCount, description) => {
+    const deadline = Date.now() + 30_000;
+    while (Date.now() < deadline) {
+      const completed = [...downloads.values()].find((download, index) => index >= beforeCount && download.state === "completed" && (typeof download.filePath === "string" || typeof download.suggestedFilename === "string"));
+      if (completed) return completed;
+      await delay(40);
+    }
+    throw new Error(`Timed out waiting for ${description}.`);
+  };
   const newestPaused = async (predicate, description) => {
     const deadline = Date.now() + 12_000;
     while (Date.now() < deadline) {
@@ -484,6 +505,7 @@ async function main() {
   const isDocumentSummaryPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/summary`;
   const isDocumentQuestionsGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/questions`;
   const isDocumentQuestionsPost = (request, id) => request.request.method === "POST" && documentPath(request) === `/api/documents/${id}/questions`;
+  const isDocumentPdfGet = (request, id) => request.request.method === "GET" && documentPath(request) === `/api/documents/${id}/pdf`;
   const questionPostCount = (id) => allPaused.filter((request) => request.method === "POST" && new URL(request.url).pathname === `/api/documents/${id}/questions`).length;
   const fulfillJson = async (request, status, body) => {
     record("mock-response", { method: request.request.method, path: new URL(request.request.url).pathname, status });
@@ -492,6 +514,15 @@ async function main() {
       responseCode: status,
       responseHeaders: [{ name: "content-type", value: "application/json; charset=utf-8" }],
       body: Buffer.from(JSON.stringify(body)).toString("base64"),
+    }, sessionId);
+  };
+  const fulfillText = async (request, status, body) => {
+    record("mock-response", { method: request.request.method, path: new URL(request.request.url).pathname, status, body: "redacted non-JSON" });
+    return cdp.send("Fetch.fulfillRequest", {
+      requestId: request.requestId,
+      responseCode: status,
+      responseHeaders: [{ name: "content-type", value: "text/html; charset=utf-8" }],
+      body: Buffer.from(body).toString("base64"),
     }, sessionId);
   };
   const navigate = async () => {
@@ -666,6 +697,10 @@ async function main() {
   await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
   await waitFor("document.querySelector('#paper-search-query')", "browser refresh");
   assert.equal(await click("#library-tab"), true);
+  // React development StrictMode can cancel the mount-time library read during
+  // navigation. This explicit action remains GET-only and verifies the same
+  // persisted local-D1 record without changing application behavior.
+  assert.equal(await click("#library-view .reload-button"), true);
   await waitFor(`document.body.innerText.includes(${JSON.stringify(actualRecordId)})`, "record after browser refresh");
   assert.equal(await evaluate("document.querySelector('[data-save-paper=\"2401.01239\"]')?.disabled ?? true"), true, "not searched after refresh; saved UI state is reconciled from the library");
   const duplicateActual = await evaluate(`fetch('/api/library/papers', {
@@ -711,6 +746,9 @@ async function main() {
   await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentOne.id), "not-generated summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await waitFor("document.body.innerText.includes('Title unavailable') && document.body.innerText.includes('title is unknown')", "unknown metadata fallbacks");
   await waitFor("document.body.innerText.includes('No summary has been generated')", "not-generated summary state");
+  assert.equal(await click("[data-download-original]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentPdfGet(request, mockDocumentOne.id), "download failure GET"), 503, { error: { kind: "storage_unavailable", message: "The original PDF storage is unavailable." } });
+  await waitFor("document.body.innerText.includes('original PDF storage is unavailable')", "download failure feedback");
   assert.equal(await click('[data-generate-summary]'), true);
   await waitFor("document.body.innerText.includes('Generating a source-grounded summary')", "summary generation feedback");
   await fulfillJson(await nextPaused((request) => isDocumentSummaryPost(request, mockDocumentOne.id), "partial summary POST"), 201, { summary: partialSummary(mockDocumentOne.id), created: true });
@@ -724,6 +762,8 @@ async function main() {
   assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentOne.id}/summary`)).length, summaryPostsAfterCreate, "summary reload must use GET only");
 
   // A superseded detail response must not overwrite a newer selection.
+  assert.equal(await click("[data-download-original]"), true);
+  const staleDownload = await nextPaused((request) => isDocumentPdfGet(request, mockDocumentOne.id), "stale download request");
   assert.equal(await click(`[data-document-id="${mockDocumentTwo.id}"]`), true);
   const staleText = await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "stale document text request");
   const staleMetadata = await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "stale document metadata request");
@@ -735,7 +775,9 @@ async function main() {
   await cdp.send("Fetch.failRequest", { requestId: staleText.requestId, errorReason: "Aborted" }).catch(() => undefined);
   await cdp.send("Fetch.failRequest", { requestId: staleMetadata.requestId, errorReason: "Aborted" }).catch(() => undefined);
   await cdp.send("Fetch.failRequest", { requestId: staleSummary.requestId, errorReason: "Aborted" }).catch(() => undefined);
+  await cdp.send("Fetch.failRequest", { requestId: staleDownload.requestId, errorReason: "Aborted" }).catch(() => undefined);
   await waitFor("document.querySelector('.document-text pre')?.textContent.includes('Current selected PDF text') && document.body.innerText.includes('Partial source coverage')", "stale document and summary selection ignored");
+  assert.equal(await evaluate("document.body.innerText.includes('original PDF storage is unavailable')"), false, "a stale download must not show feedback for a different selection");
 
   // Resume reads first, then surfaces in-progress and interrupted POSTs without
   // retrying them. The interrupted case reconciles through read-only GETs.
@@ -800,6 +842,25 @@ async function main() {
   assert.equal(await click("[data-question-reload]"), true);
   await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "empty question history GET"), 200, { questions: [] });
   await waitFor("document.body.innerText.includes('No saved questions yet')", "empty question history");
+
+  // A gateway/session response is deliberately distinct from an application
+  // error. The question remains in the input and recovery uses GET only.
+  const deniedQuestion = "Can private access recover this submitted question?";
+  assert.equal(await fillQuestion(deniedQuestion), true);
+  assert.equal(await click("[data-question-submit]"), true);
+  await fulfillText(await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "question access-denied POST"), 403, "<h1>Access denied</h1>");
+  await waitFor("document.body.innerText.includes('private site denied access to Q&A (HTTP 403)')", "question access-denied feedback");
+  assert.equal(await evaluate("document.querySelector('#document-question-input')?.value"), deniedQuestion, "access-denied question must remain available for an explicit future attempt");
+  assert.equal(await click("[data-question-access-reload]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "access recovery history GET"), 200, { questions: [] });
+  await waitFor("document.body.innerText.includes('No saved questions yet')", "question access recovery GET-only reload");
+  assert.equal(await click("[data-question-reload]"), true);
+  await fulfillText(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "question history unauthorized GET"), 401, "<h1>Sign in</h1>");
+  await waitFor("document.body.innerText.includes('private site denied access to Q&A (HTTP 401)')", "question history unauthorized feedback");
+  assert.equal(await click("[data-question-access-reload]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentQuestionsGet(request, mockDocumentTwo.id), "unauthorized recovery history GET"), 200, { questions: [] });
+  await waitFor("document.body.innerText.includes('No saved questions yet')", "question unauthorized recovery GET-only reload");
+  record("mocked-question-non-application-401-403-preserve-input-and-recover-with-get-only-passed", { deniedPostStatus: 403, deniedGetStatus: 401 });
 
   const mockAnsweredQuestion = partialQuestion(mockDocumentTwo.id);
   assert.equal(await fillQuestion(mockAnsweredQuestion.question), true);
@@ -904,14 +965,13 @@ async function main() {
   assert.match(uploadedDocumentId, /^[0-9a-f-]{36}$/u);
   await evaluate("document.querySelector('.document-text').open = true; document.querySelector('.metadata-evidence').open = true");
   await waitFor("document.body.innerText.includes('Page 1') && document.body.innerText.includes('Avery Example') && document.body.innerText.includes('Page-numbered source evidence')", "extracted page text and metadata evidence");
-  const originalPdfBase64 = await evaluate(`fetch('/api/documents/${uploadedDocumentId}/pdf').then(async (response) => {
-    if (!response.ok) throw new Error('download failed');
-    const bytes = new Uint8Array(await response.arrayBuffer());
-    let text = '';
-    for (const byte of bytes) text += String.fromCharCode(byte);
-    return btoa(text);
-  })`);
-  assert.deepEqual(Buffer.from(originalPdfBase64, "base64"), Buffer.from(documentFixture.bytes), "original-PDF download must preserve fixture bytes");
+  const downloadsBeforeClick = downloads.size;
+  assert.equal(await click("[data-download-original]"), true);
+  await waitFor("document.body.innerText.includes('Original PDF download started')", "download started feedback");
+  const completedDownload = await waitForCompletedDownload(downloadsBeforeClick, "captured original-PDF browser download");
+  const downloadedPath = completedDownload.filePath ?? resolve(downloadDirectory, completedDownload.suggestedFilename);
+  assert.deepEqual(await readFile(downloadedPath), Buffer.from(documentFixture.bytes), "clicked original-PDF download must preserve fixture bytes");
+  assert.equal(completedDownload.suggestedFilename, "metadata-browser-fixture.pdf");
   await cdp.send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }, sessionId);
   await delay(50);
   const pdfMobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
@@ -925,7 +985,7 @@ async function main() {
   assert.equal(await click(`[data-document-id="${uploadedDocumentId}"]`), true);
   await waitFor(`document.body.innerText.includes(${JSON.stringify(documentFixture.expected.title)})`, "persisted document metadata after selection");
   assert.equal(metadataProviderCalls, 1, "list reload and selection must use GET only");
-  record("actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-download-passed", { documentId: uploadedDocumentId, providerCalls: metadataProviderCalls });
+  record("actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-click-download-passed", { documentId: uploadedDocumentId, providerCalls: metadataProviderCalls, downloadBytes: documentFixture.bytes.byteLength });
 
   // A provider failure is surfaced without removing the stored original or
   // extracted text. It also proves no automatic metadata POST retry occurs.

@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
-import { dirname, resolve } from "node:path";
+import { dirname, relative, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 
@@ -12,6 +12,9 @@ const wrangler = resolve(root, "node_modules/wrangler/bin/wrangler.js");
 const vite = resolve(root, "node_modules/vite/bin/vite.js");
 const id = randomUUID();
 const state = resolve(root, ".wrangler/storage-check", id);
+// Keep an absolute path for owned-state safety checks, but pass its
+// project-relative spelling to the local CLI.
+const stateArgument = relative(root, state).split(sep).join("/") || ".";
 const probePath = `/api/__local/storage-probe/${id}`;
 const value = `persistent D1 probe ${id}: quotes ' and Unicode λ`;
 const bytes = [0, 1, 2, 127, 128, 254, 255, ...Buffer.from(`R2 probe ${id}\n`)];
@@ -104,7 +107,7 @@ async function waitForServer(child, url) {
 }
 
 async function migrate() {
-  const args = ["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", state];
+  const args = ["d1", "migrations", "apply", "DB", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument];
   record("migrate-command", { command: `node node_modules/wrangler/bin/wrangler.js ${args.join(" ")}` });
   const child = launch(wrangler, args);
   child.stdin.end(); // Noninteractive Wrangler confirms local migration application.
@@ -119,7 +122,7 @@ async function migrate() {
 }
 
 async function startWorker(port, enableProbe) {
-  const args = ["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", state,
+  const args = ["dev", "--config", "wrangler.jsonc", "--local", "--persist-to", stateArgument,
     "--ip", "127.0.0.1", "--port", String(port), "--inspector-port", "0",
     "--show-interactive-dev-session=false"];
   if (enableProbe) args.push("--var", "LOCAL_STORAGE_PROBE:true");
