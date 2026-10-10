@@ -16,6 +16,13 @@ export interface QuestionProviderResult {
   output: unknown;
 }
 
+type QuestionProviderDiagnosticStage =
+  | "http_body_empty"
+  | "http_body_non_json"
+  | "rest_envelope_invalid"
+  | "output_text_missing"
+  | "structured_json_malformed";
+
 const evidenceQuoteSchema = {
   type: "object",
   additionalProperties: false,
@@ -60,6 +67,24 @@ function readString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
+/**
+ * Retain only a fixed stage label in Worker logs. Provider bodies, questions,
+ * extracted source text, parse details, and credentials are intentionally not
+ * logged.
+ */
+function questionProviderDiagnostic(stage: QuestionProviderDiagnosticStage): void {
+  console.warn(JSON.stringify({ event: "document_question_provider_rejected", stage }));
+}
+
+function malformedQuestionProviderResponse(
+  stage: QuestionProviderDiagnosticStage,
+  message: string,
+  upstreamStatus?: number,
+): IntegrationError {
+  questionProviderDiagnostic(stage);
+  return new IntegrationError("malformed_response", message, upstreamStatus);
+}
+
 function classifyOpenAiFailure(status: number, payload: unknown) {
   const fields = errorFields(payload);
   if (status === 401) return "authentication" as const;
@@ -100,7 +125,9 @@ function formatSource(question: string, excerpt: SummarySourceExcerpt): string {
 }
 
 async function readBoundedJson(response: Response, maximumBytes: number): Promise<unknown> {
-  if (!response.body) throw new IntegrationError("malformed_response", "OpenAI returned an empty response body.", response.status);
+  if (!response.body) {
+    throw malformedQuestionProviderResponse("http_body_empty", "OpenAI returned an empty response body.", response.status);
+  }
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
@@ -126,36 +153,44 @@ async function readBoundedJson(response: Response, maximumBytes: number): Promis
     bytes.set(chunk, offset);
     offset += chunk.byteLength;
   }
+  if (bytes.byteLength === 0) {
+    throw malformedQuestionProviderResponse("http_body_empty", "OpenAI returned an empty response body.", response.status);
+  }
   try {
-    return JSON.parse(new TextDecoder().decode(bytes));
+    return JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(bytes));
   } catch {
-    throw new IntegrationError("malformed_response", "OpenAI returned a non-JSON response.", response.status);
+    throw malformedQuestionProviderResponse("http_body_non_json", "OpenAI returned a non-JSON response.", response.status);
   }
 }
 
 function structuredOutput(payload: unknown): unknown {
-  if (typeof payload !== "object" || payload === null) {
-    throw new IntegrationError("malformed_response", "OpenAI returned an invalid JSON response.");
+  if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+    throw malformedQuestionProviderResponse("rest_envelope_invalid", "OpenAI returned an invalid question response envelope.");
   }
   const record = payload as Record<string, unknown>;
+  if (typeof record.status !== "string") {
+    throw malformedQuestionProviderResponse("rest_envelope_invalid", "OpenAI returned an invalid question response envelope.");
+  }
   if (record.status === "incomplete") {
     throw new IntegrationError("incomplete_response", "OpenAI returned an incomplete question response.");
   }
   if (record.status !== "completed") {
     throw new IntegrationError("incomplete_response", "OpenAI did not complete the question response.");
   }
-  if (Array.isArray(record.output)) {
-    for (const item of record.output) {
-      if (typeof item !== "object" || item === null) continue;
-      const content = (item as Record<string, unknown>).content;
-      if (!Array.isArray(content)) continue;
-      if (content.some((part) => typeof part === "object" && part !== null && (part as Record<string, unknown>).type === "refusal")) {
-        throw new IntegrationError("refusal", "OpenAI refused the question request.");
-      }
+  if (Object.hasOwn(record, "output") && !Array.isArray(record.output)) {
+    throw malformedQuestionProviderResponse("rest_envelope_invalid", "OpenAI returned an invalid question response envelope.");
+  }
+  const output = Array.isArray(record.output) ? record.output : [];
+  for (const item of output) {
+    if (typeof item !== "object" || item === null) continue;
+    const content = (item as Record<string, unknown>).content;
+    if (!Array.isArray(content)) continue;
+    if (content.some((part) => typeof part === "object" && part !== null && (part as Record<string, unknown>).type === "refusal")) {
+      throw new IntegrationError("refusal", "OpenAI refused the question request.");
     }
   }
   const direct = readString(record.output_text);
-  const parts = Array.isArray(record.output) ? record.output.flatMap((item) => {
+  const parts = output.flatMap((item) => {
     if (typeof item !== "object" || item === null) return [];
     const content = (item as Record<string, unknown>).content;
     if (!Array.isArray(content)) return [];
@@ -164,13 +199,15 @@ function structuredOutput(payload: unknown): unknown {
       const partRecord = part as Record<string, unknown>;
       return partRecord.type === "output_text" ? [readString(partRecord.text)] : [];
     });
-  }).filter((part): part is string => Boolean(part)) : [];
+  }).filter((part): part is string => Boolean(part));
   const text = direct ?? parts.join("\n").trim();
-  if (!text) throw new IntegrationError("malformed_response", "OpenAI completed without structured question text.");
+  if (!text) {
+    throw malformedQuestionProviderResponse("output_text_missing", "OpenAI completed without structured question text.");
+  }
   try {
     return JSON.parse(text);
   } catch {
-    throw new IntegrationError("malformed_response", "OpenAI returned malformed structured question data.");
+    throw malformedQuestionProviderResponse("structured_json_malformed", "OpenAI returned malformed structured question data.");
   }
 }
 

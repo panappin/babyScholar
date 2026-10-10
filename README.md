@@ -3,7 +3,7 @@
 ## Evaluator quick start
 
 Start from the committed-source handoff ZIP (for this checkpoint,
-`babyScholar-slice-5-2882fe6-source.zip`), not a copied working directory. You
+`babyScholar-slice-5-fix-750378b-source.zip`), not a copied working directory. You
 need Node.js **22.12+** and npm; Node 24.11.1/npm 11.6.2 were used here. The
 commands below create only local Wrangler state. They do not provision
 Cloudflare resources or change a hosted Site.
@@ -11,7 +11,7 @@ Cloudflare resources or change a hosted Site.
 On Windows PowerShell:
 
 ```powershell
-Expand-Archive .\babyScholar-slice-5-2882fe6-source.zip -DestinationPath .\babyScholar
+Expand-Archive .\babyScholar-slice-5-fix-750378b-source.zip -DestinationPath .\babyScholar
 Set-Location .\babyScholar
 Copy-Item .dev.vars.example .dev.vars       # only when .dev.vars is absent
 # Open .dev.vars in an editor. Enter your own OPENAI_API_KEY and choose OPENAI_MODEL.
@@ -30,7 +30,7 @@ the hosted application or its data.
 On macOS or Linux:
 
 ```sh
-unzip babyScholar-slice-5-2882fe6-source.zip -d babyScholar
+unzip babyScholar-slice-5-fix-750378b-source.zip -d babyScholar
 cd babyScholar
 cp .dev.vars.example .dev.vars              # only when .dev.vars is absent
 # Open .dev.vars in an editor. Enter your own OPENAI_API_KEY and choose OPENAI_MODEL.
@@ -670,13 +670,19 @@ the first immutable result.
 npm.cmd run questions
 ```
 
-`questions` verifies supported later-page evidence, insufficient-source and
-partial-coverage results, input limits, malformed/refusal/timeout responses,
-wrong-page/invented/oversized evidence, 300-word output bounds, concurrency,
-cache ID/timestamp preservation, restart and migration-reapplication
-persistence, and unchanged PDF/extraction/metadata/summary records. It restarts
-only its Worker with `OPENAI_API_KEY` explicitly empty before cached GET/POST
-checks, making a provider call impossible for that branch.
+`questions` verifies supported `output[].content[].text` output, supported
+later-page evidence, insufficient-source and partial-coverage results, input
+limits, empty/non-JSON provider bodies, invalid REST envelopes, missing output
+text, malformed structured JSON, schema/evidence failures, refusal/timeout
+responses, wrong-page/invented/oversized evidence, 300-word output bounds,
+concurrency, cache ID/timestamp preservation, restart and migration-reapplication
+persistence, and unchanged PDF/extraction/metadata/summary records. Fixed
+sanitized Worker log fields distinguish `http_body_empty`, `http_body_non_json`,
+`rest_envelope_invalid`, `output_text_missing`, `structured_json_malformed`,
+`schema_validation_failed`, and `evidence_validation_failed`; they intentionally
+exclude keys, questions, PDF text, provider output, and parse details. The check
+restarts only its Worker with `OPENAI_API_KEY` explicitly empty before cached
+GET/POST checks, making a provider call impossible for that branch.
 
 ### PDFs
 
@@ -685,12 +691,16 @@ read its stored text and metadata without starting processing. Choose one
 nonempty PDF up to 10 MiB, then select **Upload and process** to make the
 explicit one-shot upload, text-extraction, and metadata requests. A later
 **Resume processing** first reads saved results and submits only missing work;
-it never automatically retries a POST. **Download original PDF** is also an
-explicit action: it fetches the same-origin private PDF with a 10 MiB bound,
-creates a short-lived Blob download using a sanitized filename, reports busy or
-sanitized failure feedback, and aborts/cleans up if selection changes. The
-selected record also offers full page-numbered extracted text, source-grounded
-title/authors/year/abstract, warnings, and collapsible page-numbered evidence.
+it never automatically retries a POST. **Prepare original PDF download** is an
+explicit bounded same-origin fetch (10 MiB). Once ready, a visible **Download
+prepared PDF** link requires a fresh browser click and remains available for one
+minute before its Blob URL is revoked. The UI reports preparation/activation,
+not a claim that the browser saved a file. It also supplies an authenticated
+**Open original PDF in a new tab** fallback, where the normal browser PDF viewer
+may offer its own save control. Preparing work is cancelled on selection changes
+and object URLs are cleaned up on expiry/unmount. The selected record also offers
+full page-numbered extracted text, source-grounded title/authors/year/abstract,
+warnings, and collapsible page-numbered evidence.
 
 The selected PDF also has a **Summary** section. Loading a record, selecting it,
 and choosing **Reload summary** use `GET /api/documents/:id/summary` only. When
@@ -743,9 +753,12 @@ actual Worker PDF extraction, and loopback metadata, summary, and question
 mocks with offline sentinel keys; it makes no OpenAI or arXiv request. It covers
 saved and missing summaries/questions, partial coverage/evidence rendering,
 stale selections, in-progress/failure/uncertain outcomes, explicit generation,
-GET-only refresh persistence, cached question identity preservation, clicked
-original-PDF downloads with byte comparison, download failure/stale selection,
-and non-application Q&A 401/403 recovery.
+GET-only refresh persistence, cached question identity preservation, prepared
+original-PDF download clicks with byte comparison, download failure/stale
+selection, the new-tab fallback attributes, and non-application Q&A 401/403
+recovery. The harness explicitly permits Chrome downloads for its isolated test;
+this proves the local prepared-link byte flow, not default-browser or hosted
+frame download behavior.
 
 Known local-tool limitation: with the installed Wrangler 4.148.0 / Miniflare
 5.20261006.0-alpha, an immediate POST/PUT after a rejected oversized chunked

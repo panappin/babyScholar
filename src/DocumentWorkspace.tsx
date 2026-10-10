@@ -28,6 +28,7 @@ const METADATA_TIMEOUT_MS = 35_000;
 const SUMMARY_TIMEOUT_MS = 35_000;
 const QUESTION_TIMEOUT_MS = 35_000;
 const DOWNLOAD_TIMEOUT_MS = 35_000;
+const PREPARED_DOWNLOAD_LIFETIME_MS = 60_000;
 const MAX_QUESTION_BYTES = 2 * 1024;
 
 type ListState = {
@@ -61,9 +62,11 @@ type QuestionState = {
 };
 
 type DownloadState = {
-  status: "idle" | "downloading" | "error";
+  status: "idle" | "preparing" | "ready" | "error";
   documentId?: string;
   message?: string;
+  objectUrl?: string;
+  filename?: string;
 };
 
 type ProcessingState =
@@ -399,6 +402,7 @@ export function DocumentWorkspace() {
   const questionRequest = useRef<AbortController | null>(null);
   const downloadRequest = useRef<AbortController | null>(null);
   const downloadObjectUrl = useRef<string | null>(null);
+  const downloadObjectUrlExpiry = useRef<number | null>(null);
   const listRevision = useRef(0);
   const detailRevision = useRef(0);
   const pipelineRevision = useRef(0);
@@ -437,6 +441,10 @@ export function DocumentWorkspace() {
   }
 
   function revokeDownloadObjectUrl() {
+    if (downloadObjectUrlExpiry.current !== null) {
+      window.clearTimeout(downloadObjectUrlExpiry.current);
+      downloadObjectUrlExpiry.current = null;
+    }
     if (downloadObjectUrl.current) {
       URL.revokeObjectURL(downloadObjectUrl.current);
       downloadObjectUrl.current = null;
@@ -592,7 +600,7 @@ export function DocumentWorkspace() {
     void loadDetails(id);
   }
 
-  async function downloadOriginal(document: UploadedDocument) {
+  async function prepareOriginalDownload(document: UploadedDocument) {
     const revision = downloadRevision.current + 1;
     downloadRevision.current = revision;
     downloadRequest.current?.abort();
@@ -601,7 +609,7 @@ export function DocumentWorkspace() {
     downloadRequest.current = controller;
     let timedOut = false;
     const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, DOWNLOAD_TIMEOUT_MS);
-    setDownloadState({ status: "downloading", documentId: document.id, message: "Preparing the original PDF download..." });
+    setDownloadState({ status: "preparing", documentId: document.id, message: "Preparing the original PDF for a fresh download click..." });
     try {
       const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}/pdf`, {
         headers: { accept: "application/pdf" },
@@ -614,18 +622,22 @@ export function DocumentWorkspace() {
       const blob = await readBoundedPdf(response);
       if (!ownsDownloadRequest(revision, document.id, controller)) return;
       const objectUrl = URL.createObjectURL(blob);
+      const filename = safeDownloadFilename(document.filename);
       downloadObjectUrl.current = objectUrl;
-      const anchor = window.document.createElement("a");
-      anchor.href = objectUrl;
-      anchor.download = safeDownloadFilename(document.filename);
-      anchor.hidden = true;
-      window.document.body.append(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(() => {
-        if (downloadObjectUrl.current === objectUrl) revokeDownloadObjectUrl();
-      }, 0);
-      setDownloadState({ status: "idle", documentId: document.id, message: "Original PDF download started." });
+      downloadObjectUrlExpiry.current = window.setTimeout(() => {
+        const ownsPreparedUrl = downloadObjectUrl.current === objectUrl;
+        if (ownsPreparedUrl) revokeDownloadObjectUrl();
+        if (ownsPreparedUrl && mounted.current && selectedId === document.id) {
+          setDownloadState({ status: "idle", documentId: document.id, message: "The prepared PDF link expired. Prepare it again to download the original." });
+        }
+      }, PREPARED_DOWNLOAD_LIFETIME_MS);
+      setDownloadState({
+        status: "ready",
+        documentId: document.id,
+        objectUrl,
+        filename,
+        message: "The PDF is ready. Select the prepared download link below. The application cannot confirm whether your browser saved the file.",
+      });
     } catch (error) {
       if (!ownsDownloadRequest(revision, document.id, controller)) return;
       setDownloadState({
@@ -633,14 +645,21 @@ export function DocumentWorkspace() {
         documentId: document.id,
         message: controller.signal.aborted
           ? timedOut
-            ? "Preparing the original PDF download took too long. Try the explicit download again."
-            : "The original PDF download was interrupted. Try the explicit download again."
+            ? "Preparing the original PDF download took too long. Try again or use the new-tab fallback."
+            : "Preparing the original PDF download was interrupted. Try again or use the new-tab fallback."
           : error instanceof Error ? error.message : "The original PDF could not be downloaded.",
       });
     } finally {
       window.clearTimeout(timeout);
       if (downloadRequest.current === controller) downloadRequest.current = null;
     }
+  }
+
+  function activatePreparedDownload(document: UploadedDocument, objectUrl: string) {
+    if (selectedId !== document.id || downloadObjectUrl.current !== objectUrl) return;
+    setDownloadState((current) => current.status === "ready" && current.documentId === document.id && current.objectUrl === objectUrl
+      ? { ...current, message: "The prepared download link was activated. Check your browser's download controls, or use the new-tab fallback if no file appears." }
+      : current);
   }
 
   async function postEmpty(path: string, signal: AbortSignal): Promise<{ response: Response; body: unknown }> {
@@ -1094,13 +1113,34 @@ export function DocumentWorkspace() {
             type="button"
             className="paper-link"
             data-download-original
-            onClick={() => void downloadOriginal(selectedDocument)}
-            disabled={downloadState.status === "downloading" && downloadState.documentId === selectedDocument.id}
+            onClick={() => void prepareOriginalDownload(selectedDocument)}
+            disabled={downloadState.status === "preparing" && downloadState.documentId === selectedDocument.id}
           >
-            {downloadState.status === "downloading" && downloadState.documentId === selectedDocument.id ? "Preparing download..." : "Download original PDF"}
+            {downloadState.status === "preparing" && downloadState.documentId === selectedDocument.id ? "Preparing download..." : "Prepare original PDF download"}
           </button>
         </div>
         {downloadState.documentId === selectedDocument.id && downloadState.message && <p className={downloadState.status === "error" ? "search-feedback search-feedback--error" : "search-feedback"} role={downloadState.status === "error" ? "alert" : "status"}>{downloadState.message}</p>}
+        <div className="download-actions" aria-label="Original PDF download options">
+          {downloadState.status === "ready" && downloadState.documentId === selectedDocument.id && downloadState.objectUrl && downloadState.filename && <a
+            className="paper-link"
+            data-download-prepared
+            href={downloadState.objectUrl}
+            download={downloadState.filename}
+            onClick={() => activatePreparedDownload(selectedDocument, downloadState.objectUrl ?? "")}
+          >
+            Download prepared PDF
+          </a>}
+          <a
+            className="paper-link"
+            data-download-new-tab
+            href={`/api/documents/${encodeURIComponent(selectedDocument.id)}/pdf`}
+            target="_blank"
+            rel="noopener"
+          >
+            Open original PDF in a new tab
+          </a>
+        </div>
+        <p className="results-note download-note">The prepared link remains available for one minute and uses a fresh browser click. The new-tab fallback uses your normal signed-in session; its viewer may offer its own save control.</p>
         <dl className="paper-metadata">
           <div><dt>Uploaded</dt><dd><time dateTime={selectedDocument.uploadedAt}>{formatTime(selectedDocument.uploadedAt)}</time></dd></div>
           <div><dt>Size</dt><dd>{formatBytes(selectedDocument.byteCount)}</dd></div>

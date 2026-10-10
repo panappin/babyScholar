@@ -177,6 +177,26 @@ async function startProvider() {
         }
         return;
       }
+      if (questionMode === "empty_http_body") {
+        response.writeHead(200, { "content-type": "application/json" });
+        response.end();
+        return;
+      }
+      if (questionMode === "non_json_http_body") {
+        response.writeHead(200, { "content-type": "text/plain" });
+        response.end("not JSON");
+        return;
+      }
+      if (questionMode === "invalid_rest_envelope") {
+        response.writeHead(200, { "content-type": "application/json" });
+        response.end(JSON.stringify({ status: "completed", output: "not an output array" }));
+        return;
+      }
+      if (questionMode === "missing_output_text") {
+        response.writeHead(200, { "content-type": "application/json" });
+        response.end(JSON.stringify({ status: "completed", output: [{ type: "message", content: [] }] }));
+        return;
+      }
       if (questionMode === "malformed") {
         response.writeHead(200, { "content-type": "application/json" });
         response.end(JSON.stringify({ status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: "{" }] }] }));
@@ -185,6 +205,11 @@ async function startProvider() {
       if (questionMode === "refusal") {
         response.writeHead(200, { "content-type": "application/json" });
         response.end(JSON.stringify({ status: "completed", output: [{ content: [{ type: "refusal", refusal: "mock refusal" }] }] }));
+        return;
+      }
+      if (questionMode === "schema_invalid") {
+        response.writeHead(200, { "content-type": "application/json" });
+        response.end(JSON.stringify(responsePayload({ outcome: "answered" })));
         return;
       }
       response.writeHead(200, { "content-type": "application/json" });
@@ -299,7 +324,7 @@ async function download(document, bytes) {
   assert.deepEqual(new Uint8Array(await response.arrayBuffer()), bytes);
 }
 
-async function expectQuestionFailure(mode, kind, status) {
+async function expectQuestionFailure(mode, kind, status, diagnostic) {
   const prepared = await uploadAndExtract(fixture.bytes, `${mode}.pdf`);
   questionMode = mode;
   const beforeCalls = questionProviderCalls;
@@ -307,6 +332,11 @@ async function expectQuestionFailure(mode, kind, status) {
   assert.equal(failed.body.error.kind, kind);
   assert.equal(questionProviderCalls, beforeCalls + 1);
   assert.deepEqual((await jsonRequest(`/api/documents/${prepared.document.id}/questions`, undefined, 200)).body.questions, []);
+  if (diagnostic) {
+    const expected = JSON.stringify(diagnostic);
+    assert.ok(worker.log.includes(expected), `Missing sanitized diagnostic ${expected} for ${mode}.`);
+    record("question-diagnostic-stage-verified", { mode, ...diagnostic });
+  }
   questionMode = "answered";
 }
 
@@ -384,24 +414,30 @@ async function main() {
   questionMode = "answered";
   record("insufficient-source-and-partial-coverage-results-persisted", { documentId: partial.document.id, byteBudget: 96 * 1024 });
 
-  await expectQuestionFailure("wrong_page", "question_invalid_response", 502);
-  await expectQuestionFailure("invented_evidence", "question_invalid_response", 502);
-  await expectQuestionFailure("oversized_evidence", "question_invalid_response", 502);
-  await expectQuestionFailure("too_many_words", "question_invalid_response", 502);
-  await expectQuestionFailure("malformed", "question_invalid_response", 502);
+  await expectQuestionFailure("empty_http_body", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "http_body_empty" });
+  await expectQuestionFailure("non_json_http_body", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "http_body_non_json" });
+  await expectQuestionFailure("invalid_rest_envelope", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "rest_envelope_invalid" });
+  await expectQuestionFailure("missing_output_text", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "output_text_missing" });
+  await expectQuestionFailure("malformed", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "structured_json_malformed" });
+  await expectQuestionFailure("schema_invalid", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "schema_validation_failed" });
+  await expectQuestionFailure("wrong_page", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "evidence_validation_failed" });
+  await expectQuestionFailure("invented_evidence", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "evidence_validation_failed" });
+  await expectQuestionFailure("oversized_evidence", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "evidence_validation_failed" });
+  await expectQuestionFailure("too_many_words", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "schema_validation_failed" });
   await expectQuestionFailure("refusal", "question_refusal", 422);
   await expectQuestionFailure("timeout", "question_timeout", 504);
-  record("question-output-malformed-refusal-timeout-evidence-and-word-boundaries-leave-no-record", { rejectedEvidenceBytes: 601, proseWordLimit: 300 });
+  record("question-response-decoding-schema-evidence-refusal-timeout-boundaries-leave-no-record", { rejectedEvidenceBytes: 601, proseWordLimit: 300, diagnosticStages: ["http_body_empty", "http_body_non_json", "rest_envelope_invalid", "output_text_missing", "structured_json_malformed", "schema_validation_failed", "evidence_validation_failed"] });
 
   const concurrent = await uploadAndExtract();
   questionMode = "slow";
+  const callsBeforeConcurrent = questionProviderCalls;
   const started = new Promise((done) => { questionProviderStarted = done; });
   const firstConcurrent = jsonRequest(`/api/documents/${concurrent.document.id}/questions`, jsonQuestion("What later finding is stated?"));
   await started;
   const secondConcurrent = await jsonRequest(`/api/documents/${concurrent.document.id}/questions`, jsonQuestion("What later finding is stated?"), 409);
   assert.equal(secondConcurrent.body.error.kind, "question_in_progress");
   assert.equal((await firstConcurrent).response.status, 201);
-  assert.equal(questionProviderCalls, callsAfterFirst + 2 + 1 + 1 + 7 + 1, "only one concurrent provider call is allowed");
+  assert.equal(questionProviderCalls, callsBeforeConcurrent + 1, "only one concurrent provider call is allowed");
   questionMode = "answered";
   record("concurrent-identical-question-used-one-provider-call", { documentId: concurrent.document.id });
 

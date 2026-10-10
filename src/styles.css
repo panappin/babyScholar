@@ -407,6 +407,21 @@ button.paper-link:disabled {
   font-style: italic;
 }
 
+.download-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 0.75rem;
+}
+
+.download-actions .paper-link {
+  margin: 0;
+}
+
+.download-note {
+  margin-top: 0.5rem;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -456,6 +471,11 @@ button.paper-link:disabled {
   .search-controls input {
     flex: 0 1 auto;
     width: 100%;
+  }
+
+  .download-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .paper-metadata {

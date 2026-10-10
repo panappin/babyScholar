@@ -1546,3 +1546,55 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   the prior wrapped-abstract repair: provider output was not retained. The
   documented oversized chunked-upload local runtime limitation remains open and
   unchanged.
+
+## 2026-10-10 - Offline PDF download and Q&A response-decoding repair
+
+- Started from `750378b21f15dab6f8b7d5aa791650691147a211`. The pre-existing
+  Phase 0B.2 ZIP/folder, normal local D1/R2 state, historical migrations,
+  configured Worker-only key/model, existing working summary, and the user's
+  running development server were preserved.
+- Hosted evidence remains deliberately narrow: the six-page owner PDF's summary
+  now returned 201, while two original-PDF GETs returned 200 without a visible
+  saved file. The Q&A 502 maps to `malformed_response` before Q&A schema/evidence
+  validation. Its provider body was not retained, so its exact decoding stage is
+  still unknown; this repair does not attribute it to quote matching or change
+  grounding.
+- Replaced the hidden immediate Blob-anchor click and zero-delay revocation with
+  a bounded **Prepare original PDF download** fetch. A visible, safe-filename
+  Blob link now remains for one minute and requires a fresh user click; it gives
+  preparation/activation feedback without claiming that the browser saved a
+  file. A same-session **Open original PDF in a new tab** fallback is also
+  visible. Selection changes/unmounts abort owned work and revoke the URL.
+- Added only fixed sanitized Q&A Worker diagnostics: provider stages
+  `http_body_empty`, `http_body_non_json`, `rest_envelope_invalid`,
+  `output_text_missing`, and `structured_json_malformed`; validation stages
+  `schema_validation_failed` and `evidence_validation_failed`. They never log
+  keys, questions, PDF text, provider envelopes, or parse-error snippets. The
+  existing `output[].content[].text` decoding path and strict downstream
+  validation remain intact.
+- Corrected the evaluator README's stale source-ZIP filename to
+  `babyScholar-slice-5-fix-750378b-source.zip` and documented the prepared
+  download/new-tab behavior, timeout, and browser-verification scope.
+
+### Windows verification
+
+| Exact command/check | Result |
+| --- | --- |
+| `node --check scripts/question-check.mjs` | Exit 0 |
+| `node --check scripts/frontend-search-browser-check.mjs` | Exit 0 |
+| `npm.cmd run typecheck` | Exit 0 |
+| `npm.cmd run questions` | Exit 0; loopback-only provider, all seven sanitized decoder/schema/evidence stages, valid `output[].content[].text`, no-write failures, concurrency, cached empty-key GET/POST, restart persistence, and unchanged PDF/extraction/metadata/summary checks passed. Evidence: `.wrangler/question-check/fa8d9ae5-2db7-4d7c-9788-a58f49850a7f/result.json` |
+| `npm.cmd run documents:ui:check` | Exit 0; isolated local Worker/Vite/Chrome/loopback providers. A prepared-link browser click captured the exact 1,752-byte fixture PDF; mocked preparation failure, stale selection cancellation, and new-tab fallback attributes passed. Evidence: `.wrangler/frontend-search-browser-check/133480e4-f1e8-4761-8693-48661a904ee3/result.json` |
+| `npm.cmd run build` | Exit 0; typecheck, Vite, Worker dry-run, and Sites staging passed; no upload |
+| `npm.cmd run sites` | Exit 0; binding-fixture artifact validation passed |
+
+- The browser verifier explicitly enables Chrome downloads for its disposable
+  harness. It proves the local prepared-link click and exact fixture bytes, not
+  default-browser saving, private hosted-frame restrictions, or the owner PC's
+  behavior. The authenticated new-tab fallback is available for a later hosted
+  check, but it was not exercised against the private Site here.
+- All provider traffic in this repair was loopback-only with inert test
+  bindings. No live OpenAI/arXiv call, API-key read/change, dependency/schema/
+  migration change, hosted upload, push, deployment, or normal-state migration
+  occurred. The documented local Wrangler/Miniflare oversized-upload transport
+  limitation remains open and unchanged.

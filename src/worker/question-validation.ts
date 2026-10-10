@@ -19,7 +19,13 @@ export interface ValidatedDocumentQuestionOutput {
   warnings: string[];
 }
 
-function invalid(message: string): never {
+type QuestionValidationDiagnosticStage = "schema_validation_failed" | "evidence_validation_failed";
+
+function invalid(message: string, stage: QuestionValidationDiagnosticStage = "schema_validation_failed"): never {
+  // Keep question text, extracted PDF text, quotes, and provider output out of
+  // logs. The fixed stage is sufficient to distinguish validation from REST
+  // response decoding in hosted diagnostics.
+  console.warn(JSON.stringify({ event: "document_question_output_rejected", stage }));
   throw new DocumentError("question_invalid_response", 502, message);
 }
 
@@ -48,17 +54,17 @@ function wordCount(value: string): number {
 }
 
 function validateEvidenceQuote(value: unknown, excerpt: SummarySourceExcerpt): DocumentQuestionEvidenceQuote {
-  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "quote"])) invalid("OpenAI returned malformed question evidence.");
+  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "quote"])) invalid("OpenAI returned malformed question evidence.", "evidence_validation_failed");
   const pageNumber = value.pageNumber;
   const quote = value.quote;
   if (typeof pageNumber !== "number" || !Number.isInteger(pageNumber)
     || typeof quote !== "string" || quote.length === 0 || quote !== quote.trim()
     || byteLength(quote) > METADATA_EVIDENCE_QUOTE_BYTES) {
-    invalid("OpenAI returned unsupported question evidence.");
+    invalid("OpenAI returned unsupported question evidence.", "evidence_validation_failed");
   }
   const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
   if (!page || !metadataPageContains(page.text, quote)) {
-    invalid("OpenAI returned question evidence that does not match the included PDF text.");
+    invalid("OpenAI returned question evidence that does not match the included PDF text.", "evidence_validation_failed");
   }
   return { pageNumber, quote };
 }
@@ -71,11 +77,11 @@ function validateAnswerParts(value: unknown, excerpt: SummarySourceExcerpt): Doc
     if (!isRecord(part) || !hasOnlyKeys(part, ["text", "evidence"])) invalid("OpenAI returned malformed question answer.");
     const text = boundedText(part.text, MAX_ANSWER_PART_BYTES, "answer part");
     if (!Array.isArray(part.evidence) || part.evidence.length === 0 || part.evidence.length > MAX_EVIDENCE_PER_PART) {
-      invalid("OpenAI returned unsupported question evidence.");
+      invalid("OpenAI returned unsupported question evidence.", "evidence_validation_failed");
     }
     const evidence = part.evidence.map((quote) => validateEvidenceQuote(quote, excerpt));
     if (new Set(evidence.map((quote) => `${quote.pageNumber}\u0000${quote.quote}`)).size !== evidence.length) {
-      invalid("OpenAI returned duplicate question evidence.");
+      invalid("OpenAI returned duplicate question evidence.", "evidence_validation_failed");
     }
     return { text, evidence };
   });

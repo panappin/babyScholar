@@ -746,6 +746,8 @@ async function main() {
   await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentOne.id), "not-generated summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
   await waitFor("document.body.innerText.includes('Title unavailable') && document.body.innerText.includes('title is unknown')", "unknown metadata fallbacks");
   await waitFor("document.body.innerText.includes('No summary has been generated')", "not-generated summary state");
+  const downloadFallback = JSON.parse(await evaluate("JSON.stringify((() => { const link = document.querySelector('[data-download-new-tab]'); return link ? { href: link.getAttribute('href'), target: link.getAttribute('target'), rel: link.getAttribute('rel') } : null; })())"));
+  assert.deepEqual(downloadFallback, { href: `/api/documents/${mockDocumentOne.id}/pdf`, target: "_blank", rel: "noopener" });
   assert.equal(await click("[data-download-original]"), true);
   await fulfillJson(await nextPaused((request) => isDocumentPdfGet(request, mockDocumentOne.id), "download failure GET"), 503, { error: { kind: "storage_unavailable", message: "The original PDF storage is unavailable." } });
   await waitFor("document.body.innerText.includes('original PDF storage is unavailable')", "download failure feedback");
@@ -967,7 +969,9 @@ async function main() {
   await waitFor("document.body.innerText.includes('Page 1') && document.body.innerText.includes('Avery Example') && document.body.innerText.includes('Page-numbered source evidence')", "extracted page text and metadata evidence");
   const downloadsBeforeClick = downloads.size;
   assert.equal(await click("[data-download-original]"), true);
-  await waitFor("document.body.innerText.includes('Original PDF download started')", "download started feedback");
+  await waitFor("document.body.innerText.includes('The PDF is ready') && document.querySelector('[data-download-prepared]')", "prepared download link");
+  assert.equal(await click("[data-download-prepared]"), true);
+  await waitFor("document.body.innerText.includes('prepared download link was activated')", "prepared download activation feedback");
   const completedDownload = await waitForCompletedDownload(downloadsBeforeClick, "captured original-PDF browser download");
   const downloadedPath = completedDownload.filePath ?? resolve(downloadDirectory, completedDownload.suggestedFilename);
   assert.deepEqual(await readFile(downloadedPath), Buffer.from(documentFixture.bytes), "clicked original-PDF download must preserve fixture bytes");
@@ -985,7 +989,7 @@ async function main() {
   assert.equal(await click(`[data-document-id="${uploadedDocumentId}"]`), true);
   await waitFor(`document.body.innerText.includes(${JSON.stringify(documentFixture.expected.title)})`, "persisted document metadata after selection");
   assert.equal(metadataProviderCalls, 1, "list reload and selection must use GET only");
-  record("actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-click-download-passed", { documentId: uploadedDocumentId, providerCalls: metadataProviderCalls, downloadBytes: documentFixture.bytes.byteLength });
+  record("actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-prepared-download-passed", { documentId: uploadedDocumentId, providerCalls: metadataProviderCalls, downloadBytes: documentFixture.bytes.byteLength, chromeDownloadPermissionForcedForHarness: true, defaultBrowserSavingUnverified: true });
 
   // A provider failure is surfaced without removing the stored original or
   // extracted text. It also proves no automatic metadata POST retry occurs.
