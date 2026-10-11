@@ -114,15 +114,24 @@ Windows Wrangler setup, not a requirement for every clone.
 
 ## Checks: offline first
 
-The verifier commands below use disposable local state and loopback
-fixtures/mocks; build commands may write ignored `dist/` artifacts. None of
-these commands calls OpenAI or arXiv. Run them from the repository root.
+These optional checks are separate from normal startup. Build first: some
+verifiers need the production artifacts. The `papers` and `integrations`
+commands automatically compile separate test modules into ignored
+`.wrangler/check-worker/` using `checks:prepare`; they leave the production
+Worker bundle in `dist/worker/` unchanged. Their related imports use the same
+test modules, including error classes.
+
+The verifier commands below use disposable local state or fixtures/mocks. None
+calls OpenAI or arXiv. Run them from the repository root.
 
 **Windows PowerShell**
 
 ```powershell
-npm.cmd run integrations:offline
-npm.cmd run papers:check
+npm.cmd run build
+npm.cmd run papers
+npm.cmd run integrations
+node scripts/question-text-check.mjs
+node scripts/document-details-timeout-check.mjs
 node scripts/library-check.mjs
 npm.cmd run documents:check
 npm.cmd run extractions:check
@@ -130,16 +139,17 @@ npm.cmd run metadata:check
 npm.cmd run summaries
 npm.cmd run questions
 npm.cmd run documents:ui:check
-npm.cmd run typecheck
-npm.cmd run build
 npm.cmd run sites
 ```
 
 **macOS/Linux**
 
 ```sh
-npm run integrations:offline
-npm run papers:check
+npm run build
+npm run papers
+npm run integrations
+node scripts/question-text-check.mjs
+node scripts/document-details-timeout-check.mjs
 node scripts/library-check.mjs
 npm run documents:check
 npm run extractions:check
@@ -147,13 +157,16 @@ npm run metadata:check
 npm run summaries
 npm run questions
 npm run documents:ui:check
-npm run typecheck
-npm run build
 npm run sites
 ```
 
 Do not treat the offline checks as proof that a hosted service or a live model
 will behave identically.
+
+`papers:check` and `integrations:offline` remain aliases for the corresponding
+offline commands above. To prepare the individual test modules manually, run
+`npm.cmd run checks:prepare` on Windows or `npm run checks:prepare` on
+macOS/Linux before invoking their scripts directly.
 
 ### Commands that make live requests
 
@@ -163,7 +176,7 @@ intend to make the stated live request.**
 
 | Command | Live activity |
 | --- | --- |
-| `npm.cmd run integrations` / `npm run integrations` | One fixed arXiv probe and at most one OpenAI Responses request. |
+| `npm.cmd run integrations:live` / `npm run integrations:live` | One fixed arXiv probe and at most one OpenAI Responses request. |
 | `npm.cmd run papers:live` / `npm run papers:live` | One arXiv search request. |
 | `npm.cmd run metadata:live` / `npm run metadata:live` | One OpenAI metadata verification request when a usable local key is configured; it stops rather than retrying. |
 

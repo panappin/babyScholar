@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { probeArxiv } from "../dist/worker/arxiv.js";
-import { IntegrationError } from "../dist/worker/integration-errors.js";
-import { probeOpenAi } from "../dist/worker/openai.js";
+import { probeArxiv } from "../.wrangler/check-worker/arxiv.js";
+import { IntegrationError } from "../.wrangler/check-worker/integration-errors.js";
+import { probeOpenAi } from "../.wrangler/check-worker/openai.js";
 
 async function expectKind(operation, kind) {
   await assert.rejects(operation, (error) => error instanceof IntegrationError && error.kind === kind);

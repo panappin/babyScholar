@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import worker, { handlePaperSearchRequest } from "../dist/worker/index.js";
-import { createArxivSearchService, PaperSearchError } from "../dist/worker/arxiv.js";
+import worker, { handlePaperSearchRequest } from "../.wrangler/check-worker/index.js";
+import { createArxivSearchService, PaperSearchError } from "../.wrangler/check-worker/arxiv.js";
 
 const multiEntryFeed = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">

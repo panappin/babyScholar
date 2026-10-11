@@ -577,18 +577,20 @@ export function DocumentWorkspace() {
     if (mounted.current) setDetailState((current) => ({ status: "loading", extraction: current.extraction, metadata: current.metadata, summary: { status: "loading", summary: current.summary.summary }, questions: { status: "loading", questions: current.questions.questions } }));
     try {
       const results = await getStoredResults(id, controller.signal);
+      if (timedOut) throw new Error("Reading this PDF took too long.");
       if (!mounted.current || controller.signal.aborted || revision !== detailRevision.current) return results;
       setDetailState({ status: "loaded", ...results });
       return results;
     } catch (error) {
-      if (!mounted.current || controller.signal.aborted || revision !== detailRevision.current) return undefined;
+      if (!mounted.current || revision !== detailRevision.current || (controller.signal.aborted && !timedOut)) return undefined;
+      const message = timedOut ? "Reading this PDF took too long. Retry loading its details." : error instanceof Error ? error.message : "This PDF could not be read.";
       setDetailState((current) => ({
         status: "error",
         extraction: current.extraction,
         metadata: current.metadata,
-        summary: current.summary,
-        questions: current.questions,
-        message: timedOut ? "Reading this PDF took too long. Select it again or reload the PDFs view." : error instanceof Error ? error.message : "This PDF could not be read.",
+        summary: { status: "error", summary: current.summary.summary, message },
+        questions: { status: "error", questions: current.questions.questions, submittedQuestion: current.questions.submittedQuestion, message },
+        message,
       }));
       return undefined;
     } finally {
@@ -1219,7 +1221,10 @@ export function DocumentWorkspace() {
           <div><dt>Status</dt><dd>{selectionLabel(detailState.extraction, detailState.metadata)}</dd></div>
         </dl>
         {detailState.status === "loading" && <p className="search-feedback" role="status">Reading saved text, metadata, and summary...</p>}
-        {detailState.status === "error" && <p className="search-feedback search-feedback--error" role="alert">{detailState.message}</p>}
+        {detailState.status === "error" && <>
+          <p className="search-feedback search-feedback--error" role="alert">{detailState.message}</p>
+          <button type="button" className="reload-button" data-detail-reload disabled={pipelineBusy || summaryBusy || questionBusy} onClick={() => void loadDetails(selectedDocument.id)}>Retry loading PDF details</button>
+        </>}
         <div className="delete-document-controls">
           <label><input type="checkbox" data-confirm-delete checked={deleteConfirmed} disabled={deleting} onChange={(event) => setDeleteConfirmed(event.target.checked)} /> Delete this PDF's original, extracted text, metadata, summary, and Q&amp;A history.</label>
           <button type="button" className="reload-button" data-delete-document disabled={!deleteConfirmed || deleting} onClick={() => void deleteDocument(selectedDocument)}>{deleting ? "Deleting PDF..." : "Delete PDF"}</button>
