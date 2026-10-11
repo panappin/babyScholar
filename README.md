@@ -2,8 +2,10 @@
 
 BabyScholar is a local research workspace for finding papers, saving a library,
 and working with uploaded PDFs. It can extract PDF text and, when a local Worker
-has an OpenAI key, generate source-grounded metadata, summaries, and answers
-with page-numbered supporting quotes. Its React frontend talks to the local
+has an OpenAI key, generate metadata, summaries, and Q&A using the selected PDF
+as context. Results can include uncertainty, and answers can add general
+knowledge. New results do not require citations or quote matching; older saved
+quotes remain readable. Its React frontend talks to the local
 Cloudflare Worker through relative `/api` URLs; the Worker uses local D1 and R2
 emulation for persistent development data.
 
@@ -213,9 +215,9 @@ before using those artifacts; local binding labels are not hosted resource IDs.
 
 ## Important limits
 
-- Grounding validates supporting quotes against retained extracted page text.
-  A quote being present proves source presence, not that every model paraphrase
-  is logically entailed.
+- Metadata, summaries, and Q&A use extracted PDF text as context without quote
+  matching or source verification. Coverage describes text included in the
+  request. Check important generated claims against the document.
 - PDF extraction does not include OCR. Scanned/image-only PDFs may have no
   usable text.
 - Local fixture checks make no live requests. Live provider behavior, hosted

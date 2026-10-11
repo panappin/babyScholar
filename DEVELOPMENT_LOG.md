@@ -1598,3 +1598,113 @@ Final application observations (same owned Wrangler PID 70396 throughout):
   migration change, hosted upload, push, deployment, or normal-state migration
   occurred. The documented local Wrangler/Miniflare oversized-upload transport
   limitation remains open and unchanged.
+
+## 2026-10-10 — Homework 1 reliability, removal, and local recovery
+
+### Fallback before repairs
+
+- Inspected applicable instruction locations, `main`, origin, HEAD and worktree.
+  No applicable AGENTS.md was present. Tracked files were clean at
+  `a36c94e273341122c21cca8498f46dbd2876cded`; no empty checkpoint commit was made.
+  Origin remained `https://github.com/panappin/babyScholar.git`.
+- `git -c safe.directory=C:/Users/panap/PycharmProjects/babyScholar push origin main`
+  initially could not connect in the restricted environment; the authorized
+  unrestricted rerun returned **Everything up-to-date**. Direct `git ls-remote
+  origin refs/heads/main` matched the full checkpoint SHA before editing.
+- Created `handoff/babyScholar-homework1-checkpoint-a36c94e-source.zip` using
+  `git archive` with `core.autocrlf=false` and `core.eol=lf` so archive bytes match
+  committed blobs on Windows. Verified exact tree paths/bytes, ZIP contents and
+  sanitized credential scan: 416,804 bytes, 99 files, 10 directory entries.
+  SHA-256: `7010df10b7ce19576e70c0c1106fafb1aabbb5a3012208ba7a5c7222a2fe8e28`.
+  Existing archives, the Phase 0B.2 ZIP/folder, and recordings were not modified.
+
+### Scoped repairs and evidence limits
+
+- Q&A prompt/schema v2 uses the existing summary source selector's page-bound
+  reference IDs. The Worker resolves original exact quotes and still validates
+  page membership, 600-byte excerpts, source coverage and all output limits.
+  Old public records/caches are not rewritten or invalidated. Prior rejected
+  hosted quotes were not retained; their precise cause remains unknown.
+- Metadata prompt v3 requests conservative nulls for absent/ambiguous fields.
+  A non-null publication year now needs source-matching evidence with an explicit
+  publication/copyright label and an unambiguous year. Bare-year evidence fails;
+  an explicit null with empty evidence and a year warning is allowed without
+  clearing other supported fields. **Retry metadata only** uses saved extraction.
+- Shared corrective generation permits at most two provider attempts for one
+  explicit uncached action, only for classified invalid output/schema/grounding.
+  Attempts share one 25-second deadline and the same claim; caches still use zero
+  attempts. Auth/model/quota/refusal/network/timeout/upstream-HTTP failures are
+  not retried. A second invalid result stays an error, names the failed stage,
+  and is never persisted. Fixed diagnostics contain no source/provider content.
+- Added parameterized, no-store DELETE routes and visible controls for library
+  records and confirmed PDFs. PDFs first acquire a durable `deleting` status and
+  release their own claims, then delete only their server-derived R2 key, then
+  remove their D1 children/parent in a batch. Partial cleanup is explicitly
+  retryable; repeated deletion is safe. Parent/lease guards prevent late claim,
+  extraction, and generation writes. No schema/migration change was necessary.
+  UI deletion cancels stale work and revokes prepared download URLs.
+- Ordinary save diagnosis is separate from the known oversized-upload transport
+  issue: an aborted library read previously returned before updating loading
+  state, and a failed reconciliation could leave indefinite checking feedback.
+  Reads/saves now reach finite error/unknown states and require GET reconciliation
+  before uncertain resubmission. Non-application and malformed save responses
+  are not treated as confirmed failures or blindly POSTed again. PDF list reads
+  had the same timeout guard; PDF processing also needed ownership checks that
+  distinguish timeout from superseded work, plus a fresh 10-second GET signal
+  for reconciliation. No database corruption or hosted transport cause is claimed.
+- `npm.cmd run dev` now owns a tagged Worker/Vite process tree; `dev:stop`
+  verifies script/root/session/PID before termination. `storage:reset --
+  --confirm-reset` refuses active project processes/redirected paths, moves state
+  into a unique backup, and only then creates fresh state and applies existing
+  local migrations. A failed backup stops before migration. Verified disposable
+  Windows Worker/Vite startup, D1/R2 status through proxy, owned-tree shutdown,
+  and state rename after shutdown. POSIX cleanup remains unverified.
+- README uses a received-ZIP placeholder, preserves Windows short-path guidance,
+  prevents overwriting an existing .dev.vars, and documents removal/reset/retry
+  behavior and the possible two-request cost of a future explicit live action.
+
+### Actual offline Windows verification
+
+All provider endpoints used by these checks were loopback fixtures with inert
+bindings. **Live OpenAI/arXiv request count: 0.** The existing key/model were not
+read, provisioned or changed. No dependency installation/upgrade, normal-state
+migration/reset, hosted upload, deployment, transport stress, or live integration
+probe was performed. Dependencies, lockfile, all SQL/meta, registered project ID
+and DB/PAPER_BUCKET names remain unchanged. Audit baseline remains documented
+as 3 high/4 moderate development findings and zero production-only findings;
+the audit was not rerun because dependency inputs did not change.
+
+| Exact command | Actual result/evidence |
+| --- | --- |
+| `npm.cmd run build:worker` | Initial sandbox access failure (Wrangler logs/esbuild ancestor directory); authorized rerun exit 0, dry-run only. Prepared the artifact required by existing checks. |
+| `node --check scripts/library-check.mjs`; `node --check scripts/metadata-check.mjs`; `node --check scripts/summary-check.mjs`; `node --check scripts/question-check.mjs`; `node --check scripts/frontend-search-browser-check.mjs`; `node --check scripts/document-delete-check.mjs`; `node --check scripts/local-dev.mjs`; `node --check scripts/local-reset-check.mjs` | All exit 0. |
+| `node scripts/library-check.mjs` | Exit 0; duplicates/full metadata/restart plus remove/repeated delete/resave/unrelated records. `.wrangler/library-check/a64620a4-c6d5-4b47-9dd9-8b81be65ae1a/result.json` |
+| `npm.cmd run documents:check` | Exit 0; original validation/storage/persistence suite. `.wrangler/document-check/d58df7e6-738b-4642-9ae1-337bda8bc3f3/result.json` |
+| `npm.cmd run extractions:check` | Exit 0; extraction/concurrency/errors/persistence. `.wrangler/extraction-check/989433f4-7a8a-4207-8102-e74a998618e6/result.json` |
+| `npm.cmd run metadata:check` | Exit 0; 55 recorded loopback requests, nullable correction, strict evidence, two-failure cleanup, cache, restart. `.wrangler/metadata-check/b37fd99b-366d-48e3-a335-1dd8a611a6e4/result.json` |
+| `npm.cmd run summaries` | Exit 0; 17 recorded loopback requests; evidence references, limits, failures, cache, restart. `.wrangler/summary-check/7bb0bd39-0434-4fe6-b8fe-f5b577444345/result.json` |
+| `npm.cmd run questions` | Exit 0; 41 recorded loopback requests (including metadata/summary fixtures); reference rejection, insufficient/partial source, one corrective success, two invalid attempts, shared deadline, non-retryable failures, concurrent claims, deletion race, empty-key cache and restart. `.wrangler/question-check/72c4f942-68b7-407e-af85-650e9534921d/result.json` |
+| `node scripts/document-delete-check.mjs` | Exit 0 after adapting the new harness to installed Miniflare's options converter. Real local D1/R2 with bucket/D1 fault injection, child/claim cleanup, idempotence, unrelated-row preservation and late-extraction race. `.wrangler/document-delete-check/52845733-e303-4ab4-8203-be4e621f680a/result.json` |
+| `node scripts/local-reset-check.mjs` | Exit 0; failed backup/busy refusal, backup preservation, isolated migrations; final run uses actual managed Worker/Vite, empty key, verifies descendant shutdown and rename after runtime exit. `.wrangler/local-reset-check/9147d05a-8756-400c-8554-43c73fd0af3c/result.json` |
+
+The new Miniflare harness initially failed constructor validation (legacy option
+shape), not deletion logic; the second failed evidence is retained at
+`.wrangler/document-delete-check/c4b15d3e-5b75-4db2-ab18-47310171b214/result.json`.
+The installed runtime exposes `convertV4MiniflareOptions`; using it required no
+dependency change. Existing UnPDF standard-font warnings remained nonfatal.
+
+Browser failures are preserved below `.wrangler/frontend-search-browser-check/`:
+`3b7e7e11-20be-4bef-b1f7-fc91b63dccbd` (real-library navigation/visibility timeout;
+read-only `wrangler d1 execute ... --command "SELECT COUNT(*) AS saved_count FROM
+papers" --json` against that isolated state confirmed zero rows),
+`40d2a528-75ee-4db0-aef5-192a48ee855e` (new test dereferenced a not-yet-rendered
+resave button), `cd328eb0-9c3e-4735-bf7a-5f7166025ae3` and
+`faa3dbc5-4832-4bf1-bbb6-82f73efa28bc` (navigation readiness gates), and
+`fd43721e-3bc2-45db-b075-afc343531a1f` (old metadata-specific feedback assertion
+against the new generic two-attempt error). The verifier now stops the prior
+load, uses a distinct local navigation URL and a previous-document marker, waits
+for the new rendered page, and uses a null-safe selector. It does not retry POSTs
+or suppress failed assertions. The final error names its stage for useful UI
+feedback. Earlier evidence remains intact.
+
+Final browser/build/handoff results are recorded below when completed.

@@ -1,11 +1,7 @@
 import type { DocumentExtraction, DocumentSummaryPageRange, DocumentTextPage } from "./document-types.js";
 
 export const SUMMARY_MAX_TEXT_BYTES = 96 * 1024;
-/**
- * Quotes returned to callers remain short. The model selects one of these
- * server-issued references; it never has to reproduce the PDF presentation
- * text itself.
- */
+/** Retained for compatibility with earlier summary records and tooling. */
 export const SUMMARY_EVIDENCE_REFERENCE_BYTES = 600;
 const encoder = new TextEncoder();
 
@@ -66,47 +62,6 @@ function formatRanges(ranges: DocumentSummaryPageRange[]): string {
 }
 
 /**
- * Split selected source pages into bounded, server-owned evidence excerpts.
- * Prefer whitespace boundaries so ordinary words remain intact. An unusually
- * long unbroken token is split only as a last resort, at a Unicode boundary.
- * Source pages themselves remain unchanged.
- */
-function evidenceReferencesForPage(page: DocumentTextPage): SummaryEvidenceReference[] {
-  const references: SummaryEvidenceReference[] = [];
-  let referenceId = 1;
-
-  // Prefer physical extracted lines: they are concise and make a reference
-  // useful without asking a provider to reconstruct a paragraph. Split a
-  // single long line further only when its own byte budget requires it.
-  for (const line of page.text.split(/\r\n|[\r\n]/u)) {
-    let remaining = line;
-    while (remaining.length > 0) {
-      const bounded = truncateAtTextBoundary(remaining, SUMMARY_EVIDENCE_REFERENCE_BYTES);
-      let consumed = bounded.length;
-      if (bounded.length < remaining.length) {
-        let whitespaceIndex = -1;
-        for (let index = 0; index < bounded.length; index += 1) {
-          if (/\s/u.test(bounded[index])) whitespaceIndex = index;
-        }
-        if (whitespaceIndex > 0) consumed = whitespaceIndex;
-      }
-      if (consumed === 0) consumed = bounded.length;
-      const quote = remaining.slice(0, consumed).trim();
-      remaining = remaining.slice(consumed);
-      if (!quote) continue;
-      // `quote` is derived from a bounded source slice. Keep this invariant
-      // explicit in case this splitter changes in the future.
-      if (utf8ByteLength(quote) > SUMMARY_EVIDENCE_REFERENCE_BYTES) {
-        throw new Error("Summary evidence reference exceeded its byte limit.");
-      }
-      references.push({ pageNumber: page.pageNumber, referenceId, quote });
-      referenceId += 1;
-    }
-  }
-  return references;
-}
-
-/**
  * Uses every ordered persisted extraction page until the source budget is full.
  * The final selected page can be partial; later pages are deliberately omitted.
  */
@@ -132,7 +87,6 @@ export function selectSummarySource(extraction: DocumentExtraction): SummarySour
 
   const numbers = pages.map((page) => page.pageNumber);
   const ranges = pageRanges(numbers);
-  const evidenceReferences = pages.flatMap(evidenceReferencesForPage);
   const included = formatRanges(ranges) || "none";
   const coverageWarning = truncated
     ? `Partial source coverage: pages ${included} of ${extraction.pageCount} were included within the ${SUMMARY_MAX_TEXT_BYTES}-byte budget.`
@@ -140,7 +94,7 @@ export function selectSummarySource(extraction: DocumentExtraction): SummarySour
 
   return {
     pages,
-    evidenceReferences,
+    evidenceReferences: [],
     pageNumbers: numbers,
     pageRanges: ranges,
     byteCount: pages.reduce((total, page) => total + utf8ByteLength(page.text), 0),

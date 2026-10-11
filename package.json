@@ -8,7 +8,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail --names worker,frontend --prefix-colors magenta,cyan \"npm run dev:worker\" \"npm run dev:frontend\"",
+    "dev": "node scripts/local-dev.mjs start",
+    "dev:stop": "node scripts/local-dev.mjs stop",
+    "storage:reset": "node scripts/local-dev.mjs reset",
     "dev:frontend": "vite",
     "dev:worker": "wrangler dev --config wrangler.jsonc --local --persist-to .wrangler/state --port 8787",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",

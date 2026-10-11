@@ -105,10 +105,13 @@ async function persistExtraction(
     pages_json: JSON.stringify(extraction.pages),
   };
   const [inserted, selected] = await db.batch([
-    db.prepare(`INSERT INTO document_extractions (${EXTRACTION_COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(document_id) DO NOTHING`)
-      .bind(row.document_id, row.source_sha256, row.parser, row.parser_version, row.extracted_at, row.page_count, row.pages_json),
+    db.prepare(`INSERT INTO document_extractions (${EXTRACTION_COLUMNS}) SELECT ?, ?, ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM uploaded_documents WHERE id = ? AND status = 'stored') ON CONFLICT(document_id) DO NOTHING`)
+      .bind(row.document_id, row.source_sha256, row.parser, row.parser_version, row.extracted_at, row.page_count, row.pages_json, row.document_id),
     db.prepare(`SELECT ${EXTRACTION_COLUMNS} FROM document_extractions WHERE document_id = ?`).bind(row.document_id),
   ]);
+  if (inserted.success && selected.success && selected.results.length === 0) {
+    throw new DocumentError("document_deleting", 409, "The PDF was deleted while extraction was running.");
+  }
   if (!inserted.success || !selected.success || selected.results.length !== 1) {
     throw new Error("Document extraction persistence failed.");
   }

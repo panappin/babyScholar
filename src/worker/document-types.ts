@@ -11,7 +11,7 @@ export interface UploadedDocument {
   /** Server-assigned UTC ISO 8601 timestamp. */
   uploadedAt: string;
   /** Extraction has not run in Phase 3A. */
-  status: "stored";
+  status: "stored" | "deleting";
 }
 
 export interface UploadDocumentResponse {
@@ -64,7 +64,7 @@ export interface DocumentMetadataEvidenceQuote {
 
 export type DocumentMetadataEvidence = Record<DocumentMetadataField, DocumentMetadataEvidenceQuote[]>;
 
-/** Source-grounded bibliographic metadata, never inferred from a filename or web source. */
+/** Bibliographic metadata generated with selected PDF text as context. */
 export interface DocumentMetadata {
   documentId: string;
   /** SHA-256 of the original stored PDF used by the linked text extraction. */
@@ -103,13 +103,13 @@ export interface DocumentSummaryPageRange {
   endPage: number;
 }
 
-/** A short exact quotation that establishes presence in one selected source page. */
+/** Optional quotation retained by earlier saved summary records. */
 export interface DocumentSummaryEvidenceQuote {
   pageNumber: number;
   quote: string;
 }
 
-/** Summary prose may paraphrase; its attached quotes establish only source presence. */
+/** Summary text; new results use empty evidence, older saved quotes remain readable. */
 export interface DocumentSummaryItem {
   text: string;
   evidence: DocumentSummaryEvidenceQuote[];
@@ -151,13 +151,13 @@ export interface DocumentSummaryResponse {
   created?: boolean;
 }
 
-/** A short exact quotation establishing that an answer cites an included source page. */
+/** Optional quotation retained by earlier saved Q&A records. */
 export interface DocumentQuestionEvidenceQuote {
   pageNumber: number;
   quote: string;
 }
 
-/** One ordered, source-grounded portion of an answered question. */
+/** One ordered answer portion; newly generated plain text uses empty evidence. */
 export interface DocumentQuestionAnswerPart {
   text: string;
   evidence: DocumentQuestionEvidenceQuote[];
@@ -165,7 +165,7 @@ export interface DocumentQuestionAnswerPart {
 
 export type DocumentQuestionOutcome = "answered" | "insufficient_source";
 
-/** Immutable, source-grounded answer for one normalized question/extraction pair. */
+/** Immutable answer with PDF context for one normalized question/extraction pair. */
 export interface DocumentQuestionRecord {
   /** Independent application UUID for this saved Q&A result. */
   id: string;
@@ -209,7 +209,7 @@ export interface ListDocumentQuestionsResponse {
 
 export type DocumentErrorKind = "invalid_request" | "unsupported_media_type" | "body_too_large"
   | "request_timeout" | "method_not_allowed" | "storage_unavailable" | "database_failure"
-  | "document_not_found" | "object_missing" | "extraction_not_found" | "source_hash_mismatch"
+  | "document_not_found" | "document_deleting" | "object_missing" | "extraction_not_found" | "source_hash_mismatch"
   | "password_protected" | "no_usable_text" | "extraction_limit_exceeded" | "extraction_timeout"
   | "parser_error" | "metadata_not_found" | "metadata_in_progress"
   | "metadata_missing_configuration" | "metadata_authentication" | "metadata_quota_or_rate_limit"

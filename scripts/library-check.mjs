@@ -111,8 +111,8 @@ async function startWorker() {
   throw new Error("Owned Worker did not become ready.");
 }
 
-async function request(init, expectedStatus) {
-  const response = await fetch(`${origin}/api/library/papers`, { ...init, signal: AbortSignal.timeout(20_000) }).catch((error) => {
+async function request(init, expectedStatus, suffix = "") {
+  const response = await fetch(`${origin}/api/library/papers${suffix}`, { ...init, signal: AbortSignal.timeout(20_000) }).catch((error) => {
     throw new Error(`Local library request failed: ${error.cause?.code ?? error.name}: ${error.cause?.message ?? error.message}`);
   });
   if (response.headers.get("cache-control") !== "no-store") {
@@ -257,6 +257,16 @@ async function main() {
   await startWorker();
   assert.deepEqual(await list(), expected);
   record("migration-reapply-preserves-all-records", { rowCount: 3, originalId: winner.id, savedAt: winner.savedAt });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    assert.deepEqual((await request({ method: "DELETE" }, 200, `/${nullSaved.id}`)).body, { deleted: true, id: nullSaved.id });
+  }
+  assert.deepEqual((await list()).papers, expected.papers.filter((paper) => paper.id !== nullSaved.id));
+  const resaved = (await request(post(nullPaper), 201)).body.paper;
+  assert.notEqual(resaved.id, nullSaved.id);
+  assert.deepEqual((await request(post(nullPaper), 200)).body.paper, resaved);
+  await request({ method: "DELETE" }, 400, "/not-an-application-id");
+  assert.deepEqual((await list()).papers.filter((paper) => paper.id !== resaved.id), expected.papers.filter((paper) => paper.id !== nullSaved.id));
+  record("remove-by-application-id-idempotence-resave-and-unrelated-records-passed");
   evidence.result = "passed";
 }
 

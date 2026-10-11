@@ -51,9 +51,23 @@ async function listPapers(db: D1Database): Promise<ListPapersResponse> {
   return { papers: rows.results.map(savedPaper) };
 }
 
-export async function handleLibrary(request: Request, env: WorkerEnv): Promise<Response> {
+export async function handleLibrary(request: Request, env: WorkerEnv, recordId?: string): Promise<Response> {
   const headers: Record<string, string> = { "cache-control": "no-store" };
   try {
+    if (recordId !== undefined) {
+      if (request.method !== "DELETE") {
+        headers.Allow = "DELETE";
+        throw new LibraryError("method_not_allowed", 405, "Use DELETE to remove a library record.");
+      }
+      if (!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(recordId)
+        || request.headers.has("content-encoding") || (request.headers.get("content-length") ?? "0") !== "0") {
+        throw new LibraryError("invalid_request", 400, "Use a canonical library record ID with no request body.");
+      }
+      if (!env.DB) throw new LibraryError("storage_unavailable", 503, "The paper library database is unavailable.");
+      const deleted = await env.DB.prepare("DELETE FROM papers WHERE id = ?").bind(recordId).run();
+      if (!deleted.success) throw new Error("Library removal failed.");
+      return Response.json({ deleted: true, id: recordId }, { headers });
+    }
     if (request.method !== "GET" && request.method !== "POST") {
       headers.Allow = "GET, POST";
       throw new LibraryError("method_not_allowed", 405, "Use GET or POST for the paper library.");

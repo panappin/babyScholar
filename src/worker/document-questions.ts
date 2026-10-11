@@ -169,6 +169,7 @@ async function listQuestions(db: D1Database, documentId: string): Promise<Docume
 }
 
 function providerError(error: unknown): DocumentError {
+  if (error instanceof DocumentError) return error;
   if (!(error instanceof IntegrationError)) {
     return new DocumentError("question_provider_failure", 502, "The question provider failed unexpectedly.");
   }
@@ -199,8 +200,8 @@ async function acquireClaim(
 ): Promise<boolean> {
   const [expired, claimed] = await db.batch([
     db.prepare("DELETE FROM document_question_claims WHERE expires_at <= ?").bind(now),
-    db.prepare("INSERT INTO document_question_claims (document_id, normalized_question, extraction_fingerprint, owner_token, expires_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(document_id, normalized_question, extraction_fingerprint) DO NOTHING")
-      .bind(documentId, normalizedQuestion, fingerprint, ownerToken, expiresAt),
+    db.prepare("INSERT INTO document_question_claims (document_id, normalized_question, extraction_fingerprint, owner_token, expires_at) SELECT ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM uploaded_documents WHERE id = ? AND status = 'stored') ON CONFLICT(document_id, normalized_question, extraction_fingerprint) DO NOTHING")
+      .bind(documentId, normalizedQuestion, fingerprint, ownerToken, expiresAt, documentId),
   ]);
   if (!expired.success || !claimed.success) throw new Error("Question claim operation failed.");
   return claimed.meta.changes === 1;
@@ -221,6 +222,7 @@ async function persistQuestion(
     db.prepare(`INSERT INTO document_questions (${QUESTION_COLUMNS})
       SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
       WHERE EXISTS (SELECT 1 FROM document_question_claims WHERE document_id = ? AND normalized_question = ? AND extraction_fingerprint = ? AND owner_token = ? AND expires_at > ?)
+      AND EXISTS (SELECT 1 FROM uploaded_documents WHERE id = ? AND status = 'stored')
       ON CONFLICT(document_id, normalized_question, extraction_fingerprint) DO NOTHING`)
       .bind(
         record.id, record.documentId, record.question, record.normalizedQuestion, record.sourceSha256,
@@ -229,7 +231,7 @@ async function persistQuestion(
         record.sourceExcerptByteCount, record.sourceExcerptTruncated ? 1 : 0, record.sourceCoverageWarning,
         record.model, record.promptVersion, record.schemaVersion, record.outcome, JSON.stringify(record.answerParts),
         record.insufficientSourceReason, JSON.stringify(record.warnings), record.createdAt,
-        record.documentId, record.normalizedQuestion, record.extractionFingerprint, ownerToken, now,
+        record.documentId, record.normalizedQuestion, record.extractionFingerprint, ownerToken, now, record.documentId,
       ),
     db.prepare("DELETE FROM document_question_claims WHERE document_id = ? AND normalized_question = ? AND extraction_fingerprint = ? AND owner_token = ?")
       .bind(record.documentId, record.normalizedQuestion, record.extractionFingerprint, ownerToken),
@@ -277,11 +279,16 @@ async function generateQuestion(
     const excerpt = selectSummarySource(extraction);
     let provider;
     try {
-      provider = await requestDocumentQuestion(env, input.question, excerpt);
+      if (!await findDocument(db, documentId)) throw new DocumentError("document_not_found", 404, "The uploaded document was deleted.");
+      const owned = await db.prepare("SELECT 1 FROM document_question_claims WHERE document_id = ? AND owner_token = ? AND expires_at > ?")
+        .bind(documentId, ownerToken, new Date().toISOString()).first();
+      if (!owned) throw new DocumentError("question_in_progress", 409, "Generation ownership expired. Reload saved results before retrying.");
+      const response = await requestDocumentQuestion(env, input.question, excerpt);
+      provider = { model: response.model, output: validateDocumentQuestionOutput(response.output, excerpt) };
     } catch (error) {
       throw providerError(error);
     }
-    const output = validateDocumentQuestionOutput(provider.output, excerpt);
+    const output = provider.output;
     const record: DocumentQuestionRecord = {
       id: crypto.randomUUID(),
       documentId,

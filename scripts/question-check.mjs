@@ -90,7 +90,7 @@ function answeredOutput() {
     outcome: "answered",
     answerParts: [{
       text: "The included later page states that later pages remain visible.",
-      evidence: [{ pageNumber: 4, quote: expected.findingQuote }],
+      evidence: [{ pageNumber: 4, referenceId: 1 }],
     }],
     insufficientSourceReason: null,
     warnings: [],
@@ -112,7 +112,8 @@ function questionOutputForMode() {
   if (questionMode === "insufficient") return insufficientOutput(false);
   if (questionMode === "partial") return insufficientOutput(true);
   const output = answeredOutput();
-  if (questionMode === "wrong_page") output.answerParts[0].evidence = [{ pageNumber: 3, quote: expected.findingQuote }];
+  if (questionMode === "wrong_page") output.answerParts[0].evidence = [{ pageNumber: 99, referenceId: 1 }];
+  else if (questionMode === "unknown_reference") output.answerParts[0].evidence = [{ pageNumber: 4, referenceId: 9999 }];
   else if (questionMode === "invented_evidence") output.answerParts[0].evidence = [{ pageNumber: 4, quote: "Invented question evidence." }];
   else if (questionMode === "oversized_evidence") output.answerParts[0].evidence = [{ pageNumber: 4, quote: "x".repeat(601) }];
   else if (questionMode === "too_many_words") output.answerParts[0].text = Array.from({ length: 301 }, () => "word").join(" ");
@@ -141,8 +142,9 @@ async function startProvider() {
       const body = await readRequestBody(request);
       const format = body.text?.format;
       const input = body.input?.[1]?.content;
-      const kind = format?.name === "document_question" ? "question" : format?.name === "document_summary" ? "summary" : "metadata";
-      const pageMarkers = typeof input === "string" ? [...input.matchAll(/\[Page (\d+)\]/gu)].map((match) => Number(match[1])) : [];
+      const kind = request.headers.authorization === "Bearer local-metadata-test-key" ? "metadata"
+        : request.headers.authorization === "Bearer local-summary-test-key" ? "summary" : "question";
+      const pageMarkers = typeof input === "string" ? [...new Set([...input.matchAll(/\[Page (\d+)[;\]]/gu)].map((match) => Number(match[1])))] : [];
       evidence.providerRequests.push({
         kind,
         mode: kind === "question" ? questionMode : "valid",
@@ -166,6 +168,18 @@ async function startProvider() {
         return;
       }
       questionProviderCalls += 1;
+      const correction = typeof input === "string" && input.includes("previous attempt failed strict output");
+      if (questionMode === "correct_once" || questionMode === "correct_deadline") {
+        if (questionMode === "correct_deadline") await delay(correction ? 20_000 : 8_000);
+        if (!response.destroyed) { response.writeHead(200, { "content-type": "application/json" }); response.end(JSON.stringify(responsePayload(correction ? answeredOutput() : {}))); }
+        return;
+      }
+      if (["authentication", "quota", "model_access"].includes(questionMode)) {
+        response.writeHead(questionMode === "authentication" ? 401 : questionMode === "quota" ? 429 : 403, { "content-type": "application/json" });
+        response.end(JSON.stringify({ error: { code: "model_access", message: "mock failure" } }));
+        return;
+      }
+      if (questionMode === "network_failure") { response.destroy(); return; }
       questionProviderStarted?.();
       questionProviderStarted = undefined;
       if (questionMode === "slow") await delay(350);
@@ -330,7 +344,7 @@ async function expectQuestionFailure(mode, kind, status, diagnostic) {
   const beforeCalls = questionProviderCalls;
   const failed = await jsonRequest(`/api/documents/${prepared.document.id}/questions`, jsonQuestion(`Failure ${mode}?`), status);
   assert.equal(failed.body.error.kind, kind);
-  assert.equal(questionProviderCalls, beforeCalls + 1);
+  assert.equal(questionProviderCalls, beforeCalls + 1, "a failed Q&A request must not retry the provider automatically");
   assert.deepEqual((await jsonRequest(`/api/documents/${prepared.document.id}/questions`, undefined, 200)).body.questions, []);
   if (diagnostic) {
     const expected = JSON.stringify(diagnostic);
@@ -375,12 +389,12 @@ async function main() {
   assert.equal(first.body.question.outcome, "answered");
   assert.equal(first.body.question.question, originalQuestion);
   assert.equal(first.body.question.normalizedQuestion, "What later findings are stated in 2024?");
-  assert.equal(first.body.question.answerParts[0].evidence[0].pageNumber, 4);
-  assert.equal(first.body.question.answerParts[0].evidence[0].quote, expected.findingQuote);
+  assert.equal(first.body.question.answerParts[0].text, answeredOutput().answerParts[0].text);
+  assert.deepEqual(first.body.question.answerParts[0].evidence, []);
   assert.deepEqual(first.body.question.includedPageNumbers, [1, 2, 3, 4]);
   assert.equal(first.body.question.sourceExcerptTruncated, false);
-  assert.match(first.body.question.promptVersion, /document-question-v1/u);
-  assert.match(first.body.question.schemaVersion, /document-question-schema-v1/u);
+  assert.match(first.body.question.promptVersion, /document-question-text-v3/u);
+  assert.match(first.body.question.schemaVersion, /document-question-text-v3/u);
   const callsAfterFirst = questionProviderCalls;
   const cached = await jsonRequest(`/api/documents/${primary.document.id}/questions`, jsonQuestion("What later findings are stated in 2024?"), 200);
   assert.equal(cached.body.created, false);
@@ -418,15 +432,35 @@ async function main() {
   await expectQuestionFailure("non_json_http_body", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "http_body_non_json" });
   await expectQuestionFailure("invalid_rest_envelope", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "rest_envelope_invalid" });
   await expectQuestionFailure("missing_output_text", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "output_text_missing" });
-  await expectQuestionFailure("malformed", "question_invalid_response", 502, { event: "document_question_provider_rejected", stage: "structured_json_malformed" });
+  await expectQuestionFailure("malformed", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "schema_validation_failed" });
   await expectQuestionFailure("schema_invalid", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "schema_validation_failed" });
-  await expectQuestionFailure("wrong_page", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "evidence_validation_failed" });
-  await expectQuestionFailure("invented_evidence", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "evidence_validation_failed" });
-  await expectQuestionFailure("oversized_evidence", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "evidence_validation_failed" });
-  await expectQuestionFailure("too_many_words", "question_invalid_response", 502, { event: "document_question_output_rejected", stage: "schema_validation_failed" });
+  for (const mode of ["wrong_page", "unknown_reference", "invented_evidence", "oversized_evidence"]) {
+    questionMode = mode;
+    const beforeCalls = questionProviderCalls;
+    const usable = await jsonRequest(`/api/documents/${primary.document.id}/questions`, jsonQuestion(`Optional citations ${mode}?`), 201);
+    assert.equal(usable.body.question.answerParts[0].text, answeredOutput().answerParts[0].text);
+    assert.deepEqual(usable.body.question.answerParts[0].evidence, [], "invalid optional citation data is omitted without discarding the answer");
+    assert.equal(questionProviderCalls, beforeCalls + 1);
+  }
+  questionMode = "answered";
+  questionMode = "too_many_words";
+  const longAnswer = await jsonRequest(`/api/documents/${primary.document.id}/questions`, jsonQuestion("A longer readable answer?"), 201);
+  assert.ok(longAnswer.body.question.answerParts[0].text.split(/\s+/u).length > 300);
+  assert.deepEqual(longAnswer.body.question.answerParts[0].evidence, []);
+  questionMode = "answered";
   await expectQuestionFailure("refusal", "question_refusal", 422);
   await expectQuestionFailure("timeout", "question_timeout", 504);
-  record("question-response-decoding-schema-evidence-refusal-timeout-boundaries-leave-no-record", { rejectedEvidenceBytes: 601, proseWordLimit: 300, diagnosticStages: ["http_body_empty", "http_body_non_json", "rest_envelope_invalid", "output_text_missing", "structured_json_malformed", "schema_validation_failed", "evidence_validation_failed"] });
+  await expectQuestionFailure("authentication", "question_authentication", 502);
+  await expectQuestionFailure("quota", "question_quota_or_rate_limit", 429);
+  await expectQuestionFailure("model_access", "question_model_access", 502);
+  await expectQuestionFailure("network_failure", "question_provider_failure", 502);
+  const deadlineStart = Date.now();
+  await expectQuestionFailure("correct_deadline", "question_invalid_response", 502);
+  assert.ok(Date.now() - deadlineStart < 28_000, "a failed answer must stop within the existing provider deadline");
+  await expectQuestionFailure("correct_once", "question_invalid_response", 502);
+  record("provider-failure-stops-without-automatic-retry", { liveProviderRequests: 0 });
+  questionMode = "answered";
+  record("question-text-decoding-optional-citations-and-provider-failure-boundaries", { ignoredEvidenceBytes: 601, diagnosticStages: ["http_body_empty", "http_body_non_json", "rest_envelope_invalid", "output_text_missing", "schema_validation_failed"] });
 
   const concurrent = await uploadAndExtract();
   questionMode = "slow";
@@ -441,6 +475,18 @@ async function main() {
   questionMode = "answered";
   record("concurrent-identical-question-used-one-provider-call", { documentId: concurrent.document.id });
 
+  const deleting = await uploadAndExtract();
+  questionMode = "slow";
+  const generationStarted = new Promise((done) => { questionProviderStarted = done; });
+  const generating = jsonRequest(`/api/documents/${deleting.document.id}/questions`, jsonQuestion("Deletion race fixture?"));
+  await generationStarted;
+  await jsonRequest(`/api/documents/${deleting.document.id}`, { method: "DELETE" }, 200);
+  assert.equal((await generating).response.status, 409);
+  await jsonRequest(`/api/documents/${deleting.document.id}/questions`, undefined, 404);
+  await jsonRequest(`/api/documents/${deleting.document.id}`, { method: "DELETE" }, 200);
+  questionMode = "answered";
+  record("late-generation-cannot-recreate-deleted-document");
+
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/metadata`, undefined, 200)).body.metadata, metadata.body.metadata);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/summary`, undefined, 200)).body.summary, summary.body.summary);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/text`, undefined, 200)).body.extraction, textBeforeQuestions.body.extraction);
@@ -452,11 +498,13 @@ async function main() {
   await startWorker("");
   assert.notEqual(worker.pid, firstPid);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/questions`, undefined, 200)).body.questions.find((entry) => entry.id === first.body.question.id), first.body.question);
+  const callsBeforeCache = questionProviderCalls;
   const cacheWithoutKey = await jsonRequest(`/api/documents/${primary.document.id}/questions`, jsonQuestion("What later findings are stated in 2024?"), 200);
   assert.equal(cacheWithoutKey.body.created, false);
   assert.equal(cacheWithoutKey.body.question.id, first.body.question.id);
   const missingConfig = await jsonRequest(`/api/documents/${primary.document.id}/questions`, jsonQuestion("A new uncached question?"), 424);
   assert.equal(missingConfig.body.error.kind, "question_missing_configuration");
+  assert.equal(questionProviderCalls, callsBeforeCache);
   record("cached-question-get-and-post-work-with-empty-api-key", { documentId: primary.document.id });
 
   await stop(worker);
@@ -467,11 +515,17 @@ async function main() {
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/summary`, undefined, 200)).body.summary, summary.body.summary);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/text`, undefined, 200)).body.extraction, textBeforeQuestions.body.extraction);
   await download(primary.document, fixture.bytes);
+  await jsonRequest(`/api/documents/${primary.document.id}`, { method: "DELETE" }, 200);
+  for (const suffix of ["pdf", "text", "metadata", "summary", "questions"]) {
+    assert.equal((await fetch(`${origin}/api/documents/${primary.document.id}/${suffix}`)).status, 404);
+  }
+  await download(concurrent.document, fixture.bytes);
+  record("delete-populated-document-removes-public-children-and-preserves-other-pdf");
   for (const request of evidence.providerRequests.filter((request) => request.kind === "question")) {
     assert.equal(request.store, false);
     assert.equal(request.maxOutputTokens, 2048);
     assert.equal(request.hasTools, false);
-    assert.equal(request.strictSchema, true);
+    assert.equal(request.strictSchema, false, "ordinary Q&A answers do not require structured JSON");
   }
   evidence.result = "passed";
 }

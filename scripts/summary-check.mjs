@@ -117,17 +117,20 @@ function multibyteSummaryOutput() {
 }
 
 function providerResponse(output) {
-  return { status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(output) }] }] };
+  return { status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: typeof output === "string" ? output : JSON.stringify(output) }] }] };
+}
+
+function summaryProse(output) {
+  return [output.overview.text, ...["contributions", "methods", "findings", "limitations"].flatMap((section) => output[section].map((point) => point.text))].join("\n\n");
 }
 
 function summaryOutputForMode() {
   const output = validSummaryOutput();
-  if (summaryMode === "unissued_reference") output.overview.evidence = [{ pageNumber: 2, referenceId: 999 }];
-  else if (summaryMode === "invented_evidence") output.overview.evidence = [{ pageNumber: 1, quote: "Invented summary evidence." }];
-  else if (summaryMode === "too_many_words") output.overview.text = Array.from({ length: 501 }, () => "word").join(" ");
-  else if (summaryMode === "multibyte_600") return multibyteSummaryOutput();
-  else if (summaryMode === "clipped") return clippedSummaryOutput();
-  return output;
+  if (summaryMode === "too_many_words") output.overview.text = Array.from({ length: 501 }, () => "word").join(" ");
+  else if (summaryMode === "too_long_text") return "x".repeat(12_001);
+  else if (summaryMode === "multibyte_600") return summaryProse(multibyteSummaryOutput());
+  else if (summaryMode === "clipped") return summaryProse(clippedSummaryOutput());
+  return summaryProse(output);
 }
 
 async function readRequestBody(request) {
@@ -153,9 +156,9 @@ async function startProvider() {
       const format = body.text?.format;
       const input = body.input?.[1]?.content;
       const pageMarkers = typeof input === "string"
-        ? [...new Set([...input.matchAll(/\[Page (\d+); evidence \d+\]/gu)].map((match) => Number(match[1])))]
+        ? [...new Set([...input.matchAll(/\[Page (\d+)[;\]]/gu)].map((match) => Number(match[1])))]
         : [];
-      const isSummary = format?.name === "document_summary";
+      const isSummary = request.headers.authorization === "Bearer local-summary-test-key";
       evidence.providerRequests.push({
         kind: isSummary ? "summary" : "metadata",
         mode: isSummary ? summaryMode : "valid",
@@ -166,13 +169,9 @@ async function startProvider() {
         strictSchema: format?.type === "json_schema" && format?.strict === true && format?.schema?.additionalProperties === false,
         pageMarkers,
         hasSummaryInstructions: !isSummary || (typeof input === "string"
-          && input.includes("all supplied pages in their given order")
-          && input.includes("300 to 500 words")
-          && input.includes("Return only the pageNumber and evidence referenceId")),
-        usesServerEvidenceReferences: !isSummary || (
-          format?.schema?.properties?.overview?.properties?.evidence?.items?.properties?.referenceId?.type === "integer"
-          && format?.schema?.properties?.overview?.properties?.evidence?.items?.properties?.quote === undefined
-        ),
+          && input.includes("using the supplied PDF pages as context")
+          && input.includes("State uncertainty clearly")
+          && input.includes("Return ordinary readable text")),
       });
       if (!isSummary) {
         metadataProviderCalls += 1;
@@ -188,7 +187,7 @@ async function startProvider() {
         await delay(26_000);
         if (!response.destroyed) {
           response.writeHead(200, { "content-type": "application/json" });
-          response.end(JSON.stringify(providerResponse(validSummaryOutput())));
+          response.end(JSON.stringify(providerResponse(summaryProse(validSummaryOutput()))));
         }
         return;
       }
@@ -198,7 +197,7 @@ async function startProvider() {
         return;
       }
       let payload;
-      if (summaryMode === "malformed") payload = { status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: "{" }] }] };
+      if (summaryMode === "malformed") payload = { status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: "" }] }] };
       else if (summaryMode === "refusal") payload = { status: "completed", output: [{ content: [{ type: "refusal", refusal: "mock refusal" }] }] };
       else if (summaryMode === "incomplete") payload = { status: "incomplete" };
       else payload = providerResponse(summaryOutputForMode());
@@ -343,7 +342,7 @@ async function expectSummaryFailure(mode, kind, status, bytes = fixture.bytes) {
   const beforeCalls = summaryProviderCalls;
   const failed = await jsonRequest(`/api/documents/${prepared.document.id}/summary`, { method: "POST" }, status);
   assert.equal(failed.body.error.kind, kind);
-  assert.equal(summaryProviderCalls, beforeCalls + 1);
+  assert.equal(summaryProviderCalls, beforeCalls + (kind === "summary_invalid_response" ? 2 : 1));
   const get = await jsonRequest(`/api/documents/${prepared.document.id}/summary`, undefined, 404);
   assert.equal(get.body.error.kind, "summary_not_found");
   summaryMode = "valid";
@@ -376,12 +375,15 @@ async function main() {
   assert.equal(first.body.summary.totalPageCount, 4);
   assert.equal(first.body.summary.sourceExcerptTruncated, false);
   assert.match(first.body.summary.sourceCoverageWarning, /all 4 extracted page/u);
-  assert.equal(first.body.summary.overview.evidence[0].pageNumber, 1);
-  assert.equal(first.body.summary.findings[0].evidence[0].pageNumber, 4);
+  assert.deepEqual(first.body.summary.overview.evidence, []);
+  for (const section of ["contributions", "methods", "findings", "limitations"]) {
+    for (const point of first.body.summary[section]) assert.deepEqual(point.evidence, []);
+  }
+  assert.ok(first.body.summary.overview.text.includes(validSummaryOutput().findings[0].text));
   assert.notEqual(first.body.summary.overview.text, expected.overviewQuote, "summary prose may paraphrase");
   assert.match(first.body.summary.model, /\S/u);
-  assert.equal(first.body.summary.promptVersion, "document-summary-v2");
-  assert.equal(first.body.summary.schemaVersion, "document-summary-schema-v2");
+  assert.equal(first.body.summary.promptVersion, "document-summary-v3");
+  assert.equal(first.body.summary.schemaVersion, "document-summary-schema-v3");
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/metadata`, undefined, 200)).body.metadata, metadata.body.metadata);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/text`, undefined, 200)).body.extraction, textBeforeSummary.body.extraction);
   await download(primary.document, fixture.bytes);
@@ -435,7 +437,7 @@ async function main() {
   assert.ok(clippedSummary.body.summary.sourceExcerptByteCount <= 96 * 1024);
   assert.match(clippedSummary.body.summary.sourceCoverageWarning, /Partial source coverage/u);
   assert.ok(clippedSummary.body.summary.warnings.includes(clippedSummary.body.summary.sourceCoverageWarning));
-  assert.equal(clippedSummary.body.summary.overview.evidence[0].quote, clippedFixture.expected.quote);
+  assert.deepEqual(clippedSummary.body.summary.overview.evidence, []);
   const clippedRequest = evidence.providerRequests.at(-1);
   assert.deepEqual(clippedRequest.pageMarkers, [1, 2, 3, 4]);
   assert.deepEqual((await jsonRequest(`/api/documents/${clipped.document.id}/text`, undefined, 200)).body.extraction.pages.map((page) => page.pageNumber), [1, 2, 3, 4]);
@@ -446,13 +448,14 @@ async function main() {
   const unicodeLimit = await uploadAndExtract(multibyteFixture.bytes, "summary-evidence-600-utf8-bytes.pdf");
   summaryMode = "multibyte_600";
   const unicodeAccepted = await jsonRequest(`/api/documents/${unicodeLimit.document.id}/summary`, { method: "POST" }, 201);
-  assert.ok(new TextEncoder().encode(unicodeAccepted.body.summary.overview.evidence[0].quote).byteLength <= 600);
-  await expectSummaryFailure("unissued_reference", "summary_invalid_response", 502);
-  await expectSummaryFailure("invented_evidence", "summary_invalid_response", 502);
-  await expectSummaryFailure("too_many_words", "summary_invalid_response", 502);
-  assert.match(worker.log, /"event":"summary_evidence_rejected"[^\n]*"reason":"reference_not_issued"/u);
-  assert.match(worker.log, /"event":"summary_evidence_rejected"[^\n]*"reason":"reference_shape"/u);
-  record("summary-evidence-server-references-invalid-reference-diagnostics-and-utf8-output-limits-passed", { maximumResolvedQuoteBytes: 600, proseWordLimit: 500 });
+  assert.deepEqual(unicodeAccepted.body.summary.overview.evidence, []);
+  const longProse = await uploadAndExtract();
+  summaryMode = "too_many_words";
+  const longAccepted = await jsonRequest(`/api/documents/${longProse.document.id}/summary`, { method: "POST" }, 201);
+  assert.ok(longAccepted.body.summary.overview.text.split(/\s+/u).length > 500);
+  assert.deepEqual(longAccepted.body.summary.overview.evidence, []);
+  await expectSummaryFailure("too_long_text", "summary_invalid_response", 502);
+  record("summary-ordinary-text-with-empty-evidence-and-prose-output-limits-passed", { proseByteLimit: 12_000 });
 
   await expectSummaryFailure("malformed", "summary_invalid_response", 502);
   await expectSummaryFailure("refusal", "summary_refusal", 422);
@@ -465,9 +468,8 @@ async function main() {
     assert.equal(request.store, false);
     assert.equal(request.maxOutputTokens, 2048);
     assert.equal(request.hasTools, false);
-    assert.equal(request.strictSchema, true);
+    assert.equal(request.strictSchema, false);
     assert.equal(request.hasSummaryInstructions, true);
-    assert.equal(request.usesServerEvidenceReferences, true);
   }
   evidence.result = "passed";
 }

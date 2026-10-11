@@ -171,7 +171,7 @@ function questionProviderOutput() {
     outcome: "answered",
     answerParts: [{
       text: "The later page states that supporting quotes do not establish every implication of a paraphrase.",
-      evidence: [{ pageNumber: 4, quote: expected.limitationQuote }],
+      evidence: [{ pageNumber: 4, referenceId: 2 }],
     }],
     insufficientSourceReason: null,
     warnings: [],
@@ -395,6 +395,24 @@ async function main() {
     downloads.set(params.guid, { ...current, ...params });
   });
   await cdp.send("Page.enable", {}, sessionId);
+  const navigatePage = async () => {
+    const marker = randomUUID();
+    await cdp.send("Runtime.evaluate", { expression: `window.__checkPreviousDocument = ${JSON.stringify(marker)}` }, sessionId);
+    await cdp.send("Page.stopLoading", {}, sessionId);
+    await cdp.send("Page.navigate", { url: `${viteOrigin}/?checkNavigation=${marker}` }, sessionId);
+    const deadline = Date.now() + 30_000;
+    while (Date.now() < deadline) {
+      try {
+        const result = await cdp.send("Runtime.evaluate", { expression: `window.__checkPreviousDocument !== ${JSON.stringify(marker)} && document.readyState !== 'loading' && Boolean(document.querySelector('#root'))`, returnByValue: true }, sessionId);
+        if (result.result?.value === true) return;
+      } catch (error) {
+        if (!/context|navigat/iu.test(error.message)) throw error;
+      }
+      await delay(40);
+    }
+    evidence.failedNavigation = (await cdp.send("Runtime.evaluate", { expression: `({ readyState: document.readyState, oldDocument: window.__checkPreviousDocument === ${JSON.stringify(marker)}, hasRoot: Boolean(document.querySelector('#root')), hasSearch: Boolean(document.querySelector('#paper-search-query')), viteOverlay: Boolean(document.querySelector('vite-error-overlay')), activeTab: document.querySelector('[role=tab][aria-selected=true]')?.id })`, returnByValue: true }, sessionId)).result?.value;
+    throw new Error("The new document did not become ready within the navigation deadline.");
+  };
   await cdp.send("Runtime.enable", {}, sessionId);
   const paused = [];
   const allPaused = [];
@@ -428,6 +446,7 @@ async function main() {
       if (await evaluate(`Boolean(${expression})`)) return;
       await delay(40);
     }
+    evidence.failedWait = { description, ui: await evaluate("({ libraryVisible: Boolean(document.querySelector('#library-view')), libraryLoading: document.body.innerText.includes('Loading saved papers'), libraryCount: document.querySelectorAll('#library-view .paper-card').length, alert: document.querySelector('[role=alert]')?.textContent?.trim().slice(0, 240) ?? null })") };
     throw new Error(`Timed out waiting for ${description}.`);
   };
   const click = (selector) => evaluate(`(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!(element instanceof HTMLElement)) return false; element.click(); return true; })()`);
@@ -526,7 +545,7 @@ async function main() {
     }, sessionId);
   };
   const navigate = async () => {
-    await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+    await navigatePage();
     await waitFor("document.querySelector('#paper-search-query')", "the initial page");
     await waitFor("document.body.innerText.includes('Backend connected') && document.body.innerText.includes('D1 connected') && document.body.innerText.includes('R2 connected')", "connection indicators");
   };
@@ -607,10 +626,10 @@ async function main() {
 
   // Abort an initial load with a browser refresh, then fulfill the newer one.
   // The superseded response must not erase the current page's records.
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#paper-search-query')", "first stale-library page");
   const staleLibrary = await newestPaused(isLibraryGet, "superseded library request");
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#paper-search-query')", "replacement stale-library page");
   const currentLibrary = await newestPaused(isLibraryGet, "replacement library request");
   await fulfillJson(currentLibrary, 200, { papers: [newlySavedPaper] });
@@ -620,7 +639,7 @@ async function main() {
   assert.equal((await evaluate("document.body.innerText")).includes("No saved papers yet"), false);
   record("mocked-stale-library-response-ignored");
 
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#paper-search-query')", "empty-library page");
   await resolveInitialLibrary([]);
   record("mocked-empty-library-passed");
@@ -650,7 +669,7 @@ async function main() {
   await waitFor("document.body.innerText.includes('No papers found for')", "search empty state");
   record("mocked-search-empty-errors-and-unexpected-json-passed");
 
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#paper-search-query')", "interrupted-save page");
   await resolveInitialLibrary([]);
   assert.equal(await click("#search-tab"), true);
@@ -672,13 +691,40 @@ async function main() {
   assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.includes("/api/library/papers") && request.postData?.includes("2401.01237")).length, 1, "interrupted POST must not retry automatically");
   record("mocked-interrupted-save-reconciles-without-post-retry");
 
+  // Malformed success followed by a stalled GET must end in a finite unknown
+  // state, not Saving/Loading forever. Only an explicit GET unlocks resaving.
+  await evaluate(`window.setTimeout = (callback, milliseconds, ...args) => window.__libraryOriginalSetTimeout(callback, milliseconds === 10000 ? 250 : milliseconds, ...args)`);
+  assert.equal(await click('[data-save-paper="2401.01237"]'), true);
+  await fulfillJson(await nextPaused(isLibraryPost, "malformed save POST"), 201, { unexpected: true });
+  const stalledRead = await nextPaused(isLibraryGet, "stalled save reconciliation GET");
+  await waitFor("document.body.innerText.includes('save outcome is still unknown')", "finite unresolved save feedback");
+  assert.equal(await evaluate("document.querySelector('[data-save-paper=\"2401.01237\"]').textContent"), "Save unconfirmed");
+  await cdp.send("Fetch.failRequest", { requestId: stalledRead.requestId, errorReason: "Aborted" }, sessionId).catch(() => undefined);
+  await evaluate("window.setTimeout = window.__libraryOriginalSetTimeout");
+  assert.equal(await click("#library-tab"), true);
+  await waitFor("document.querySelector('#library-view .reload-button')?.disabled === false", "library read timeout releases reload control");
+  assert.equal(await click("#library-view .reload-button"), true);
+  await fulfillJson(await nextPaused(isLibraryGet, "explicit reconciliation GET"), 200, { papers: [] });
+  assert.equal(await click("#search-tab"), true);
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01237\"]')?.disabled === false", "finite save recovery after authoritative GET");
+  assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.includes("/api/library/papers") && request.postData?.includes("2401.01237")).length, 2, "only the two deliberate clicks may POST");
+  record("malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed");
+
   // Real isolated D1 flow: only the search route is mocked. Save/list/refresh
   // use relative browser requests through Vite to the owned local Worker.
   await cdp.send("Fetch.disable", {}, sessionId);
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#paper-search-query')", "actual-flow page");
   assert.equal(await click("#library-tab"), true);
-  await waitFor("document.body.innerText.includes('No saved papers yet')", "actual empty library");
+  // The application's first library GET is intentionally a one-shot read. If
+  // the owned Worker is still becoming ready, exercise the explicit Reload
+  // control rather than treating an initial failure as an implicit retry.
+  await waitFor("document.body.innerText.includes('No saved papers yet') || Boolean(document.querySelector('#library-view [role=alert]'))", "actual initial library result");
+  if (!(await evaluate("document.body.innerText.includes('No saved papers yet')"))) {
+    assert.equal(await click("#library-view .reload-button"), true);
+    await waitFor("document.body.innerText.includes('No saved papers yet')", "actual empty library after explicit reload");
+    record("actual-library-initial-read-error-recovered-by-explicit-reload");
+  }
   assert.equal(await click("#search-tab"), true);
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/papers/search*" }] }, sessionId);
   await mockSearch("actual browser fixture", { provider: "arxiv", query: "actual browser fixture", papers: [actualSearchPaper] });
@@ -694,7 +740,7 @@ async function main() {
   assert.match(firstRecord.saved, /^\d{4}-\d{2}-\d{2}T/u);
   const actualRecordId = firstRecord.codes[1];
   const actualSavedAt = firstRecord.saved;
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#paper-search-query')", "browser refresh");
   assert.equal(await click("#library-tab"), true);
   // React development StrictMode can cancel the mount-time library read during
@@ -714,6 +760,17 @@ async function main() {
   assert.equal(await click(".reload-button"), true);
   await waitFor(`document.body.innerText.includes(${JSON.stringify(actualRecordId)})`, "unchanged record after real duplicate");
   record("actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed", { id: actualRecordId, savedAt: actualSavedAt });
+  assert.equal(await click(`[data-remove-paper="${actualRecordId}"]`), true);
+  await waitFor("document.body.innerText.includes('No saved papers yet')", "actual Remove clears selected library record");
+  assert.equal(await click("#search-tab"), true);
+  await mockSearch("resave actual fixture", { provider: "arxiv", query: "resave actual fixture", papers: [actualSearchPaper] });
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01239\"]')?.disabled === false", "removed search result is saveable again");
+  assert.equal(await click('[data-save-paper="2401.01239"]'), true);
+  await waitFor("document.querySelector('[data-save-paper=\"2401.01239\"]').textContent === 'Saved'", "actual resave after removal");
+  const resavedLibrary = await evaluate("fetch('/api/library/papers').then(response => response.json())");
+  assert.equal(resavedLibrary.papers.length, 1);
+  assert.notEqual(resavedLibrary.papers[0].id, actualRecordId);
+  record("actual-browser-remove-and-resave-uses-new-application-id");
 
   // Document-only mock states use the same browser/CDP harness. They exercise
   // rendering and stale/interrupted request handling without invoking Worker
@@ -721,7 +778,7 @@ async function main() {
   await cdp.send("Fetch.disable", {}, sessionId);
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/documents*" }] }, sessionId);
   autoMockQuestionGets = true;
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#pdfs-tab')", "mocked PDFs page");
   assert.equal(await click("#pdfs-tab"), true);
   const initialDocuments = await newestPaused(isDocumentList, "initial PDFs list request");
@@ -787,7 +844,7 @@ async function main() {
   await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "resume candidate text GET"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
   await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "resume candidate metadata GET"), 404, { error: { kind: "metadata_not_found", message: "The uploaded document metadata has not been generated." } });
   await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "resume candidate summary GET"), 404, { error: { kind: "summary_not_found", message: "The uploaded document summary has not been generated." } });
-  await waitFor("document.body.innerText.includes('Resume processing')", "resume action");
+  await waitFor("document.body.innerText.includes('Retry metadata only')", "resume action");
   assert.equal(await click('[data-generate-summary]'), true);
   await fulfillJson(await nextPaused((request) => isDocumentSummaryPost(request, mockDocumentTwo.id), "summary in-progress POST"), 409, { error: { kind: "summary_in_progress", message: "Summary generation is in progress; try again after the active request finishes." } });
   await waitFor("document.body.innerText.includes('Summary generation is in progress')", "summary in-progress feedback");
@@ -822,6 +879,22 @@ async function main() {
   await waitFor("document.querySelector('[role=alert]')?.textContent.includes('No saved summary was found')", "uncertain summary reconciliation");
   assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/summary`)).length, summaryPostsBeforeUncertain + 1, "uncertain summary POST must not retry automatically");
   record("mocked-pdfs-summary-loading-partial-evidence-get-only-stale-and-inprogress-passed");
+
+  await evaluate("window.__pipelineSetTimeout = window.setTimeout; window.setTimeout = (callback, ms, ...args) => window.__pipelineSetTimeout(callback, ms === 35000 ? 200 : ms, ...args)");
+  const metadataPostsBeforeTimeout = allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/metadata`)).length;
+  assert.equal(await click("[data-resume-processing]"), true);
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "timeout preflight text"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "timeout preflight metadata"), 404, { error: { kind: "metadata_not_found", message: "Metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "timeout preflight summary"), 404, { error: { kind: "summary_not_found", message: "Summary has not been generated." } });
+  const stalledMetadata = await nextPaused((request) => isDocumentMetadataPost(request, mockDocumentTwo.id), "stalled metadata POST");
+  await fulfillJson(await nextPaused((request) => isDocumentText(request, mockDocumentTwo.id), "timeout reconciliation text"), 200, { extraction: mockExtraction(mockDocumentTwo.id, "Resume fixture page text") });
+  await fulfillJson(await nextPaused((request) => isDocumentMetadataGet(request, mockDocumentTwo.id), "timeout reconciliation metadata"), 404, { error: { kind: "metadata_not_found", message: "Metadata has not been generated." } });
+  await fulfillJson(await nextPaused((request) => isDocumentSummaryGet(request, mockDocumentTwo.id), "timeout reconciliation summary"), 404, { error: { kind: "summary_not_found", message: "Summary has not been generated." } });
+  await cdp.send("Fetch.failRequest", { requestId: stalledMetadata.requestId, errorReason: "Aborted" }, sessionId).catch(() => undefined);
+  await evaluate("window.setTimeout = window.__pipelineSetTimeout");
+  await waitFor("document.querySelector('[data-resume-processing]')?.textContent === 'Retry metadata only'", "metadata timeout releases busy state after GET reconciliation");
+  assert.equal(allPaused.filter((request) => request.method === "POST" && request.url.endsWith(`/api/documents/${mockDocumentTwo.id}/metadata`)).length, metadataPostsBeforeTimeout + 1);
+  record("mocked-metadata-timeout-reconciles-with-fresh-read-signal-without-post-retry");
 
   // Q&A rendering uses the same isolated browser/CDP path. Question GETs were
   // automatically empty for the pre-existing document checks above; these
@@ -940,7 +1013,7 @@ async function main() {
   // only this loopback metadata-provider boundary.
   autoMockQuestionGets = false;
   await cdp.send("Fetch.disable", {}, sessionId);
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#pdfs-tab')", "PDFs tab");
   assert.equal(metadataProviderCalls, 0, "loading the page must not call the metadata provider");
   assert.equal(await click("#pdfs-tab"), true);
@@ -981,7 +1054,7 @@ async function main() {
   const pdfMobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
   assert.ok(pdfMobileMetrics.scrollWidth <= pdfMobileMetrics.width, "narrow PDFs layout must not require horizontal scrolling");
   await cdp.send("Emulation.clearDeviceMetricsOverride", {}, sessionId);
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#pdfs-tab')", "PDF browser refresh");
   assert.equal(metadataProviderCalls, 1, "browser refresh must not generate metadata");
   assert.equal(await click("#pdfs-tab"), true);
@@ -1001,6 +1074,18 @@ async function main() {
   assert.equal(metadataProviderCalls, 2, "failed metadata processing must have exactly one provider request and no automatic retry");
   metadataProviderMode = "success";
   record("actual-browser-metadata-failure-retains-upload-and-text-passed", { providerCalls: metadataProviderCalls });
+  const failedMetadataDocumentId = await evaluate("document.querySelector('.document-select')?.dataset.documentId");
+  const beforeRetryText = await evaluate(`fetch('/api/documents/${failedMetadataDocumentId}/text').then(response => response.json())`);
+  // Intercept and continue only to count routes; do not mock this real flow.
+  await evaluate(`window.__retryRequests = []; window.__retryFetch = window.fetch; window.fetch = (...args) => { window.__retryRequests.push({ path: String(args[0]), method: args[1]?.method ?? 'GET' }); return window.__retryFetch(...args); };`);
+  assert.equal(await click("[data-resume-processing]"), true);
+  await waitFor(`document.body.innerText.includes(${JSON.stringify(documentFixture.expected.title)}) && !document.querySelector('[data-resume-processing]')`, "explicit metadata-only recovery");
+  const retryRequests = await evaluate("window.__retryRequests");
+  await evaluate("window.fetch = window.__retryFetch");
+  assert.deepEqual(retryRequests.filter((request) => request.method === "POST").map((request) => request.path), [`/api/documents/${failedMetadataDocumentId}/metadata`]);
+  assert.deepEqual(await evaluate(`fetch('/api/documents/${failedMetadataDocumentId}/text').then(response => response.json())`), beforeRetryText);
+  assert.equal(metadataProviderCalls, 3);
+  record("actual-browser-metadata-only-retry-without-upload-or-extraction-post");
 
   // A separate actual Worker flow proves that an explicit summary works from
   // saved text even when this fixture's bibliographic metadata is unavailable.
@@ -1024,7 +1109,7 @@ async function main() {
   assert.match(actualQuestionTime, /^\d{4}-\d{2}-\d{2}T/u);
   await evaluate("document.querySelector('.question-evidence').open = true");
   await waitFor("document.body.innerText.includes('Supporting quotes') && document.body.innerText.includes('Page 4:')", "actual question expandable evidence");
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#pdfs-tab')", "question browser refresh");
   assert.equal(await click("#pdfs-tab"), true);
   await waitFor(`document.querySelector('[data-document-id=${JSON.stringify(summaryDocumentId)}]')`, "persisted question PDF after refresh");
@@ -1048,7 +1133,7 @@ async function main() {
   const summaryMobileMetrics = JSON.parse(await evaluate("JSON.stringify({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })"));
   assert.ok(summaryMobileMetrics.scrollWidth <= summaryMobileMetrics.width, "narrow summary layout must not require horizontal scrolling");
   await cdp.send("Emulation.clearDeviceMetricsOverride", {}, sessionId);
-  await cdp.send("Page.navigate", { url: viteOrigin }, sessionId);
+  await navigatePage();
   await waitFor("document.querySelector('#pdfs-tab')", "summary browser refresh");
   assert.equal(await click("#pdfs-tab"), true);
   await waitFor(`document.querySelector('[data-document-id=${JSON.stringify(summaryDocumentId)}]')`, "persisted summary PDF after refresh");
@@ -1056,6 +1141,19 @@ async function main() {
   await waitFor("document.body.innerText.includes('Later-page findings can remain represented in the resulting summary.')", "persisted summary after GET-only refresh");
   assert.equal(summaryProviderCalls, 1, "browser refresh and selection must not regenerate a saved summary");
   record("actual-browser-vite-proxy-summary-explicit-generation-refresh-and-evidence-passed", { documentId: summaryDocumentId, summaryProviderCalls, metadataProviderCalls });
+
+  assert.equal(await evaluate("document.querySelector('[data-delete-document]').disabled"), true);
+  assert.equal(await click("[data-download-original]"), true);
+  await waitFor("document.querySelector('[data-download-prepared]')", "prepared URL before deletion");
+  assert.equal(await click("[data-confirm-delete]"), true);
+  assert.equal(await click("[data-delete-document]"), true);
+  await waitFor("document.body.innerText.includes('saved processing results were deleted')", "confirmed PDF deletion completes");
+  assert.equal(await evaluate("Boolean(document.querySelector('[data-download-prepared]'))"), false);
+  assert.equal(await evaluate(`Boolean(document.querySelector('[data-document-id="${summaryDocumentId}"]'))`), false);
+  assert.equal(await evaluate(`fetch('/api/documents/${summaryDocumentId}/pdf').then(response => response.status)`), 404);
+  assert.equal(await evaluate(`fetch('/api/documents/${uploadedDocumentId}/pdf').then(response => response.status)`), 200);
+  assert.equal((await evaluate("fetch('/api/library/papers').then(response => response.json())")).papers.length, 1);
+  record("actual-browser-confirmed-pdf-delete-clears-selection-url-children-and-preserves-other-data");
 
   cdp.close();
   evidence.result = "passed";
@@ -1073,6 +1171,10 @@ async function main() {
   console.error(evidence.error);
   process.exitCode = 1;
 } finally {
+  evidence.metadataProviderCalls = metadataProviderCalls;
+  evidence.summaryProviderCalls = summaryProviderCalls;
+  evidence.questionProviderCalls = questionProviderCalls;
+  evidence.liveProviderRequests = 0;
   for (const child of [...children]) {
     try { await stop(child); } catch (error) { console.error(`Owned process cleanup failed: ${error}`); process.exitCode = 1; }
   }

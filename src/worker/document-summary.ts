@@ -10,6 +10,7 @@ import { DocumentError } from "./document-validation.js";
 import { documentErrorResponse, findDocument, requireDocumentStorage, validDocumentId } from "./documents.js";
 import { findExtraction } from "./extractions.js";
 import { IntegrationError } from "./integration-errors.js";
+import { generateWithRecovery } from "./generation-recovery.js";
 import {
   requestDocumentSummary,
   SUMMARY_PROMPT_VERSION,
@@ -142,6 +143,7 @@ async function findSummary(db: D1Database, documentId: string): Promise<Document
 }
 
 function providerError(error: unknown): DocumentError {
+  if (error instanceof DocumentError) return error;
   if (!(error instanceof IntegrationError)) {
     return new DocumentError("summary_provider_failure", 502, "The summary provider failed unexpectedly.");
   }
@@ -164,8 +166,8 @@ function providerError(error: unknown): DocumentError {
 async function acquireClaim(db: D1Database, documentId: string, ownerToken: string, now: string, expiresAt: string): Promise<boolean> {
   const [expired, claimed] = await db.batch([
     db.prepare("DELETE FROM document_summary_claims WHERE expires_at <= ?").bind(now),
-    db.prepare("INSERT INTO document_summary_claims (document_id, owner_token, expires_at) VALUES (?, ?, ?) ON CONFLICT(document_id) DO NOTHING")
-      .bind(documentId, ownerToken, expiresAt),
+    db.prepare("INSERT INTO document_summary_claims (document_id, owner_token, expires_at) SELECT ?, ?, ? WHERE EXISTS (SELECT 1 FROM uploaded_documents WHERE id = ? AND status = 'stored') ON CONFLICT(document_id) DO NOTHING")
+      .bind(documentId, ownerToken, expiresAt, documentId),
   ]);
   if (!expired.success || !claimed.success) throw new Error("Summary claim operation failed.");
   return claimed.meta.changes === 1;
@@ -186,6 +188,7 @@ async function persistSummary(
     db.prepare(`INSERT INTO document_summaries (${SUMMARY_COLUMNS})
       SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
       WHERE EXISTS (SELECT 1 FROM document_summary_claims WHERE document_id = ? AND owner_token = ? AND expires_at > ?)
+      AND EXISTS (SELECT 1 FROM uploaded_documents WHERE id = ? AND status = 'stored')
       ON CONFLICT(document_id) DO NOTHING`)
       .bind(
         summary.documentId, summary.sourceSha256, summary.extractionParser, summary.extractionParserVersion,
@@ -194,7 +197,7 @@ async function persistSummary(
         summary.sourceCoverageWarning, summary.model, summary.promptVersion, summary.schemaVersion, summary.createdAt,
         JSON.stringify(summary.overview), JSON.stringify(summary.contributions), JSON.stringify(summary.methods),
         JSON.stringify(summary.findings), JSON.stringify(summary.limitations), JSON.stringify(summary.warnings),
-        summary.documentId, ownerToken, now,
+        summary.documentId, ownerToken, now, summary.documentId,
       ),
     db.prepare("DELETE FROM document_summary_claims WHERE document_id = ? AND owner_token = ?").bind(summary.documentId, ownerToken),
     db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM document_summaries WHERE document_id = ?`).bind(summary.documentId),
@@ -251,11 +254,19 @@ async function generateSummary(env: WorkerEnv, rawId: string): Promise<{ summary
     const excerpt = selectSummarySource(extraction);
     let provider;
     try {
-      provider = await requestDocumentSummary(env, excerpt);
+      provider = await generateWithRecovery("summary",
+        (remaining, correction) => requestDocumentSummary(env, excerpt, fetch, remaining, correction),
+        (output) => validateDocumentSummaryOutput(output, excerpt),
+        async () => {
+          if (!await findDocument(db, id)) throw new DocumentError("document_not_found", 404, "The uploaded document was deleted.");
+          const owned = await db.prepare("SELECT 1 FROM document_summary_claims WHERE document_id = ? AND owner_token = ? AND expires_at > ?")
+            .bind(id, ownerToken, new Date().toISOString()).first();
+          if (!owned) throw new DocumentError("summary_in_progress", 409, "Generation ownership expired. Reload saved results before retrying.");
+        });
     } catch (error) {
       throw providerError(error);
     }
-    const output = validateDocumentSummaryOutput(provider.output, excerpt);
+    const output = provider.output;
     const summary: DocumentSummary = {
       documentId: id,
       sourceSha256: extraction.sourceSha256,

@@ -207,6 +207,8 @@ function App() {
   const activeSearch = useRef<AbortController | null>(null);
   const activeLibrary = useRef<AbortController | null>(null);
   const activeSaves = useRef(new Map<string, AbortController>());
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [removeMessage, setRemoveMessage] = useState<string | null>(null);
   const searchRequestId = useRef(0);
   const libraryRequestId = useRef(0);
   const libraryRevision = useRef(0);
@@ -256,7 +258,7 @@ function App() {
       });
       return papers;
     } catch (error) {
-      if (!mounted.current || requestId !== libraryRequestId.current || controller.signal.aborted) return undefined;
+      if (!mounted.current || requestId !== libraryRequestId.current || (controller.signal.aborted && !timedOut)) return undefined;
       const message = timedOut
         ? "Loading the library took too long. Please reload it."
         : receivedResponse && error instanceof Error ? error.message : "The library could not be loaded. Please reload it.";
@@ -353,7 +355,11 @@ function App() {
 
   async function reconcileUncertainSave(identity: string, controller: AbortController) {
     const papers = await loadLibrary();
-    if (!mounted.current || activeSaves.current.get(identity) !== controller || !papers) return;
+    if (!mounted.current || activeSaves.current.get(identity) !== controller) return;
+    if (!papers) {
+      updateSaveState(identity, { status: "uncertain", message: "The save outcome is still unknown. Reload the library to reconcile it before saving again." });
+      return;
+    }
     const confirmed = savedPaperFor(papers, identity);
     updateSaveState(identity, confirmed
       ? { status: "saved", paper: confirmed, created: false }
@@ -367,7 +373,6 @@ function App() {
     activeSaves.current.set(identity, controller);
     updateSaveState(identity, { status: "saving" });
     let timedOut = false;
-    let receivedResponse = false;
     const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, SAVE_TIMEOUT_MS);
     try {
       const response = await fetch("/api/library/papers", {
@@ -376,14 +381,17 @@ function App() {
         body: JSON.stringify({ paper }),
         signal: controller.signal,
       });
-      receivedResponse = true;
       const body: unknown = await response.json().catch(() => undefined);
       if (!response.ok) {
         const serverError = libraryErrorPayload(body);
-        updateSaveState(identity, { status: "error", message: serverError?.message ?? `The paper could not be saved (HTTP ${response.status}).` });
+        if (serverError) updateSaveState(identity, { status: "error", message: serverError.message });
+        else {
+          updateSaveState(identity, { status: "uncertain", message: `The save returned HTTP ${response.status} without an application result. Checking the library before another save.` });
+          await reconcileUncertainSave(identity, controller);
+        }
         return;
       }
-      if (!isSavePaperResponse(body)) {
+      if (!isSavePaperResponse(body) || arxivSourceIdentity(body.paper.arxivId) !== identity) {
         updateSaveState(identity, { status: "uncertain", message: "The save response was unexpected. Checking the library before another save." });
         await reconcileUncertainSave(identity, controller);
         return;
@@ -403,11 +411,30 @@ function App() {
         status: "uncertain",
         message: timedOut ? "Saving took too long. Checking the library before another save." : "The save was interrupted. Checking the library before another save.",
       });
-      if (!receivedResponse) await reconcileUncertainSave(identity, controller);
+      await reconcileUncertainSave(identity, controller);
     } finally {
       window.clearTimeout(timeout);
       if (activeSaves.current.get(identity) === controller) activeSaves.current.delete(identity);
     }
+  }
+
+  async function removePaper(paper: SavedPaper) {
+    if (removingId) return;
+    setRemovingId(paper.id);
+    setRemoveMessage(null);
+    try {
+      const response = await fetch(`/api/library/papers/${encodeURIComponent(paper.id)}`, { method: "DELETE", signal: AbortSignal.timeout(10_000) });
+      const body: unknown = await response.json().catch(() => undefined);
+      if (!response.ok || !isRecord(body) || body.deleted !== true || body.id !== paper.id) throw new Error("Removal could not be confirmed. Reload the library, then explicitly retry if needed.");
+      if (!mounted.current) return;
+      const identity = arxivSourceIdentity(paper.arxivId);
+      libraryRevision.current += 1;
+      setSaveStates((current) => { const next = { ...current }; delete next[identity]; return next; });
+      setLibraryState((current) => { const papers = current.papers.filter((entry) => entry.id !== paper.id); return { status: papers.length ? "loaded" : "empty", papers }; });
+      await loadLibrary();
+    } catch {
+      if (mounted.current) setRemoveMessage("Removal is unconfirmed. Reload the library and retry Remove if the record remains. No delete was retried automatically.");
+    } finally { if (mounted.current) setRemovingId(null); }
   }
 
   const searching = searchState.status === "loading";
@@ -481,11 +508,11 @@ function App() {
                       <PaperDetails paper={paper} />
                       <div className="save-area">
                         <button type="button" className="save-button" onClick={() => void savePaper(paper)} disabled={disabled} data-save-paper={paper.id}>
-                          {saving ? "Saving..." : uncertain ? "Checking library..." : saved ? "Saved" : "Save to library"}
+                          {saving ? "Saving..." : uncertain ? "Save unconfirmed" : saved ? "Saved" : "Save to library"}
                         </button>
                         {saved && <p className="save-feedback" role="status">{saveState?.status === "saved" && !saveState.created ? "Saved — the original library record was retained." : "Saved in your library."}</p>}
                         {saveState?.status === "error" && <p className="save-feedback save-feedback--error" role="alert">{saveState.message}</p>}
-                        {uncertain && <p className="save-feedback" role="status">{saveState.message}</p>}
+                        {uncertain && <><p className="save-feedback" role="status">{saveState.message}</p><button type="button" className="reload-button" onClick={() => void loadLibrary()}>Reload library to check save</button></>}
                       </div>
                     </article>
                   </li>
@@ -505,10 +532,11 @@ function App() {
             {libraryState.status === "loading" && <p className="search-feedback" role="status">Loading saved papers...</p>}
             {libraryState.status === "empty" && <p className="search-feedback" role="status">No saved papers yet. Save a search result to start your library.</p>}
             {libraryState.status === "error" && <p className="search-feedback search-feedback--error" role="alert">{libraryState.message}</p>}
+            {removeMessage && <p role="alert" className="search-feedback search-feedback--error">{removeMessage}</p>}
             {libraryState.papers.length > 0 && <>
               <p className="results-note">{libraryState.papers.length} {libraryState.papers.length === 1 ? "saved paper" : "saved papers"}, newest first. Each has a distinct library record ID.</p>
               <ol className="paper-list">
-                {libraryState.papers.map((paper) => <li key={paper.id}><article className="paper-card"><PaperDetails paper={paper} saved={paper} /></article></li>)}
+                {libraryState.papers.map((paper) => <li key={paper.id}><article className="paper-card"><PaperDetails paper={paper} saved={paper} /><button type="button" className="reload-button" data-remove-paper={paper.id} disabled={removingId !== null} onClick={() => void removePaper(paper)}>{removingId === paper.id ? "Removing..." : "Remove from library"}</button></article></li>)}
               </ol>
             </>}
           </section>

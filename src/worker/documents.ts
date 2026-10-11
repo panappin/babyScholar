@@ -14,7 +14,7 @@ export interface DocumentRow {
   sha256: string;
   object_key: string;
   uploaded_at: string;
-  status: "stored";
+  status: "stored" | "deleting";
 }
 
 export const DOCUMENT_COLUMNS = "id, filename, byte_count, sha256, object_key, uploaded_at, status";
@@ -34,7 +34,7 @@ function documentFromRow(row: DocumentRow): UploadedDocument {
     || !SHA256.test(row.sha256)
     || row.object_key !== privateObjectKey(row.id)
     || typeof row.uploaded_at !== "string"
-    || row.status !== "stored"
+    || !["stored", "deleting"].includes(row.status)
   ) {
     throw new Error("Invalid stored document metadata");
   }
@@ -70,7 +70,45 @@ async function listDocuments(db: D1Database): Promise<ListDocumentsResponse> {
 
 export async function findDocument(db: D1Database, id: string): Promise<DocumentRow | null> {
   const row = await db.prepare(`SELECT ${DOCUMENT_COLUMNS} FROM uploaded_documents WHERE id = ?`).bind(id).first<DocumentRow>();
+  if (row?.status === "deleting") throw new DocumentError("document_deleting", 409, "PDF deletion is pending. Retry Delete PDF to finish cleanup.");
   return row ?? null;
+}
+
+/** A durable marker hides the document from all work before R2 cleanup. No schema change is needed. */
+export async function handleDocumentDelete(request: Request, env: WorkerEnv, rawId: string): Promise<Response> {
+  const headers: Record<string, string> = { "cache-control": "no-store" };
+  try {
+    if (request.method !== "DELETE") {
+      headers.Allow = "DELETE";
+      throw new DocumentError("method_not_allowed", 405, "Use DELETE to remove a PDF.");
+    }
+    // No client-supplied storage key or unbounded body is consumed.
+    if (request.headers.has("content-encoding") || (request.headers.get("content-length") ?? "0") !== "0") {
+      throw new DocumentError("invalid_request", 400, "PDF deletion does not accept a request body.");
+    }
+    const id = validDocumentId(rawId);
+    const { db, bucket } = requireDocumentStorage(env);
+    const row = await db.prepare(`SELECT ${DOCUMENT_COLUMNS} FROM uploaded_documents WHERE id = ?`).bind(id).first<DocumentRow>();
+    if (!row) return Response.json({ deleted: true, id }, { headers });
+    documentFromRow(row); // Validate the server-owned R2 key before any deletion.
+    const claimTables = ["document_metadata_claims", "document_summary_claims", "document_question_claims"];
+    const marked = await db.batch([
+      db.prepare("UPDATE uploaded_documents SET status = 'deleting' WHERE id = ?").bind(id),
+      ...claimTables.map((table) => db.prepare(`DELETE FROM ${table} WHERE document_id = ?`).bind(id)),
+    ]);
+    if (marked.some((result) => !result.success)) throw new Error("Deletion marker failed.");
+    try { await bucket.delete(row.object_key); }
+    catch { throw new DocumentError("storage_unavailable", 503, "PDF deletion is incomplete. Retry Delete PDF to finish storage cleanup."); }
+    // A batch commits all children and the parent together. If it fails the
+    // marker/key survive, and retrying the idempotent R2 delete is safe.
+    const tables = [...claimTables, "document_questions", "document_summaries", "document_metadata", "document_extractions"];
+    const removed = await db.batch([
+      ...tables.map((table) => db.prepare(`DELETE FROM ${table} WHERE document_id = ?`).bind(id)),
+      db.prepare("DELETE FROM uploaded_documents WHERE id = ? AND status = 'deleting'").bind(id),
+    ]);
+    if (removed.some((result) => !result.success)) throw new Error("Deletion cleanup failed.");
+    return Response.json({ deleted: true, id }, { headers });
+  } catch (error) { return documentErrorResponse(error, headers); }
 }
 
 async function insertDocument(db: D1Database, row: DocumentRow): Promise<void> {

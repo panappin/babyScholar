@@ -3,7 +3,7 @@ import { handleLocalProbe } from "./local-probe.js";
 import { handleLocalIntegrationProbe } from "./local-integration-probe.js";
 import { paperSearchFailureStatus, publicPaperSearchError, searchArxivPapers } from "./arxiv.js";
 import { handleLibrary } from "./library.js";
-import { handleDocumentPdf, handleDocuments } from "./documents.js";
+import { handleDocumentDelete, handleDocumentPdf, handleDocuments } from "./documents.js";
 import { handleDocumentExtraction, handleDocumentText } from "./extractions.js";
 import { handleDocumentMetadata } from "./document-metadata.js";
 import { handleDocumentSummary } from "./document-summary.js";
@@ -62,10 +62,14 @@ export default {
     if (url.pathname === "/api/library/papers") {
       return handleLibrary(request, env);
     }
+    const libraryItem = /^\/api\/library\/papers\/([^/]+)$/u.exec(url.pathname);
+    if (libraryItem) return handleLibrary(request, env, libraryItem[1]);
 
     if (url.pathname === "/api/documents") {
       return handleDocuments(request, env);
     }
+    const documentItem = /^\/api\/documents\/([^/]+)$/u.exec(url.pathname);
+    if (documentItem) return handleDocumentDelete(request, env, documentItem[1]);
 
     const documentExtraction = /^\/api\/documents\/([^/]+)\/extract$/u.exec(url.pathname);
     if (documentExtraction) {

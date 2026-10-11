@@ -1,15 +1,9 @@
-import type { DocumentQuestionAnswerPart, DocumentQuestionEvidenceQuote, DocumentQuestionOutcome } from "./document-types.js";
+import type { DocumentQuestionAnswerPart, DocumentQuestionOutcome } from "./document-types.js";
 import { DocumentError } from "./document-validation.js";
-import { METADATA_EVIDENCE_QUOTE_BYTES, metadataPageContains, normalizeMetadataWhitespace } from "./metadata-validation.js";
 import type { SummarySourceExcerpt } from "./summary-source.js";
 
 const encoder = new TextEncoder();
-const MAX_ANSWER_PARTS = 4;
-const MAX_ANSWER_PART_BYTES = 2_000;
-const MAX_EVIDENCE_PER_PART = 2;
-const MAX_WARNINGS = 15;
-const MAX_WARNING_BYTES = 500;
-const MAX_INSUFFICIENT_REASON_BYTES = 1_000;
+const MAX_ANSWER_BYTES = 16_000;
 export const DOCUMENT_QUESTION_MAX_WORDS = 300;
 
 export interface ValidatedDocumentQuestionOutput {
@@ -19,104 +13,54 @@ export interface ValidatedDocumentQuestionOutput {
   warnings: string[];
 }
 
-type QuestionValidationDiagnosticStage = "schema_validation_failed" | "evidence_validation_failed";
-
-function invalid(message: string, stage: QuestionValidationDiagnosticStage = "schema_validation_failed"): never {
-  // Keep question text, extracted PDF text, quotes, and provider output out of
-  // logs. The fixed stage is sufficient to distinguish validation from REST
-  // response decoding in hosted diagnostics.
-  console.warn(JSON.stringify({ event: "document_question_output_rejected", stage }));
-  throw new DocumentError("question_invalid_response", 502, message);
+function invalid(): never {
+  console.warn(JSON.stringify({ event: "document_question_output_rejected", stage: "schema_validation_failed" }));
+  throw new DocumentError("question_invalid_response", 502, "The question provider did not return a usable bounded answer.");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function hasOnlyKeys(value: Record<string, unknown>, expected: string[]): boolean {
-  const keys = Object.keys(value);
-  return keys.length === expected.length && expected.every((key) => Object.hasOwn(value, key));
+function answer(value: unknown): string {
+  if (typeof value !== "string" || !/[\p{L}\p{N}]/u.test(value) || encoder.encode(value).byteLength > MAX_ANSWER_BYTES) invalid();
+  return value.trim();
 }
 
-function byteLength(value: string): number {
-  return encoder.encode(value).byteLength;
-}
+/**
+ * Ordinary text is the preferred provider result. Legacy structured responses
+ * remain usable, but optional citation data never gates answer acceptance.
+ * Newly generated evidence is omitted rather than presenting unverified quotes.
+ * Existing stored records are read unchanged by document-questions.ts.
+ */
+export function validateDocumentQuestionOutput(output: unknown, _excerpt: SummarySourceExcerpt): ValidatedDocumentQuestionOutput {
+  if (typeof output === "string") {
+    const text = answer(output);
+    // Compatibility with existing fixture/providers returning the older JSON
+    // envelope. This is optional decoding, not a mandatory structured format.
+    let decoded: unknown;
+    try { decoded = JSON.parse(text); } catch { /* Normal plain-text answer. */ }
+    output = isRecord(decoded) ? decoded : text;
+  }
 
-function boundedText(value: unknown, maximumBytes: number, name: string): string {
-  if (typeof value !== "string" || value.length === 0 || value !== value.trim() || byteLength(value) > maximumBytes) {
-    invalid(`OpenAI returned an unsupported question ${name}.`);
-  }
-  return value;
-}
+  const warnings = ["This answer may include uncertainty or supplementary general knowledge. Citations are optional and new quotations are not verified."];
+  let answerParts: DocumentQuestionAnswerPart[];
+  if (typeof output === "string") {
+    answerParts = [{ text: answer(output), evidence: [] }];
+  } else if (isRecord(output)) {
+    if (Array.isArray(output.answerParts) && output.answerParts.length > 0 && output.answerParts.length <= 4) {
+      answerParts = output.answerParts.map((part) => {
+        if (!isRecord(part)) invalid();
+        return { text: answer(part.text), evidence: [] };
+      });
+    } else if (typeof output.answer === "string") {
+      answerParts = [{ text: answer(output.answer), evidence: [] }];
+    } else if (output.outcome === "insufficient_source" && typeof output.insufficientSourceReason === "string") {
+      return { outcome: "insufficient_source", answerParts: [], insufficientSourceReason: answer(output.insufficientSourceReason), warnings };
+    } else invalid();
+  } else invalid();
 
-function wordCount(value: string): number {
-  return value.match(/[\p{L}\p{N}]+(?:['\u2019-][\p{L}\p{N}]+)*/gu)?.length ?? 0;
-}
-
-function validateEvidenceQuote(value: unknown, excerpt: SummarySourceExcerpt): DocumentQuestionEvidenceQuote {
-  if (!isRecord(value) || !hasOnlyKeys(value, ["pageNumber", "quote"])) invalid("OpenAI returned malformed question evidence.", "evidence_validation_failed");
-  const pageNumber = value.pageNumber;
-  const quote = value.quote;
-  if (typeof pageNumber !== "number" || !Number.isInteger(pageNumber)
-    || typeof quote !== "string" || quote.length === 0 || quote !== quote.trim()
-    || byteLength(quote) > METADATA_EVIDENCE_QUOTE_BYTES) {
-    invalid("OpenAI returned unsupported question evidence.", "evidence_validation_failed");
-  }
-  const page = excerpt.pages.find((candidate) => candidate.pageNumber === pageNumber);
-  if (!page || !metadataPageContains(page.text, quote)) {
-    invalid("OpenAI returned question evidence that does not match the included PDF text.", "evidence_validation_failed");
-  }
-  return { pageNumber, quote };
-}
-
-function validateAnswerParts(value: unknown, excerpt: SummarySourceExcerpt): DocumentQuestionAnswerPart[] {
-  if (!Array.isArray(value) || value.length === 0 || value.length > MAX_ANSWER_PARTS) {
-    invalid("OpenAI returned an unsupported question answer.");
-  }
-  const answerParts = value.map((part) => {
-    if (!isRecord(part) || !hasOnlyKeys(part, ["text", "evidence"])) invalid("OpenAI returned malformed question answer.");
-    const text = boundedText(part.text, MAX_ANSWER_PART_BYTES, "answer part");
-    if (!Array.isArray(part.evidence) || part.evidence.length === 0 || part.evidence.length > MAX_EVIDENCE_PER_PART) {
-      invalid("OpenAI returned unsupported question evidence.", "evidence_validation_failed");
-    }
-    const evidence = part.evidence.map((quote) => validateEvidenceQuote(quote, excerpt));
-    if (new Set(evidence.map((quote) => `${quote.pageNumber}\u0000${quote.quote}`)).size !== evidence.length) {
-      invalid("OpenAI returned duplicate question evidence.", "evidence_validation_failed");
-    }
-    return { text, evidence };
-  });
-  if (new Set(answerParts.map((part) => part.text)).size !== answerParts.length) invalid("OpenAI returned duplicate question answer parts.");
-  if (wordCount(answerParts.map((part) => part.text).join(" ")) > DOCUMENT_QUESTION_MAX_WORDS) {
-    invalid(`OpenAI returned an answer exceeding the ${DOCUMENT_QUESTION_MAX_WORDS}-word limit.`);
-  }
-  return answerParts;
-}
-
-function validateWarnings(value: unknown): string[] {
-  if (!Array.isArray(value) || value.length > MAX_WARNINGS) invalid("OpenAI returned unsupported question warnings.");
-  const warnings = value.map((warning) => boundedText(warning, MAX_WARNING_BYTES, "warning"));
-  if (new Set(warnings).size !== warnings.length) invalid("OpenAI returned duplicate question warnings.");
-  return warnings;
-}
-
-/** Validates provider output after strict structured-output decoding. */
-export function validateDocumentQuestionOutput(output: unknown, excerpt: SummarySourceExcerpt): ValidatedDocumentQuestionOutput {
-  const expected = ["outcome", "answerParts", "insufficientSourceReason", "warnings"];
-  if (!isRecord(output) || !hasOnlyKeys(output, expected)) invalid("OpenAI returned malformed question data.");
-  const warnings = validateWarnings(output.warnings);
-  if (output.outcome === "answered") {
-    if (output.insufficientSourceReason !== null) invalid("An answered question cannot include an insufficient-source reason.");
-    return { outcome: "answered", answerParts: validateAnswerParts(output.answerParts, excerpt), insufficientSourceReason: null, warnings };
-  }
-  if (output.outcome === "insufficient_source") {
-    if (!Array.isArray(output.answerParts) || output.answerParts.length !== 0) {
-      invalid("An insufficient-source result cannot include an answer or citations.");
-    }
-    const insufficientSourceReason = boundedText(output.insufficientSourceReason, MAX_INSUFFICIENT_REASON_BYTES, "insufficient-source reason");
-    if (excerpt.truncated && !/^the included (excerpt|pages)\b/iu.test(normalizeMetadataWhitespace(insufficientSourceReason))) {
-      invalid("A partial-source conclusion must refer to the included excerpt.");
-    }
-    return { outcome: "insufficient_source", answerParts: [], insufficientSourceReason, warnings };
-  }
-  invalid("OpenAI returned an unsupported question outcome.");
+  const prose = answerParts.map((part) => part.text).join("\n\n");
+  if (encoder.encode(prose).byteLength > MAX_ANSWER_BYTES) invalid();
+  return { outcome: "answered", answerParts, insufficientSourceReason: null, warnings };
 }

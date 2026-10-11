@@ -53,18 +53,13 @@ function validOutput() {
     authors: expected.authors,
     year: expected.year,
     abstract: expected.abstract,
-    evidence: {
-      title: [{ pageNumber: 1, quote: expected.title }],
-      authors: [{ pageNumber: 1, quote: "Avery Example; Bao Example" }],
-      year: [{ pageNumber: 1, quote: "Published: 2024" }],
-      abstract: [{ pageNumber: 1, quote: `Abstract: ${expected.abstract}` }],
-    },
     warnings: [],
   };
 }
 
 function invalidEvidenceOutput(mode) {
   const output = validOutput();
+  output.evidence = { title: [{ pageNumber: 1, quote: expected.title }] };
   const quote = output.evidence.title[0];
   if (mode === "evidence_quote_shape") output.evidence.title = [{ pageNumber: 1 }];
   else if (mode === "evidence_page_number_type") quote.pageNumber = "1";
@@ -187,6 +182,16 @@ async function startProvider() {
       }
       let payload;
       if (providerMode === "unknown") payload = providerResponse(unknownOutput());
+      else if (providerMode === "ambiguous_year" || providerMode === "correct_nullable_year") {
+        const output = validOutput();
+        output.evidence = { year: [{ pageNumber: 1, quote: "2024" }] };
+        if (providerMode === "correct_nullable_year") {
+          output.year = null;
+          output.evidence.year = [];
+          output.warnings = ["year: No unambiguous publication-year evidence was selected."];
+        }
+        payload = providerResponse(output);
+      }
       else if (providerMode.startsWith("evidence_")) payload = providerResponse(invalidEvidenceOutput(providerMode));
       else if (providerMode === "wrapped") payload = providerResponse(wrappedOutput());
       else if (providerMode === "wrapped_literal") payload = providerResponse(wrappedLiteralOutput());
@@ -211,7 +216,7 @@ async function startProvider() {
       }
       else if (providerMode === "wrong_evidence") {
         const output = validOutput();
-        output.evidence.title = [{ pageNumber: 1, quote: "not present in source" }];
+        output.evidence = { title: [{ pageNumber: 1, quote: "not present in source" }] };
         payload = providerResponse(output);
       } else if (providerMode === "malformed") {
         payload = { status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: "{" }] }] };
@@ -369,7 +374,7 @@ async function expectFailure(mode, kind, status) {
   const beforeCalls = providerCalls;
   const failed = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, status);
   assert.equal(failed.body.error.kind, kind);
-  assert.equal(providerCalls, beforeCalls + 1);
+  assert.equal(providerCalls, beforeCalls + (kind === "metadata_invalid_response" ? 2 : 1));
   const get = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, undefined, 404);
   assert.equal(get.body.error.kind, "metadata_not_found");
   providerMode = "valid";
@@ -377,21 +382,15 @@ async function expectFailure(mode, kind, status) {
   assert.equal(recovered.body.created, true, `${mode} must release only its own claim for a later explicit request`);
 }
 
-async function expectEvidenceFailure(mode, reason) {
+async function expectEvidenceIgnored(mode) {
   const prepared = await uploadAndExtract();
   providerMode = mode;
-  const logStart = worker.log.length;
   const beforeCalls = providerCalls;
-  const failed = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, 502);
-  assert.equal(failed.body.error.kind, "metadata_invalid_response");
+  const result = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(result.body.metadata.title, expected.title);
+  for (const field of ["title", "authors", "year", "abstract"]) assert.deepEqual(result.body.metadata.evidence[field], []);
   assert.equal(providerCalls, beforeCalls + 1);
-  const diagnosticLog = worker.log.slice(logStart);
-  assert.match(diagnosticLog, new RegExp(`metadata_evidence_rejected.*"field":"title","index":0,"reason":"${reason}"`, "u"));
-  const get = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, undefined, 404);
-  assert.equal(get.body.error.kind, "metadata_not_found");
   providerMode = "valid";
-  const recovered = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, 201);
-  assert.equal(recovered.body.created, true, `${mode} must release only its own claim for a later explicit request`);
 }
 
 async function main() {
@@ -422,8 +421,8 @@ async function main() {
   assert.equal(first.body.metadata.sourceSha256, primary.document.sha256);
   assert.equal(first.body.metadata.extractionExtractedAt, primary.extraction.extractedAt);
   assert.match(first.body.metadata.model, /\S/u);
-  assert.equal(first.body.metadata.promptVersion, "document-metadata-v2");
-  for (const field of ["title", "authors", "year", "abstract"]) assert.equal(first.body.metadata.evidence[field].length, 1);
+  assert.equal(first.body.metadata.promptVersion, "document-metadata-v4");
+  for (const field of ["title", "authors", "year", "abstract"]) assert.deepEqual(first.body.metadata.evidence[field], []);
   assert.deepEqual((await jsonRequest(`/api/documents/${primary.document.id}/text`, undefined, 200)).body.extraction, primary.extraction);
   await download(primary.document, fixture.bytes);
   const callsAfterFirst = providerCalls;
@@ -465,11 +464,30 @@ async function main() {
   await download(primary.document, fixture.bytes);
   record("migration-reapply-preserves-metadata-text-and-original-bytes", { documentId: primary.document.id });
 
+  const ambiguousYear = await uploadAndExtract();
+  providerMode = "ambiguous_year";
+  const ambiguousResult = await jsonRequest(`/api/documents/${ambiguousYear.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(ambiguousResult.body.metadata.year, expected.year);
+  assert.deepEqual(ambiguousResult.body.metadata.evidence.year, []);
+  const nullableYear = await uploadAndExtract();
+  providerMode = "correct_nullable_year";
+  const beforeNullable = providerCalls;
+  const nullableResult = await jsonRequest(`/api/documents/${nullableYear.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(providerCalls, beforeNullable + 1);
+  assert.equal(nullableResult.body.metadata.year, null);
+  assert.deepEqual(nullableResult.body.metadata.evidence.year, []);
+  assert.equal(nullableResult.body.metadata.abstract, expected.abstract);
+  assert.deepEqual((await jsonRequest(`/api/documents/${nullableYear.document.id}/text`, undefined, 200)).body.extraction, nullableYear.extraction);
+  await download(nullableYear.document, fixture.bytes);
+  assert.deepEqual((await jsonRequest(`/api/documents/${nullableYear.document.id}/metadata`, { method: "POST" }, 200)).body.metadata, nullableResult.body.metadata);
+  assert.equal(providerCalls, beforeNullable + 1);
+  record("metadata-years-accepted-without-source-evidence-and-null-keeps-other-fields-text-pdf-cache");
+
   const wrapped = await uploadAndExtract(wrappedFixture.bytes, "wrapped-metadata.pdf");
   providerMode = "wrapped";
   const wrappedResult = await jsonRequest(`/api/documents/${wrapped.document.id}/metadata`, { method: "POST" }, 201);
   assert.equal(wrappedResult.body.metadata.abstract, wrappedFixture.expected.abstract);
-  assert.equal(wrappedResult.body.metadata.evidence.abstract[0].quote, "Abstract: This controlled interpretation evaluates state-of-the-art performance on 17 source-grounded records.");
+  assert.deepEqual(wrappedResult.body.metadata.evidence.abstract, []);
   const wrappedCached = await jsonRequest(`/api/documents/${wrapped.document.id}/metadata`, { method: "POST" }, 200);
   assert.equal(wrappedCached.body.created, false);
   assert.deepEqual(wrappedCached.body.metadata, wrappedResult.body.metadata);
@@ -478,18 +496,19 @@ async function main() {
   providerMode = "wrapped_literal";
   const literalResult = await jsonRequest(`/api/documents/${wrappedLiteral.document.id}/metadata`, { method: "POST" }, 201);
   assert.equal(literalResult.body.metadata.abstract, "This controlled interpreta-\ntion evaluates state-of-the-art per-\nformance on 17 source-grounded records.");
-  assert.equal(literalResult.body.metadata.evidence.abstract[0].quote, `Abstract: ${literalResult.body.metadata.abstract}`);
+  assert.deepEqual(literalResult.body.metadata.evidence.abstract, []);
   for (const mode of ["wrapped_compound_deleted", "wrapped_number_changed", "wrapped_word_changed", "wrapped_wrong_page"]) {
-    const rejected = await uploadAndExtract(wrappedFixture.bytes, `${mode}.pdf`);
+    const prepared = await uploadAndExtract(wrappedFixture.bytes, `${mode}.pdf`);
     providerMode = mode;
-    const response = await jsonRequest(`/api/documents/${rejected.document.id}/metadata`, { method: "POST" }, 502);
-    assert.equal(response.body.error.kind, "metadata_invalid_response");
+    const response = await jsonRequest(`/api/documents/${prepared.document.id}/metadata`, { method: "POST" }, 201);
+    assert.deepEqual(response.body.metadata.evidence.abstract, []);
   }
   const dashBoundary = await uploadAndExtract(dashBoundaryFixture.bytes, "dash-boundary.pdf");
   assert.equal((await jsonRequest(`/api/documents/${dashBoundary.document.id}/text`, undefined, 200)).body.extraction.pages[0].text.includes("en–\ndash and em—\ndash"), true);
   providerMode = "dash_removed";
-  const dashRejected = await jsonRequest(`/api/documents/${dashBoundary.document.id}/metadata`, { method: "POST" }, 502);
-  assert.equal(dashRejected.body.error.kind, "metadata_invalid_response");
+  const dashResult = await jsonRequest(`/api/documents/${dashBoundary.document.id}/metadata`, { method: "POST" }, 201);
+  assert.equal(dashResult.body.metadata.abstract, "This endash and emdash remain literal.");
+  assert.deepEqual(dashResult.body.metadata.evidence.abstract, []);
   providerMode = "valid";
   record("wrapped-word-literal-and-joined-comparison-preserves-dashes-compounds-numbers-evidence-and-cache", { documentId: wrapped.document.id });
 
@@ -497,24 +516,20 @@ async function main() {
   const exactLimit = await uploadAndExtract(fixture.bytes, "evidence-600-utf8-bytes.pdf");
   providerMode = "evidence_quote_600_multibyte";
   const exactLimitResult = await jsonRequest(`/api/documents/${exactLimit.document.id}/metadata`, { method: "POST" }, 201);
-  assert.equal(exactLimitResult.body.metadata.evidence.title[0].quote, fixture.multibyteEvidenceQuote);
-  for (const [mode, reason] of [
-    ["evidence_quote_shape", "quote_shape"],
-    ["evidence_page_number_type", "page_number_type"],
-    ["evidence_page_number_integer", "page_number_integer"],
-    ["evidence_quote_type", "quote_type"],
-    ["evidence_quote_empty", "quote_empty"],
-    ["evidence_quote_untrimmed", "quote_untrimmed"],
-    ["evidence_quote_601_multibyte", "quote_too_large"],
+  assert.deepEqual(exactLimitResult.body.metadata.evidence.title, []);
+  for (const mode of [
+    "evidence_quote_shape",
+    "evidence_page_number_type",
+    "evidence_page_number_integer",
+    "evidence_quote_type",
+    "evidence_quote_empty",
+    "evidence_quote_untrimmed",
+    "evidence_quote_601_multibyte",
   ]) {
-    await expectEvidenceFailure(mode, reason);
+    await expectEvidenceIgnored(mode);
   }
   providerMode = "valid";
-  record("evidence-diagnostics-and-600-utf8-byte-boundary-passed", {
-    acceptedQuoteBytes: 600,
-    rejectedQuoteBytes: 601,
-    rejectionReasons: ["quote_shape", "page_number_type", "page_number_integer", "quote_type", "quote_empty", "quote_untrimmed", "quote_too_large"],
-  });
+  record("metadata-does-not-require-or-validate-evidence", { ignoredQuoteBytes: [600, 601] });
 
   const unknown = await uploadAndExtract();
   providerMode = "unknown";
@@ -523,7 +538,7 @@ async function main() {
   assert.equal(unknownResult.body.metadata.title, null);
   assert.equal(unknownResult.body.metadata.year, null);
   assert.equal(unknownResult.body.metadata.abstract, null);
-  assert.equal(unknownResult.body.metadata.warnings.length, 4);
+  assert.ok(Array.isArray(unknownResult.body.metadata.warnings));
 
   const clipped = await uploadAndExtract(createMetadataClippedPdfFixture(), "clipped.pdf");
   providerMode = "unknown";
@@ -533,19 +548,19 @@ async function main() {
   assert.deepEqual(evidence.providerRequests.at(-1).pageMarkers, [1, 2, 3]);
   record("unknown-fields-and-clipped-page-selection-passed", { unknownDocumentId: unknown.document.id, clippedDocumentId: clipped.document.id });
 
-  await expectFailure("wrong_evidence", "metadata_invalid_response", 502);
+  await expectEvidenceIgnored("wrong_evidence");
   await expectFailure("malformed", "metadata_invalid_response", 502);
   await expectFailure("refusal", "metadata_refusal", 422);
   await expectFailure("incomplete", "metadata_incomplete", 502);
   await expectFailure("http_error", "metadata_provider_failure", 502);
-  record("wrong-evidence-malformed-refused-incomplete-provider-failures-and-claim-release-passed", { failureModes: 5 });
+  record("malformed-refused-incomplete-provider-failures-and-claim-release-passed", { failureModes: 4 });
 
   for (const request of evidence.providerRequests) {
     assert.equal(request.store, false);
     assert.equal(request.maxOutputTokens, 4096);
     assert.equal(request.hasTools, false);
     assert.equal(request.strictSchema, true);
-    assert.equal(request.hasEvidenceQuoteLimitInstruction, true);
+    assert.equal(request.hasEvidenceQuoteLimitInstruction, false);
   }
   evidence.result = "passed";
 }

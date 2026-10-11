@@ -57,6 +57,7 @@ type QuestionState = {
   questions: DocumentQuestionRecord[];
   message?: string;
   submittedQuestion?: string;
+  retryable?: boolean;
   /** A gateway/session response, rather than the documented Worker contract. */
   accessDenied?: boolean;
 };
@@ -97,7 +98,7 @@ function isUploadedDocument(value: unknown): value is UploadedDocument {
     && typeof value.byteCount === "number"
     && typeof value.sha256 === "string"
     && typeof value.uploadedAt === "string"
-    && value.status === "stored";
+    && (value.status === "stored" || value.status === "deleting");
 }
 
 function isListDocumentsResponse(value: unknown): value is ListDocumentsResponse {
@@ -137,6 +138,7 @@ function isMetadata(value: unknown): value is DocumentMetadata {
     || !value.warnings.every((warning) => typeof warning === "string")
     || !isRecord(value.evidence)) return false;
   const evidence = value.evidence;
+  // New metadata can have empty evidence; retain support for older saved quotes.
   return ["title", "authors", "year", "abstract"].every((field) => {
     const quotes = evidence[field];
     return Array.isArray(quotes)
@@ -149,6 +151,7 @@ function isSummaryEvidenceQuote(value: unknown): value is DocumentSummaryEvidenc
 }
 
 function isSummaryItem(value: unknown): value is DocumentSummaryItem {
+  // New summaries can have empty evidence; retain support for older saved quotes.
   return isRecord(value) && typeof value.text === "string" && Array.isArray(value.evidence) && value.evidence.every(isSummaryEvidenceQuote);
 }
 
@@ -188,6 +191,7 @@ function isQuestionEvidenceQuote(value: unknown): value is DocumentQuestionEvide
 }
 
 function isQuestionAnswerPart(value: unknown): value is DocumentQuestionAnswerPart {
+  // New answers have no required citations; legacy saved quotes remain valid.
   return isRecord(value) && typeof value.text === "string" && Array.isArray(value.evidence) && value.evidence.every(isQuestionEvidenceQuote);
 }
 
@@ -321,16 +325,18 @@ function selectionLabel(extraction: DocumentExtraction | null, metadata: Documen
 }
 
 function SummaryQuotes({ evidence }: { evidence: DocumentSummaryEvidenceQuote[] }) {
+  if (evidence.length === 0) return null;
   return <details className="summary-evidence">
-    <summary>Supporting quotes ({evidence.length})</summary>
+    <summary>Optional saved quotes ({evidence.length})</summary>
     <ol>{evidence.map((quote, index) => <li key={`${quote.pageNumber}-${index}`}><strong>Page {quote.pageNumber}:</strong> {quote.quote}</li>)}</ol>
   </details>;
 }
 
-function SummaryItems({ title, items, emptyCopy }: { title: string; items: DocumentSummaryItem[]; emptyCopy: string }) {
+function SummaryItems({ title, items }: { title: string; items: DocumentSummaryItem[] }) {
+  if (items.length === 0) return null;
   return <section className="summary-section">
     <h5>{title}</h5>
-    {items.length ? <ol>{items.map((item, index) => <li key={`${item.text}-${index}`}><p>{item.text}</p><SummaryQuotes evidence={item.evidence} /></li>)}</ol> : <p>{emptyCopy}</p>}
+    <ol>{items.map((item, index) => <li key={`${item.text}-${index}`}><p>{item.text}</p><SummaryQuotes evidence={item.evidence} /></li>)}</ol>
   </section>;
 }
 
@@ -338,26 +344,27 @@ function SummaryContent({ summary }: { summary: DocumentSummary }) {
   const coverage = formatPageRanges(summary.includedPageRanges);
   return <>
     <p className={summary.sourceExcerptTruncated ? "summary-coverage summary-coverage--partial" : "summary-coverage"}>
-      <strong>{summary.sourceExcerptTruncated ? "Partial source coverage." : "Full source coverage."}</strong>{" "}
+      <strong>{summary.sourceExcerptTruncated ? "Partial text coverage." : "Full text coverage."}</strong>{" "}
       {summary.sourceCoverageWarning} Included extracted pages: {coverage || "none"} of {summary.totalPageCount}. {summary.sourceExcerptTruncated ? "Text outside the source budget was omitted." : "No extracted page text was omitted by the summary source budget."}
     </p>
-    <p className="results-note">Supporting quotes show that cited text occurs on the listed source page. They do not prove every paraphrased summary claim.</p>
+    <p className="results-note">Summaries use this PDF as context and may include uncertainty. Check important claims against the document. Older saved summaries may include optional quotes.</p>
     <section className="summary-overview" aria-labelledby="summary-overview-title">
       <h5 id="summary-overview-title">Overview</h5>
       <p>{summary.overview.text}</p>
       <SummaryQuotes evidence={summary.overview.evidence} />
     </section>
-    <SummaryItems title="Contributions" items={summary.contributions} emptyCopy="No contributions were returned; see the summary warnings." />
-    <SummaryItems title="Methods" items={summary.methods} emptyCopy="No methods were returned; see the summary warnings." />
-    <SummaryItems title="Findings" items={summary.findings} emptyCopy="No findings were returned; see the summary warnings." />
-    <SummaryItems title="Stated limitations" items={summary.limitations} emptyCopy="No stated limitations were returned; see the summary warnings." />
+    <SummaryItems title="Contributions" items={summary.contributions} />
+    <SummaryItems title="Methods" items={summary.methods} />
+    <SummaryItems title="Findings" items={summary.findings} />
+    <SummaryItems title="Stated limitations" items={summary.limitations} />
     {summary.warnings.length > 0 && <section className="document-warnings summary-warnings" aria-labelledby="summary-warnings-title"><h5 id="summary-warnings-title">Warnings</h5><ul>{summary.warnings.map((warning, index) => <li key={`${warning}-${index}`}>{warning}</li>)}</ul></section>}
   </>;
 }
 
 function QuestionQuotes({ evidence }: { evidence: DocumentQuestionEvidenceQuote[] }) {
+  if (evidence.length === 0) return null;
   return <details className="summary-evidence question-evidence">
-    <summary>Supporting quotes ({evidence.length})</summary>
+    <summary>Optional saved quotes ({evidence.length})</summary>
     <ol>{evidence.map((quote, index) => <li key={`${quote.pageNumber}-${index}`}><strong>Page {quote.pageNumber}:</strong> {quote.quote}</li>)}</ol>
   </details>;
 }
@@ -370,16 +377,16 @@ function QuestionCard({ question }: { question: DocumentQuestionRecord }) {
       <time dateTime={question.createdAt}>{formatTime(question.createdAt)}</time>
     </div>
     <p className={question.sourceExcerptTruncated ? "summary-coverage summary-coverage--partial" : "summary-coverage"}>
-      <strong>{question.sourceExcerptTruncated ? "Partial source coverage." : "Full source coverage."}</strong>{" "}
+      <strong>{question.sourceExcerptTruncated ? "Partial text coverage." : "Full text coverage."}</strong>{" "}
       {question.sourceCoverageWarning} Included extracted pages: {coverage || "none"} of {question.totalPageCount}. {question.sourceExcerptTruncated ? "Text outside the included excerpt was omitted." : "No extracted page text was omitted by the question source budget."}
     </p>
     {question.outcome === "insufficient_source" ? <section className="question-insufficient" aria-label="Insufficient source result">
       <h6>Insufficient source</h6><p>{question.insufficientSourceReason}</p>
-    </section> : <section className="question-answered" aria-label="Source-grounded answer">
+    </section> : <section className="question-answered" aria-label="Answer using PDF context">
       <h6>Answer</h6>
       <ol>{question.answerParts.map((part, index) => <li key={`${part.text}-${index}`}><p>{part.text}</p><QuestionQuotes evidence={part.evidence} /></li>)}</ol>
     </section>}
-    <p className="results-note">Supporting quotes show that cited text occurs on the listed source page. They do not prove every paraphrased answer claim.</p>
+    <p className="results-note">Answers use this PDF as context and may include general knowledge or uncertainty. Check important claims against the document. Older saved answers may include optional quotes.</p>
     {question.warnings.length > 0 && <section className="document-warnings question-warnings" aria-labelledby={`question-warnings-${question.id}`}><h6 id={`question-warnings-${question.id}`}>Warnings</h6><ul>{question.warnings.map((warning, index) => <li key={`${warning}-${index}`}>{warning}</li>)}</ul></section>}
   </article>;
 }
@@ -391,6 +398,10 @@ export function DocumentWorkspace() {
   const [questionInput, setQuestionInput] = useState("");
   const [questionInputMessage, setQuestionInputMessage] = useState<string | null>(null);
   const [downloadState, setDownloadState] = useState<DownloadState>({ status: "idle" });
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
+  const deleteRequest = useRef<AbortController | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<ProcessingState>({ status: "idle" });
@@ -411,13 +422,17 @@ export function DocumentWorkspace() {
   const downloadRevision = useRef(0);
 
   const selectedDocument = selectedId ? listState.documents.find((document) => document.id === selectedId) ?? null : null;
-  const pipelineBusy = processing.status === "uploading" || processing.status === "extracting" || processing.status === "metadata";
+  const pipelineBusy = deleting || processing.status === "uploading" || processing.status === "extracting" || processing.status === "metadata";
   const processingDocumentId = processing.status === "extracting" || processing.status === "metadata" ? processing.documentId : undefined;
   const summaryBusy = detailState.summary.status === "generating";
   const questionBusy = detailState.questions.status === "asking";
 
   function isCurrentPipeline(id: number, controller: AbortController) {
-    return mounted.current && pipelineRevision.current === id && pipelineRequest.current === controller && !controller.signal.aborted;
+    return ownsPipelineRequest(id, controller) && !controller.signal.aborted;
+  }
+
+  function ownsPipelineRequest(id: number, controller: AbortController) {
+    return mounted.current && pipelineRevision.current === id && pipelineRequest.current === controller;
   }
 
   function ownsSummaryRequest(id: number, documentId: string, controller: AbortController) {
@@ -474,7 +489,7 @@ export function DocumentWorkspace() {
       setListState({ status: documents.length ? "loaded" : "empty", documents });
       return documents;
     } catch (error) {
-      if (!mounted.current || controller.signal.aborted || revision !== listRevision.current) return undefined;
+      if (!mounted.current || (controller.signal.aborted && !timedOut) || revision !== listRevision.current) return undefined;
       setListState((current) => ({
         status: "error",
         documents: current.documents,
@@ -583,7 +598,9 @@ export function DocumentWorkspace() {
   }
 
   function selectDocument(id: string) {
-    if (pipelineBusy || summaryBusy) return;
+    if (pipelineBusy || summaryBusy || deleting) return;
+    setDeleteConfirmed(false);
+    setDeleteMessage(null);
     summaryRevision.current += 1;
     summaryRequest.current?.abort();
     questionRevision.current += 1;
@@ -600,7 +617,50 @@ export function DocumentWorkspace() {
     void loadDetails(id);
   }
 
+  async function deleteDocument(document: UploadedDocument) {
+    if (!deleteConfirmed || deleting) return;
+    setDeleting(true);
+    setDeleteMessage(null);
+    // Invalidate every request before removal; late responses cannot repopulate this selection.
+    detailRevision.current += 1;
+    pipelineRevision.current += 1;
+    summaryRevision.current += 1;
+    questionRevision.current += 1;
+    downloadRevision.current += 1;
+    for (const request of [detailRequest, pipelineRequest, summaryRequest, questionRequest, downloadRequest]) request.current?.abort();
+    revokeDownloadObjectUrl();
+    setDownloadState({ status: "idle" });
+    setProcessing({ status: "idle" });
+    setDetailState((current) => ({ ...current, status: "loaded",
+      summary: { ...current.summary, status: current.summary.summary ? "loaded" : "uncertain", message: "Processing was interrupted by deletion. Reload saved results if cleanup fails." },
+      questions: { ...current.questions, status: "uncertain", message: "Processing was interrupted by deletion. Reload history if cleanup fails." },
+    }));
+    const controller = new AbortController();
+    deleteRequest.current = controller;
+    const timer = window.setTimeout(() => controller.abort(), 15_000);
+    try {
+      const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}`, { method: "DELETE", signal: controller.signal });
+      const body = await readJson(response);
+      if (!response.ok || !isRecord(body) || body.deleted !== true || body.id !== document.id) throw new Error("Unconfirmed deletion");
+      if (!mounted.current) return;
+      setSelectedId(null);
+      setDetailState({ status: "initial", extraction: null, metadata: null, summary: { status: "initial", summary: null }, questions: initialQuestionState() });
+      setQuestionInput("");
+      setDeleteConfirmed(false);
+      setListState((current) => ({ ...current, documents: current.documents.filter((entry) => entry.id !== document.id) }));
+      setDeleteMessage("The PDF and its saved processing results were deleted.");
+      await loadDocuments();
+    } catch {
+      if (mounted.current) setDeleteMessage("Deletion could not be confirmed or cleanup is incomplete. Retry Delete PDF to finish; no automatic deletion retry was made.");
+    } finally {
+      window.clearTimeout(timer);
+      if (deleteRequest.current === controller) deleteRequest.current = null;
+      if (mounted.current) setDeleting(false);
+    }
+  }
+
   async function prepareOriginalDownload(document: UploadedDocument) {
+    if (deleting) return;
     const revision = downloadRevision.current + 1;
     downloadRevision.current = revision;
     downloadRequest.current?.abort();
@@ -670,20 +730,27 @@ export function DocumentWorkspace() {
   }
 
   async function reconcilePipeline(id: string, revision: number, controller: AbortController, message: string) {
-    if (!isCurrentPipeline(revision, controller)) return;
+    if (!ownsPipelineRequest(revision, controller)) return;
     setProcessing({ status: "uncertain", documentId: id, message });
+    const reconciliation = new AbortController();
+    pipelineRequest.current = reconciliation;
+    const timeout = window.setTimeout(() => reconciliation.abort(), READ_TIMEOUT_MS);
     try {
-      const results = await getStoredResults(id, controller.signal);
-      if (!isCurrentPipeline(revision, controller)) return;
+      const results = await getStoredResults(id, reconciliation.signal);
+      if (!isCurrentPipeline(revision, reconciliation)) return;
       setDetailState({ status: "loaded", ...results });
       if (results.extraction && results.metadata) setProcessing({ status: "ready", documentId: id, message: "Processing completed before the connection was interrupted." });
       else setProcessing({ status: "uncertain", documentId: id, message: "The request may have completed. The saved results are shown; choose Resume processing to continue missing work." });
     } catch {
       // The uncertain state already tells the user how to reconcile without a POST retry.
+    } finally {
+      window.clearTimeout(timeout);
+      if (pipelineRequest.current === reconciliation) pipelineRequest.current = null;
     }
   }
 
   async function loadSummary(id: string) {
+    if (deleting) return;
     if (summaryBusy) return;
     const revision = summaryRevision.current + 1;
     summaryRevision.current = revision;
@@ -748,7 +815,7 @@ export function DocumentWorkspace() {
     summaryRequest.current = controller;
     let timedOut = false;
     const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, SUMMARY_TIMEOUT_MS);
-    setDetailState((current) => ({ ...current, summary: { status: "generating", summary: current.summary.summary, message: "Generating a source-grounded summary from saved extracted text..." } }));
+    setDetailState((current) => ({ ...current, summary: { status: "generating", summary: current.summary.summary, message: "Generating a summary using saved PDF text..." } }));
     try {
       const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}/summary`, { method: "POST", signal: controller.signal });
       const body = await readJson(response);
@@ -783,6 +850,7 @@ export function DocumentWorkspace() {
   }
 
   async function loadQuestions(id: string) {
+    if (deleting) return;
     if (questionBusy) return;
     const revision = questionRevision.current + 1;
     questionRevision.current = revision;
@@ -859,14 +927,15 @@ export function DocumentWorkspace() {
     }
   }
 
-  async function askQuestion(document: UploadedDocument) {
+  async function askQuestion(document: UploadedDocument, retryQuestion?: string) {
     if (!detailState.extraction || questionBusy || detailState.questions.status === "in_progress" || pipelineBusy) return;
-    const validationError = questionInputError(questionInput);
+    const submittedQuestion = retryQuestion ?? questionInput;
+    const validationError = questionInputError(submittedQuestion);
     if (validationError) {
       setQuestionInputMessage(validationError);
       return;
     }
-    const submittedQuestion = questionInput;
+    if (retryQuestion !== undefined) setQuestionInput(submittedQuestion);
     const revision = questionRevision.current + 1;
     questionRevision.current = revision;
     questionRequest.current?.abort();
@@ -878,7 +947,7 @@ export function DocumentWorkspace() {
     setQuestionInputMessage(null);
     setDetailState((current) => ({
       ...current,
-      questions: { status: "asking", questions: current.questions.questions, submittedQuestion, message: "Asking from this PDF's saved extracted text..." },
+      questions: { status: "asking", questions: current.questions.questions, submittedQuestion, message: "Asking with this PDF's saved extracted text as context..." },
     }));
     try {
       const response = await fetch(`/api/documents/${encodeURIComponent(document.id)}/questions`, {
@@ -902,6 +971,7 @@ export function DocumentWorkspace() {
               status: "error",
               questions: current.questions.questions,
               submittedQuestion,
+              retryable: Boolean(error?.kind.startsWith("question_")),
               accessDenied: Boolean(accessMessage),
               message: accessMessage ?? messageForResponse(response, body, "Question could not be completed"),
             },
@@ -972,7 +1042,7 @@ export function DocumentWorkspace() {
         setDetailState({ status: "loaded", ...results });
       }
       if (!results.metadata) {
-        setProcessing({ status: "metadata", documentId: document.id, message: "Extracting source-grounded metadata..." });
+        setProcessing({ status: "metadata", documentId: document.id, message: "Generating metadata using saved PDF text..." });
         setPhaseTimeout(METADATA_TIMEOUT_MS);
         const { body } = await postEmpty(`/api/documents/${encodeURIComponent(document.id)}/metadata`, controller.signal);
         if (!isRecord(body) || !isMetadata(body.metadata)) throw new Error("Metadata extraction returned an unexpected response.");
@@ -980,9 +1050,9 @@ export function DocumentWorkspace() {
         if (!isCurrentPipeline(revision, controller)) return;
         setDetailState({ status: "loaded", ...results });
       }
-      setProcessing({ status: "ready", documentId: document.id, message: "Ready — text and source-grounded metadata are saved." });
+      setProcessing({ status: "ready", documentId: document.id, message: "Ready — text and metadata are saved." });
     } catch (error) {
-      if (!isCurrentPipeline(revision, controller)) return;
+      if (!ownsPipelineRequest(revision, controller)) return;
       if (controller.signal.aborted || !(error instanceof DocumentResponseError)) {
         await reconcilePipeline(document.id, revision, controller, "Processing was interrupted or timed out. Checking saved results before another action.");
       } else {
@@ -1036,7 +1106,7 @@ export function DocumentWorkspace() {
       setFile(null);
       await resumeProcessing(document);
     } catch (error) {
-      if (!isCurrentPipeline(revision, controller)) return;
+      if (!ownsPipelineRequest(revision, controller)) return;
       const uncertain = controller.signal.aborted || !(error instanceof DocumentResponseError);
       setProcessing({
         status: uncertain ? "uncertain" : "error",
@@ -1063,6 +1133,7 @@ export function DocumentWorkspace() {
       summaryRequest.current?.abort();
       questionRequest.current?.abort();
       downloadRequest.current?.abort();
+      deleteRequest.current?.abort();
       revokeDownloadObjectUrl();
     };
   }, []);
@@ -1074,6 +1145,7 @@ export function DocumentWorkspace() {
         <button type="button" className="reload-button" onClick={() => void loadDocuments()} disabled={listState.status === "loading" || pipelineBusy}>Reload PDFs</button>
       </div>
       <p className="results-note">Upload a PDF once, then explicitly process its saved original. Viewing, refreshing, and selecting use read-only requests only.</p>
+      {deleteMessage && <p className="search-feedback" role="status">{deleteMessage}</p>}
 
       <form className="pdf-upload-form" onSubmit={(event) => { event.preventDefault(); void uploadAndProcess(); }} noValidate>
         <label htmlFor="pdf-upload">PDF file</label>
@@ -1114,7 +1186,7 @@ export function DocumentWorkspace() {
             className="paper-link"
             data-download-original
             onClick={() => void prepareOriginalDownload(selectedDocument)}
-            disabled={downloadState.status === "preparing" && downloadState.documentId === selectedDocument.id}
+            disabled={deleting || (downloadState.status === "preparing" && downloadState.documentId === selectedDocument.id)}
           >
             {downloadState.status === "preparing" && downloadState.documentId === selectedDocument.id ? "Preparing download..." : "Prepare original PDF download"}
           </button>
@@ -1148,11 +1220,16 @@ export function DocumentWorkspace() {
         </dl>
         {detailState.status === "loading" && <p className="search-feedback" role="status">Reading saved text, metadata, and summary...</p>}
         {detailState.status === "error" && <p className="search-feedback search-feedback--error" role="alert">{detailState.message}</p>}
-        {detailState.status !== "loading" && !(pipelineBusy && processingDocumentId === selectedDocument.id) && !(detailState.extraction && detailState.metadata) && <button type="button" className="save-button" onClick={() => void resumeProcessing(selectedDocument)}>Resume processing</button>}
+        <div className="delete-document-controls">
+          <label><input type="checkbox" data-confirm-delete checked={deleteConfirmed} disabled={deleting} onChange={(event) => setDeleteConfirmed(event.target.checked)} /> Delete this PDF's original, extracted text, metadata, summary, and Q&amp;A history.</label>
+          <button type="button" className="reload-button" data-delete-document disabled={!deleteConfirmed || deleting} onClick={() => void deleteDocument(selectedDocument)}>{deleting ? "Deleting PDF..." : "Delete PDF"}</button>
+        </div>
+        {selectedDocument.status === "deleting" && <p role="alert">Deletion cleanup is pending. Retry Delete PDF to finish.</p>}
+        {detailState.status !== "loading" && !deleting && selectedDocument.status === "stored" && !(pipelineBusy && processingDocumentId === selectedDocument.id) && !(detailState.extraction && detailState.metadata) && <button type="button" className="save-button" data-resume-processing onClick={() => void resumeProcessing(selectedDocument)}>{detailState.extraction ? "Retry metadata only" : "Resume processing"}</button>}
         <section className="document-summary" aria-labelledby="document-summary-title">
           <div className="summary-heading">
-            <div><p className="eyebrow">Source-grounded summary</p><h4 id="document-summary-title">Summary</h4></div>
-            <button type="button" className="reload-button" data-summary-reload onClick={() => void loadSummary(selectedDocument.id)} disabled={detailState.summary.status === "loading" || summaryBusy}>Reload summary</button>
+            <div><p className="eyebrow">PDF context</p><h4 id="document-summary-title">Summary</h4></div>
+            <button type="button" className="reload-button" data-summary-reload onClick={() => void loadSummary(selectedDocument.id)} disabled={deleting || detailState.summary.status === "loading" || summaryBusy}>Reload summary</button>
           </div>
           {detailState.status === "loading" && <p className="search-feedback" role="status">Loading saved summary...</p>}
           {detailState.status !== "loading" && !detailState.extraction && <p className="search-feedback" role="status">Text extraction is required before a summary can be generated.</p>}
@@ -1177,10 +1254,10 @@ export function DocumentWorkspace() {
         </section>
         <section className="document-questions" aria-labelledby="document-questions-title">
           <div className="summary-heading">
-            <div><p className="eyebrow">Source-grounded PDF questions</p><h4 id="document-questions-title">Questions and answers</h4></div>
-            <button type="button" className="reload-button" data-question-reload onClick={() => void loadQuestions(selectedDocument.id)} disabled={detailState.questions.status === "loading" || questionBusy}>Reload question history</button>
+            <div><p className="eyebrow">Ask with PDF context</p><h4 id="document-questions-title">Questions and answers</h4></div>
+            <button type="button" className="reload-button" data-question-reload onClick={() => void loadQuestions(selectedDocument.id)} disabled={deleting || detailState.questions.status === "loading" || questionBusy}>Reload question history</button>
           </div>
-          <p className="results-note">Each question is answered independently from this PDF&apos;s saved extracted text. Previous answers are not conversational context; metadata and summaries are not required.</p>
+          <p className="results-note">Each question uses the selected PDF&apos;s saved extracted text as context. Answers may include general knowledge and will acknowledge uncertainty when the PDF does not cover a topic. Each question is independent; metadata and summaries are not required.</p>
           {detailState.status === "loading" && <p className="search-feedback" role="status">Loading saved questions...</p>}
           {detailState.status !== "loading" && !detailState.extraction && <p className="search-feedback" role="status">Text extraction is required before asking a question.</p>}
           {detailState.extraction && <form className="question-form" onSubmit={(event) => { event.preventDefault(); void askQuestion(selectedDocument); }} noValidate>
@@ -1201,6 +1278,7 @@ export function DocumentWorkspace() {
           {detailState.extraction && detailState.questions.status === "uncertain" && <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message} The submitted question remains in the input; no additional question was sent.</p>}
           {detailState.extraction && detailState.questions.status === "error" && <>
             <p className="search-feedback search-feedback--error" role="alert">{detailState.questions.message}</p>
+            {detailState.questions.retryable && detailState.questions.submittedQuestion && <button type="button" className="save-button" data-question-retry onClick={() => void askQuestion(selectedDocument, detailState.questions.submittedQuestion)} disabled={deleting || questionBusy || pipelineBusy}>Retry</button>}
             {detailState.questions.accessDenied && <div className="question-access-recovery">
               <p className="results-note">After signing in again through the private site&apos;s normal access flow, use this read-only reload to confirm saved questions. It will not ask the question again.</p>
               <button type="button" className="reload-button" data-question-access-reload onClick={() => void loadQuestions(selectedDocument.id)} disabled={questionBusy}>Reload question history</button>
@@ -1215,8 +1293,8 @@ export function DocumentWorkspace() {
           {detailState.extraction.pages.map((page) => <section key={page.pageNumber}><h4>Page {page.pageNumber}</h4><pre>{page.text || "No text was extracted from this page."}</pre></section>)}
         </details>}
         {detailState.metadata && <section className="document-metadata" aria-labelledby="document-metadata-title">
-          <p className="eyebrow">Source-grounded metadata</p><h4 id="document-metadata-title">Document details</h4>
-          <p className="results-note">Metadata comes from the selected opening pages of this stored PDF, not its filename or web search.</p>
+          <p className="eyebrow">PDF context</p><h4 id="document-metadata-title">Document details</h4>
+          <p className="results-note">Metadata uses the selected opening pages of this stored PDF as context and may be uncertain. Check important details against the document.</p>
           <dl className="paper-metadata">
             <div><dt>Title</dt><dd>{detailState.metadata.title ?? "Title unavailable"}</dd></div>
             <div><dt>Authors</dt><dd>{detailState.metadata.authors?.length ? detailState.metadata.authors.join(", ") : "Authors unavailable"}</dd></div>
@@ -1225,11 +1303,11 @@ export function DocumentWorkspace() {
           </dl>
           <div className="paper-abstract"><h4>Abstract</h4><p>{detailState.metadata.abstract ?? "Abstract unavailable"}</p></div>
           {detailState.metadata.warnings.length > 0 && <section className="document-warnings" aria-labelledby="metadata-warnings-title"><h4 id="metadata-warnings-title">Warnings</h4><ul>{detailState.metadata.warnings.map((warning, index) => <li key={`${warning}-${index}`}>{warning}</li>)}</ul></section>}
-          <details className="metadata-evidence"><summary>Page-numbered source evidence</summary>
-            {(["title", "authors", "year", "abstract"] as const).map((field) => <section key={field}><h4>{field[0].toUpperCase()}{field.slice(1)}</h4>{detailState.metadata!.evidence[field].length
-              ? <ol>{detailState.metadata!.evidence[field].map((quote, index) => <li key={`${quote.pageNumber}-${index}`}><strong>Page {quote.pageNumber}:</strong> {quote.quote}</li>)}</ol>
-              : <p>No source quote was retained for this unavailable field.</p>}</section>)}
-          </details>
+          {Object.values(detailState.metadata.evidence).some((quotes) => quotes.length > 0) && <details className="metadata-evidence"><summary>Optional saved quotes</summary>
+            {(["title", "authors", "year", "abstract"] as const).filter((field) => detailState.metadata!.evidence[field].length > 0).map((field) => <section key={field}><h4>{field[0].toUpperCase()}{field.slice(1)}</h4>
+              <ol>{detailState.metadata!.evidence[field].map((quote, index) => <li key={`${quote.pageNumber}-${index}`}><strong>Page {quote.pageNumber}:</strong> {quote.quote}</li>)}</ol>
+            </section>)}
+          </details>}
         </section>}
       </section>}
     </section>
