@@ -32,3 +32,7 @@ Thumbs.db
 
 # Reproducible evaluation raw runs (summaries are in docs/hw2)
 artifacts/
+
+# HW2's reviewed, immutable coverage evidence is part of the assignment record.
+!docs/hw2/rounds/*/evidence/coverage/
+!docs/hw2/rounds/*/evidence/coverage/**

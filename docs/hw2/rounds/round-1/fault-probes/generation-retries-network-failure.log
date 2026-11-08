@@ -1,0 +1,17 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-1-2026-11-08T19-17-23.069Z/generation-retries-network-failure
+
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 101ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 14ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 6ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 30ms
+
+ Test Files  4 passed (4)
+      Tests  106 passed (106)
+   Start at  14:17:28
+   Duration  944ms (tests 41%, transform 33%, import 19%, worker 6%)
+
+    Isolate  4 workers spawned · ~135ms startup each (spawn + environment, per file)
+             at least ~404ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-1-2026-11-08T19-17-23.069Z/generation-retries-network-failure.tests.json

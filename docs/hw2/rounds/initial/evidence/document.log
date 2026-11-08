@@ -1,0 +1,18 @@
+{"step":"built-worker-validation-and-storage-failures-passed","missingStorage":503,"bucketFailure":503,"databaseCleanup":1,"dishonestLength":413,"stalledBody":408,"missingObject":404}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":90964,"origin":"http://127.0.0.1:56544"}
+{"step":"empty-list-passed"}
+{"step":"first-upload-metadata-hash-and-exact-download-passed","id":"ed157707-ecc6-4165-945d-17bba194fc8b","bytes":512,"sha256":"277b943327ca968c69c561692ecaf74ee84a266f2d96d5dd1b2be5623424d8d0"}
+{"step":"second-distinct-upload-and-newest-first-list-passed","firstId":"ed157707-ecc6-4165-945d-17bba194fc8b","secondId":"10a68718-e777-43c5-b43e-b5e4ecb3f223","rowCount":2}
+{"step":"stopped-owned-process","pid":90964}
+{"step":"worker-started","pid":104336,"origin":"http://127.0.0.1:56568"}
+{"step":"restart-read-before-any-new-upload-passed","rowCount":2,"firstId":"ed157707-ecc6-4165-945d-17bba194fc8b","secondId":"10a68718-e777-43c5-b43e-b5e4ecb3f223"}
+{"step":"stopped-owned-process","pid":104336}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":118644,"origin":"http://127.0.0.1:56604"}
+{"step":"migration-reapply-preserves-document-rows-and-bytes","rowCount":2,"firstSha256":"277b943327ca968c69c561692ecaf74ee84a266f2d96d5dd1b2be5623424d8d0","secondSha256":"30683a097fb5929fa61185a032775aac180ebd5d7623a41ee977d7a3c58ebd51"}
+{"step":"missing-multiple-nonpdf-empty-filename-and-file-limit-rejected-without-records","rowCount":2}
+{"step":"actual-local-body-limit-rejected-without-records","maxBodyBytes":10551296,"rowCount":2}
+{"step":"stopped-owned-process","pid":118644}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\document-check\\6aaa2264-2151-4c05-b92d-8584d7c2344e\\state"}
+Document check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\document-check\6aaa2264-2151-4c05-b92d-8584d7c2344e\result.json

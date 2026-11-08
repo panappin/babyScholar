@@ -1,0 +1,331 @@
+{
+  "id": "b9c31d78-a600-43bc-874e-4846165b1b77",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\summary-check\\b9c31d78-a600-43bc-874e-4846165b1b77\\state",
+  "startedAt": "2026-11-08T19:05:01.858Z",
+  "fixture": {
+    "source": "scripts/fixtures/pdf-fixtures.mjs",
+    "license": "CC0-1.0"
+  },
+  "steps": [
+    {
+      "step": "built-worker-summary-storage-and-configuration-failures-passed",
+      "missingStorage": 503,
+      "missingConfiguration": 424
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 113904
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 30664,
+      "origin": "http://127.0.0.1:64571"
+    },
+    {
+      "step": "actual-worker-summary-includes-opening-and-later-pages-evidence-cache-and-unchanged-metadata-text-pdf",
+      "documentId": "556a91f8-15a7-4aec-a234-d7396ddadbb9",
+      "summaryProviderCalls": 1,
+      "metadataProviderCalls": 1
+    },
+    {
+      "step": "concurrent-summary-request-used-one-provider-call",
+      "documentId": "c56e6af2-aad9-4d3c-9c7a-177383e9ecf6"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 30664
+    },
+    {
+      "step": "worker-started",
+      "pid": 77656,
+      "origin": "http://127.0.0.1:64599"
+    },
+    {
+      "step": "restart-read-summary-before-another-provider-call-preserves-metadata-text-and-pdf",
+      "documentId": "556a91f8-15a7-4aec-a234-d7396ddadbb9"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 77656
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 111924
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 122904,
+      "origin": "http://127.0.0.1:64635"
+    },
+    {
+      "step": "migration-reapply-preserves-summary-metadata-and-original-bytes",
+      "documentId": "556a91f8-15a7-4aec-a234-d7396ddadbb9"
+    },
+    {
+      "step": "summary-source-budget-truncates-at-a-page-aware-utf8-boundary",
+      "documentId": "2ecc8267-eccd-4ed9-befd-8ac9c60640fe",
+      "byteBudget": 98304,
+      "includedPages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "totalPages": 4
+    },
+    {
+      "step": "summary-ordinary-text-with-empty-evidence-and-prose-output-limits-passed",
+      "proseByteLimit": 12000
+    },
+    {
+      "step": "summary-malformed-refusal-incomplete-provider-timeout-failures-leave-no-summary",
+      "failureModes": 5
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 122904
+    },
+    {
+      "step": "removed-owned-test-state",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\summary-check\\b9c31d78-a600-43bc-874e-4846165b1b77\\state"
+    }
+  ],
+  "providerRequests": [
+    {
+      "kind": "metadata",
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "pageMarkers": [
+        1,
+        2,
+        3
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "slow",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "clipped",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "multibyte_600",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "too_many_words",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "too_long_text",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "too_long_text",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "malformed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "malformed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "refusal",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "incomplete",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "http_error",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    },
+    {
+      "kind": "summary",
+      "mode": "timeout",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "hasSummaryInstructions": true
+    }
+  ],
+  "result": "passed",
+  "finishedAt": "2026-11-08T19:05:41.380Z"
+}

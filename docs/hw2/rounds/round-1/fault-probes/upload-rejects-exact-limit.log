@@ -1,0 +1,74 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-1-2026-11-08T19-17-23.069Z/upload-rejects-exact-limit
+
+ ❯ tests/baseline/request-streams.test.ts (34 tests | 1 failed) 79ms
+   ✓ library request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 19ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 7ms
+     ✓ maps a broken transport to invalid_request and releases the reader 1ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 3ms
+   ✓ question request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 1ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 1ms
+     ✓ maps a broken transport to invalid_request and releases the reader 0ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 2ms
+   ✓ upload request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 1ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 1ms
+     ✓ maps a broken transport to invalid_request and releases the reader 0ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 1ms
+   ✓ library JSON decoding (round 1) (5)
+     ✓ decodes multibyte code points split across single-byte chunks and clears the timer 1ms
+     ✓ accepts exactly the wrapper byte budget, independent of Content-Length 2ms
+     ✓ rejects invalid JSON with an explicit client error 0ms
+     ✓ rejects invalid UTF-8 with an explicit client error 0ms
+     ✓ rejects incomplete UTF-8 with an explicit client error 0ms
+   ✓ question JSON decoding (round 1) (5)
+     ✓ decodes multibyte code points split across single-byte chunks and clears the timer 1ms
+     ✓ accepts exactly the wrapper byte budget, independent of Content-Length 0ms
+     ✓ rejects invalid JSON with an explicit client error 0ms
+     ✓ rejects invalid UTF-8 with an explicit client error 0ms
+     ✓ rejects incomplete UTF-8 with an explicit client error 0ms
+   ❯ PDF multipart contract (round 1) (12)
+     ✓ retains original bytes and a known SHA-256; MIME and extension are not the oracle 6ms
+     ✓ rejects no file 1ms
+     ✓ rejects text field instead of a file 1ms
+     ✓ rejects duplicate files 1ms
+     ✓ rejects additional field 1ms
+     ✓ rejects empty file 1ms
+     ✓ rejects wrong signature with PDF MIME 1ms
+     ✓ rejects short signature 1ms
+     ✓ rejects 256 code point name 1ms
+     ✓ accepts 255 Unicode code points, rather than counting UTF-16 units 2ms
+     × accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body 21ms
+     ✓ rejects an unparseable multipart envelope 1ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 11ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 26ms
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 105 passed (106)
+   Start at  14:17:25
+   Duration  908ms (transform 37%, tests 35%, import 21%, worker 7%)
+
+    Isolate  4 workers spawned · ~131ms startup each (spawn + environment, per file)
+             at least ~393ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-1-2026-11-08T19-17-23.069Z/upload-rejects-exact-limit.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/request-streams.test.ts > PDF multipart contract (round 1) > accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body
+DocumentError: The PDF file must not exceed 10485760 bytes.
+ ❯ tooLarge src/worker/document-validation.ts:29:9
+     27|
+     28| function tooLarge(message: string): never {
+     29|   throw new DocumentError("body_too_large", 413, message);
+       |         ^
+     30| }
+     31|
+ ❯ readUploadedDocument src/worker/document-validation.ts:134:5
+ ❯ tests/baseline/request-streams.test.ts:146:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

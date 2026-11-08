@@ -1,0 +1,3 @@
+Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+{"result":"passed","liveProviderRequests":0,"steps":["bucket-failure-retains-marker-and-blocks-processing","d1-failure-retry-idempotence-and-unrelated-pdf-preserved","late-extraction-cannot-recreate-deleted-content"],"evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\document-delete-check\\9bb9a601-af27-4913-9598-91efe0ce2e4a\\result.json"}

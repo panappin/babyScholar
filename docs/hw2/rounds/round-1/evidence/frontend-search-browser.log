@@ -1,0 +1,36 @@
+{"step":"migration-applied","exitCode":0}
+{"step":"local-worker-and-vite-started","workerPid":120992,"frontendPid":125812,"workerOrigin":"http://127.0.0.1:56599","viteOrigin":"http://127.0.0.1:56600"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"POST","path":"/api/library/papers","status":201}
+{"step":"mocked-existing-save-and-library-passed","existingId":"11111111-1111-4111-8111-111111111111","createdId":"22222222-2222-4222-8222-222222222222"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":503}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-library-errors-retain-records-passed"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-stale-library-response-ignored"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-empty-library-passed"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"POST","path":"/api/library/papers","status":200}
+{"step":"mocked-duplicate-preserves-id-and-timestamp","id":"33333333-3333-4333-8333-333333333333","savedAt":"2025-02-03T04:05:06.000Z"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":502}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mocked-search-empty-errors-and-unexpected-json-passed"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-interrupted-save-reconciles-without-post-retry"}
+{"step":"mock-response","method":"POST","path":"/api/library/papers","status":201}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+Error: Timed out waiting for record after browser refresh.
+    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:450:11)
+    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:750:3)
+    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1190:1
+{"step":"stopped-owned-process","pid":120992}
+{"step":"stopped-owned-process","pid":125812}
+{"step":"stopped-owned-process","pid":119544}
+{"result":"failed","evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\57eae71f-4a11-467f-90e5-732564b48033\\result.json"}

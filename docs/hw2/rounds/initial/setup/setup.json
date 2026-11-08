@@ -1,0 +1,7 @@
+﻿{
+    "command":  "npm.cmd ci",
+    "timestamp":  "2026-11-08T19-03-06.764Z",
+    "exitCode":  0,
+    "node":  "v24.11.1",
+    "npm":  "11.6.2"
+}

@@ -1,0 +1,124 @@
+{
+  "id": "9e2b6456-9d94-4bd5-bcd5-470dc842dd00",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\extraction-check\\9e2b6456-9d94-4bd5-bcd5-470dc842dd00\\state",
+  "startedAt": "2026-11-08T19:04:32.126Z",
+  "fixture": {
+    "source": "scripts/fixtures/pdf-fixtures.mjs",
+    "license": "CC0-1.0",
+    "description": "Repository-authored valid PDF 1.4 two-page text fixture; page two contains Café."
+  },
+  "steps": [
+    {
+      "step": "built-worker-offline-storage-and-database-failures-passed",
+      "missingObject": 404,
+      "hashMismatch": 409,
+      "databaseFailure": 503
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 83048
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 83572,
+      "origin": "http://127.0.0.1:64308"
+    },
+    {
+      "step": "actual-worker-ordered-text-hash-get-repeat-and-original-bytes-passed",
+      "documentId": "b938a1a0-6403-4651-b796-841c19be7e87",
+      "pageCount": 2
+    },
+    {
+      "step": "concurrent-extract-retains-one-authoritative-record",
+      "documentId": "24b1c620-d2ff-465a-a564-914e271a1e43",
+      "statuses": [
+        200,
+        201
+      ]
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 83572
+    },
+    {
+      "step": "worker-started",
+      "pid": 122660,
+      "origin": "http://127.0.0.1:64336"
+    },
+    {
+      "step": "restart-read-before-another-extract-passed",
+      "documentId": "b938a1a0-6403-4651-b796-841c19be7e87"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 122660
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 93100
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 114072,
+      "origin": "http://127.0.0.1:64370"
+    },
+    {
+      "step": "migration-reapply-preserves-extraction-and-original-bytes",
+      "documentId": "b938a1a0-6403-4651-b796-841c19be7e87"
+    },
+    {
+      "step": "corrupt-signature-encrypted-image-only-and-page-text-limit-cases-preserve-originals",
+      "cases": 6
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 114072
+    },
+    {
+      "step": "removed-owned-test-state",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\extraction-check\\9e2b6456-9d94-4bd5-bcd5-470dc842dd00\\state"
+    }
+  ],
+  "workerLogs": [
+    {
+      "label": "migration",
+      "pid": 83048,
+      "tail": "───────────────┴────────┘\n🌀 Executing on local database DB (local-ai-research-assistant) from .wrangler\\extraction-check\\9e2b6456-9d94-4bd5-bcd5-470dc842dd00\\state\\v3\\d1:\n🌀 To execute on your remote database, add a --remote flag to your wrangler command.\n🚣 2 commands executed successfully.\n┌───────────────────────────────┬────────┐\n│ name                          │ status │\n├───────────────────────────────┼────────┤\n│ 0000_storage_probe.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0001_paper_library.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0002_uploaded_documents.sql   │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0003_document_extractions.sql │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0004_document_metadata.sql    │ 🕒️    │\n├───────────────────────────────┼────────┤\n│ 0005_document_summaries.sql   │ 🕒️    │\n├───────────────────────────────┼────────┤\n│ 0006_document_questions.sql   │ 🕒️    │\n└───────────────────────────────┴────────┘\n🌀 Executing on local database DB (local-ai-research-assistant) from .wrangler\\extraction-check\\9e2b6456-9d94-4bd5-bcd5-470dc842dd00\\state\\v3\\d1:\n🌀 To execute on your remote database, add a --remote flag to your wrangler command.\n🚣 3 commands executed successfully.\n┌───────────────────────────────┬────────┐\n│ name                          │ status │\n├───────────────────────────────┼────────┤\n│ 0000_storage_probe.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0001_paper_library.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0002_uploaded_documents.sql   │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0003_document_extractions.sql │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0004_document_metadata.sql    │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0005_document_summaries.sql   │ 🕒️    │\n├───────────────────────────────┼────────┤\n│ 0006_document_questions.sql   │ 🕒️    │\n└───────────────────────────────┴────────┘\n🌀 Executing on local database DB (local-ai-research-assistant) from .wrangler\\extraction-check\\9e2b6456-9d94-4bd5-bcd5-470dc842dd00\\state\\v3\\d1:\n🌀 To execute on your remote database, add a --remote flag to your wrangler command.\n🚣 3 commands executed successfully.\n┌───────────────────────────────┬────────┐\n│ name                          │ status │\n├───────────────────────────────┼────────┤\n│ 0000_storage_probe.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0001_paper_library.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0002_uploaded_documents.sql   │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0003_document_extractions.sql │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0004_document_metadata.sql    │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0005_document_summaries.sql   │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0006_document_questions.sql   │ 🕒️    │\n└───────────────────────────────┴────────┘\n🌀 Executing on local database DB (local-ai-research-assistant) from .wrangler\\extraction-check\\9e2b6456-9d94-4bd5-bcd5-470dc842dd00\\state\\v3\\d1:\n🌀 To execute on your remote database, add a --remote flag to your wrangler command.\n🚣 6 commands executed successfully.\n┌───────────────────────────────┬────────┐\n│ name                          │ status │\n├───────────────────────────────┼────────┤\n│ 0000_storage_probe.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0001_paper_library.sql        │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0002_uploaded_documents.sql   │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0003_document_extractions.sql │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0004_document_metadata.sql    │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0005_document_summaries.sql   │ ✅     │\n├───────────────────────────────┼────────┤\n│ 0006_document_questions.sql   │ ✅     │\n└───────────────────────────────┴────────┘\n"
+    },
+    {
+      "label": "Worker",
+      "pid": 83572,
+      "tail": "\n ⛅️ wrangler 4.148.0 (update available 4.158.0)\n───────────────────────────────────────────────\nUsing secrets defined in .dev.vars\nYour Worker has access to the following bindings:\nBinding                                                      Resource                  Mode\nenv.DB (ai-research-assistant-local)                         D1 Database               local\nenv.PAPER_BUCKET (ai-research-assistant-papers-local)        R2 Bucket                 local\nenv.OPENAI_MODEL (\"(hidden)\")                                Environment Variable      local\nenv.OPENAI_API_KEY (\"(hidden)\")                              Environment Variable      local\n\n❓ Your types might be out of date. Re-run `wrangler types` to ensure your types are correct.\nWrangler detected this dev session is running in an AI agent.\nThe Local Explorer API is available at http://127.0.0.1:64308/cdn-cgi/local/explorer/api\nUseful routes:\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api/local/workers - local Workers and bindings\n  POST http://127.0.0.1:64308/cdn-cgi/local/explorer/api/local/scheduled?worker=<name> - invoke a Worker's scheduled handler; cron is required (see the OpenAPI schema for the full request)\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api/storage/kv/namespaces - KV namespaces\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api/d1/database - D1 databases\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api/r2/buckets - R2 buckets\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api/workflows - Workflows\n  POST http://127.0.0.1:64308/cdn-cgi/local/explorer/api/local/observability/query - run a read-only SQL query (SELECT/WITH only) over captured request traces and console logs. Tables: spans, logs (read attributes via json(attributes)). Example:\n    curl -X POST http://127.0.0.1:64308/cdn-cgi/local/explorer/api/local/observability/query -H 'Content-Type: application/json' -d '{\"sql\":\"SELECT service, name, outcome, duration_ms FROM spans WHERE parent_id IS NULL LIMIT 20\"}'\n  POST http://127.0.0.1:64308/cdn-cgi/local/explorer/api/local/observability/clear - clear all captured traces and logs\nIf the routes above don't cover what you need, fetch the full OpenAPI schema (large - use only as a last resort):\n  GET http://127.0.0.1:64308/cdn-cgi/local/explorer/api - OpenAPI schema\n⎔ Starting local server...\n[wrangler:info] Ready on http://127.0.0.1:64308\n[wrangler:info] GET /api/health 200 OK (965ms)\n[wrangler:info] POST /api/documents 201 Created (36ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/text 404 Not Found (6ms)\n[wrangler:info] GET /api/documents/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/text 404 Not Found (4ms)\n[wrangler:info] POST /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/extract 400 Bad Request (3ms)\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mWarning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.\u001b[0m\n\n\n[wrangler:info] POST /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/extract 201 Created (105ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/pdf 200 OK (5ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/text 200 OK (5ms)\n[wrangler:info] POST /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/extract 200 OK (5ms)\n[wrangler:info] POST /api/documents 201 Created (9ms)\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mWarning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.\u001b[0m\n\n\n[wrangler:info] POST /api/documents/24b1c620-d2ff-465a-a564-914e271a1e43/extract 201 Created (15ms)\n[wrangler:info] POST /api/documents/24b1c620-d2ff-465a-a564-914e271a1e43/extract 200 OK (19ms)\n[wrangler:info] GET /api/documents/24b1c620-d2ff-465a-a564-914e271a1e43/pdf 200 OK (6ms)\n"
+    },
+    {
+      "label": "Worker",
+      "pid": 122660,
+      "tail": "\n ⛅️ wrangler 4.148.0 (update available 4.158.0)\n───────────────────────────────────────────────\nUsing secrets defined in .dev.vars\nYour Worker has access to the following bindings:\nBinding                                                      Resource                  Mode\nenv.DB (ai-research-assistant-local)                         D1 Database               local\nenv.PAPER_BUCKET (ai-research-assistant-papers-local)        R2 Bucket                 local\nenv.OPENAI_MODEL (\"(hidden)\")                                Environment Variable      local\nenv.OPENAI_API_KEY (\"(hidden)\")                              Environment Variable      local\n\n❓ Your types might be out of date. Re-run `wrangler types` to ensure your types are correct.\nWrangler detected this dev session is running in an AI agent.\nThe Local Explorer API is available at http://127.0.0.1:64336/cdn-cgi/local/explorer/api\nUseful routes:\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api/local/workers - local Workers and bindings\n  POST http://127.0.0.1:64336/cdn-cgi/local/explorer/api/local/scheduled?worker=<name> - invoke a Worker's scheduled handler; cron is required (see the OpenAPI schema for the full request)\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api/storage/kv/namespaces - KV namespaces\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api/d1/database - D1 databases\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api/r2/buckets - R2 buckets\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api/workflows - Workflows\n  POST http://127.0.0.1:64336/cdn-cgi/local/explorer/api/local/observability/query - run a read-only SQL query (SELECT/WITH only) over captured request traces and console logs. Tables: spans, logs (read attributes via json(attributes)). Example:\n    curl -X POST http://127.0.0.1:64336/cdn-cgi/local/explorer/api/local/observability/query -H 'Content-Type: application/json' -d '{\"sql\":\"SELECT service, name, outcome, duration_ms FROM spans WHERE parent_id IS NULL LIMIT 20\"}'\n  POST http://127.0.0.1:64336/cdn-cgi/local/explorer/api/local/observability/clear - clear all captured traces and logs\nIf the routes above don't cover what you need, fetch the full OpenAPI schema (large - use only as a last resort):\n  GET http://127.0.0.1:64336/cdn-cgi/local/explorer/api - OpenAPI schema\n⎔ Starting local server...\n[wrangler:info] Ready on http://127.0.0.1:64336\n[wrangler:info] GET /api/health 200 OK (923ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/text 200 OK (27ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/pdf 200 OK (13ms)\n"
+    },
+    {
+      "label": "migration",
+      "pid": 93100,
+      "tail": "\n ⛅️ wrangler 4.148.0 (update available 4.158.0)\n───────────────────────────────────────────────\nResource location: local \n\nUse --remote if you want to access the remote instance.\n\n✅ No migrations to apply!\n"
+    },
+    {
+      "label": "Worker",
+      "pid": 114072,
+      "tail": "e full request)\n  GET http://127.0.0.1:64370/cdn-cgi/local/explorer/api/storage/kv/namespaces - KV namespaces\n  GET http://127.0.0.1:64370/cdn-cgi/local/explorer/api/d1/database - D1 databases\n  GET http://127.0.0.1:64370/cdn-cgi/local/explorer/api/r2/buckets - R2 buckets\n  GET http://127.0.0.1:64370/cdn-cgi/local/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces\n  GET http://127.0.0.1:64370/cdn-cgi/local/explorer/api/workflows - Workflows\n  POST http://127.0.0.1:64370/cdn-cgi/local/explorer/api/local/observability/query - run a read-only SQL query (SELECT/WITH only) over captured request traces and console logs. Tables: spans, logs (read attributes via json(attributes)). Example:\n    curl -X POST http://127.0.0.1:64370/cdn-cgi/local/explorer/api/local/observability/query -H 'Content-Type: application/json' -d '{\"sql\":\"SELECT service, name, outcome, duration_ms FROM spans WHERE parent_id IS NULL LIMIT 20\"}'\n  POST http://127.0.0.1:64370/cdn-cgi/local/explorer/api/local/observability/clear - clear all captured traces and logs\nIf the routes above don't cover what you need, fetch the full OpenAPI schema (large - use only as a last resort):\n  GET http://127.0.0.1:64370/cdn-cgi/local/explorer/api - OpenAPI schema\n⎔ Starting local server...\n[wrangler:info] Ready on http://127.0.0.1:64370\n[wrangler:info] GET /api/health 200 OK (936ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/text 200 OK (25ms)\n[wrangler:info] GET /api/documents/b938a1a0-6403-4651-b796-841c19be7e87/pdf 200 OK (13ms)\n[wrangler:info] POST /api/documents 201 Created (9ms)\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mWarning: Indexing all PDF objects\u001b[0m\n\n\n[wrangler:info] POST /api/documents/a76d3111-329e-4144-a3fc-1e2c310a74da/extract 422 Unprocessable Entity (61ms)\n[wrangler:info] GET /api/documents/a76d3111-329e-4144-a3fc-1e2c310a74da/text 404 Not Found (4ms)\n[wrangler:info] GET /api/documents/a76d3111-329e-4144-a3fc-1e2c310a74da/pdf 200 OK (5ms)\n[wrangler:info] POST /api/documents 201 Created (8ms)\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mWarning: Indexing all PDF objects\u001b[0m\n\n\n[wrangler:info] POST /api/documents/d63b798c-357e-4de0-afaf-c7a999690c9e/extract 422 Unprocessable Entity (8ms)\n[wrangler:info] GET /api/documents/d63b798c-357e-4de0-afaf-c7a999690c9e/text 404 Not Found (4ms)\n[wrangler:info] GET /api/documents/d63b798c-357e-4de0-afaf-c7a999690c9e/pdf 200 OK (4ms)\n[wrangler:info] POST /api/documents 201 Created (7ms)\n[wrangler:info] POST /api/documents/c27c4d8d-f326-4779-b6e0-2ecfb6d189aa/extract 422 Unprocessable Entity (11ms)\n[wrangler:info] GET /api/documents/c27c4d8d-f326-4779-b6e0-2ecfb6d189aa/text 404 Not Found (4ms)\n[wrangler:info] GET /api/documents/c27c4d8d-f326-4779-b6e0-2ecfb6d189aa/pdf 200 OK (4ms)\n[wrangler:info] POST /api/documents 201 Created (8ms)\n[wrangler:info] POST /api/documents/e8f02691-ee63-42a6-9c64-6423df75d116/extract 422 Unprocessable Entity (13ms)\n[wrangler:info] GET /api/documents/e8f02691-ee63-42a6-9c64-6423df75d116/text 404 Not Found (4ms)\n[wrangler:info] GET /api/documents/e8f02691-ee63-42a6-9c64-6423df75d116/pdf 200 OK (4ms)\n[wrangler:info] POST /api/documents 201 Created (6ms)\n[wrangler:info] POST /api/documents/05080dcd-56e9-4390-9251-7dfed1c67a69/extract 413 Payload Too Large (10ms)\n[wrangler:info] GET /api/documents/05080dcd-56e9-4390-9251-7dfed1c67a69/text 404 Not Found (5ms)\n[wrangler:info] GET /api/documents/05080dcd-56e9-4390-9251-7dfed1c67a69/pdf 200 OK (4ms)\n[wrangler:info] POST /api/documents 201 Created (26ms)\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mWarning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.\u001b[0m\n\n\n[wrangler:info] POST /api/documents/30c38254-c895-4ff1-a859-990a2d1ef3e3/extract 413 Payload Too Large (241ms)\n[wrangler:info] GET /api/documents/30c38254-c895-4ff1-a859-990a2d1ef3e3/text 404 Not Found (5ms)\n[wrangler:info] GET /api/documents/30c38254-c895-4ff1-a859-990a2d1ef3e3/pdf 200 OK (4ms)\n"
+    }
+  ],
+  "result": "passed",
+  "finishedAt": "2026-11-08T19:04:47.179Z"
+}

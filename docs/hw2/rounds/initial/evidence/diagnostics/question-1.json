@@ -1,0 +1,568 @@
+{
+  "id": "9f5f471e-37ef-4958-8193-be1457d81822",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\question-check\\9f5f471e-37ef-4958-8193-be1457d81822\\state",
+  "startedAt": "2026-11-08T19:05:41.891Z",
+  "fixture": {
+    "source": "scripts/fixtures/pdf-fixtures.mjs",
+    "license": "CC0-1.0"
+  },
+  "steps": [
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 123484
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 112024,
+      "origin": "http://127.0.0.1:54065",
+      "apiKeyConfigured": true
+    },
+    {
+      "step": "answered-question-later-page-evidence-normalized-cache-and-stable-order-passed",
+      "documentId": "0875d7f3-7643-4cb7-b029-8476474aac10",
+      "questionProviderCalls": 3
+    },
+    {
+      "step": "insufficient-source-and-partial-coverage-results-persisted",
+      "documentId": "79b91a00-c916-4d0a-bf7e-67debf14b435",
+      "byteBudget": 98304
+    },
+    {
+      "step": "question-diagnostic-stage-verified",
+      "mode": "empty_http_body",
+      "event": "document_question_provider_rejected",
+      "stage": "http_body_empty"
+    },
+    {
+      "step": "question-diagnostic-stage-verified",
+      "mode": "non_json_http_body",
+      "event": "document_question_provider_rejected",
+      "stage": "http_body_non_json"
+    },
+    {
+      "step": "question-diagnostic-stage-verified",
+      "mode": "invalid_rest_envelope",
+      "event": "document_question_provider_rejected",
+      "stage": "rest_envelope_invalid"
+    },
+    {
+      "step": "question-diagnostic-stage-verified",
+      "mode": "missing_output_text",
+      "event": "document_question_provider_rejected",
+      "stage": "output_text_missing"
+    },
+    {
+      "step": "question-diagnostic-stage-verified",
+      "mode": "malformed",
+      "event": "document_question_output_rejected",
+      "stage": "schema_validation_failed"
+    },
+    {
+      "step": "question-diagnostic-stage-verified",
+      "mode": "schema_invalid",
+      "event": "document_question_output_rejected",
+      "stage": "schema_validation_failed"
+    },
+    {
+      "step": "provider-failure-stops-without-automatic-retry",
+      "liveProviderRequests": 0
+    },
+    {
+      "step": "question-text-decoding-optional-citations-and-provider-failure-boundaries",
+      "ignoredEvidenceBytes": 601,
+      "diagnosticStages": [
+        "http_body_empty",
+        "http_body_non_json",
+        "rest_envelope_invalid",
+        "output_text_missing",
+        "schema_validation_failed"
+      ]
+    },
+    {
+      "step": "concurrent-identical-question-used-one-provider-call",
+      "documentId": "7ea9fe1a-ba57-4f5e-8c90-4eac41b31002"
+    },
+    {
+      "step": "late-generation-cannot-recreate-deleted-document"
+    },
+    {
+      "step": "questions-preserve-existing-pdf-extraction-metadata-and-summary",
+      "documentId": "0875d7f3-7643-4cb7-b029-8476474aac10"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 112024
+    },
+    {
+      "step": "worker-started",
+      "pid": 117112,
+      "origin": "http://127.0.0.1:58417",
+      "apiKeyConfigured": false
+    },
+    {
+      "step": "cached-question-get-and-post-work-with-empty-api-key",
+      "documentId": "0875d7f3-7643-4cb7-b029-8476474aac10"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 117112
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 118312
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 52960,
+      "origin": "http://127.0.0.1:58450",
+      "apiKeyConfigured": true
+    },
+    {
+      "step": "delete-populated-document-removes-public-children-and-preserves-other-pdf"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 52960
+    },
+    {
+      "step": "removed-owned-test-state",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\question-check\\9f5f471e-37ef-4958-8193-be1457d81822\\state"
+    }
+  ],
+  "providerRequests": [
+    {
+      "kind": "metadata",
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "pageMarkers": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "kind": "summary",
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "answered",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "answered",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "answered",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "insufficient",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "partial",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "empty_http_body",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "non_json_http_body",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "invalid_rest_envelope",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "missing_output_text",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "malformed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "schema_invalid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "wrong_page",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "unknown_reference",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "invented_evidence",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "oversized_evidence",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "too_many_words",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "refusal",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "timeout",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "authentication",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "quota",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "model_access",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "network_failure",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "correct_deadline",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "correct_once",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "slow",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "question",
+      "mode": "slow",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 2048,
+      "hasTools": false,
+      "strictSchema": false,
+      "pageMarkers": [
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "result": "passed",
+  "finishedAt": "2026-11-08T19:06:30.000Z"
+}

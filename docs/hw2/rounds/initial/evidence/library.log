@@ -1,0 +1,19 @@
+{"step":"built-worker-failures-passed","missingBinding":503,"databaseFailure":503,"dishonestLength":413,"stalledBody":408,"databaseTouched":false}
+{"step":"migrations-applied","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\2861f910-9244-4554-af53-088cd1e624b4\\state","exitCode":0}
+{"step":"worker-started","pid":113012,"origin":"http://127.0.0.1:56398"}
+{"step":"empty-library-passed"}
+{"step":"simultaneous-first-saves-passed","statuses":[201,200],"rowCount":1,"id":"dc57a284-2fbe-4b31-94f6-ffdde84bfd2c","arxivId":"2401.01234","savedAt":"2026-11-08T19:03:58.645Z"}
+{"step":"full-metadata-round-trip-passed","authors":3,"abstractCharacters":52500,"sha256":"1d458b08a4d27480c7019b2fa9dcaa1a75a55efb723c33b2f5dba044409457af"}
+{"step":"duplicates-nullable-legacy-and-order-passed","rowCount":3,"originalPreserved":true}
+{"step":"invalid-unsafe-oversized-inputs-rejected-without-writes","invalidPaperCases":26,"rowCount":3}
+{"step":"stopped-owned-process","pid":113012}
+{"step":"worker-started","pid":123216,"origin":"http://127.0.0.1:56425"}
+{"step":"restart-first-get-before-any-post-passed","rowCount":3,"originalId":"dc57a284-2fbe-4b31-94f6-ffdde84bfd2c","savedAt":"2026-11-08T19:03:58.645Z"}
+{"step":"stopped-owned-process","pid":123216}
+{"step":"migrations-applied","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\2861f910-9244-4554-af53-088cd1e624b4\\state","exitCode":0}
+{"step":"worker-started","pid":123876,"origin":"http://127.0.0.1:56467"}
+{"step":"migration-reapply-preserves-all-records","rowCount":3,"originalId":"dc57a284-2fbe-4b31-94f6-ffdde84bfd2c","savedAt":"2026-11-08T19:03:58.645Z"}
+{"step":"remove-by-application-id-idempotence-resave-and-unrelated-records-passed"}
+{"step":"stopped-owned-process","pid":123876}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\2861f910-9244-4554-af53-088cd1e624b4\\state"}
+Library check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\library-check\2861f910-9244-4554-af53-088cd1e624b4\result.json

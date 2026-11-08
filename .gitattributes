@@ -1,0 +1,2 @@
+# Archived measurements and snapshots must retain the bytes in their SHA-256 manifests.
+docs/hw2/rounds/** -text

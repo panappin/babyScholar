@@ -1,0 +1,27 @@
+{"step":"stopped-owned-process","label":"migration","pid":119544}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":81900,"origin":"http://127.0.0.1:51344","apiKeyConfigured":true}
+{"step":"answered-question-later-page-evidence-normalized-cache-and-stable-order-passed","documentId":"114c4c58-1296-4817-9056-7560dc06bbfd","questionProviderCalls":3}
+{"step":"insufficient-source-and-partial-coverage-results-persisted","documentId":"a1e900a3-ab18-41ce-ba9d-1f6e354dccab","byteBudget":98304}
+{"step":"question-diagnostic-stage-verified","mode":"empty_http_body","event":"document_question_provider_rejected","stage":"http_body_empty"}
+{"step":"question-diagnostic-stage-verified","mode":"non_json_http_body","event":"document_question_provider_rejected","stage":"http_body_non_json"}
+{"step":"question-diagnostic-stage-verified","mode":"invalid_rest_envelope","event":"document_question_provider_rejected","stage":"rest_envelope_invalid"}
+{"step":"question-diagnostic-stage-verified","mode":"missing_output_text","event":"document_question_provider_rejected","stage":"output_text_missing"}
+{"step":"question-diagnostic-stage-verified","mode":"malformed","event":"document_question_output_rejected","stage":"schema_validation_failed"}
+{"step":"question-diagnostic-stage-verified","mode":"schema_invalid","event":"document_question_output_rejected","stage":"schema_validation_failed"}
+{"step":"provider-failure-stops-without-automatic-retry","liveProviderRequests":0}
+{"step":"question-text-decoding-optional-citations-and-provider-failure-boundaries","ignoredEvidenceBytes":601,"diagnosticStages":["http_body_empty","http_body_non_json","rest_envelope_invalid","output_text_missing","schema_validation_failed"]}
+{"step":"concurrent-identical-question-used-one-provider-call","documentId":"fbec99bc-3fc8-4b8b-ae13-70cafb47a40c"}
+{"step":"late-generation-cannot-recreate-deleted-document"}
+{"step":"questions-preserve-existing-pdf-extraction-metadata-and-summary","documentId":"114c4c58-1296-4817-9056-7560dc06bbfd"}
+{"step":"stopped-owned-process","label":"Worker","pid":81900}
+{"step":"worker-started","pid":64004,"origin":"http://127.0.0.1:51281","apiKeyConfigured":false}
+{"step":"cached-question-get-and-post-work-with-empty-api-key","documentId":"114c4c58-1296-4817-9056-7560dc06bbfd"}
+{"step":"stopped-owned-process","label":"Worker","pid":64004}
+{"step":"stopped-owned-process","label":"migration","pid":124096}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":124500,"origin":"http://127.0.0.1:56194","apiKeyConfigured":true}
+{"step":"delete-populated-document-removes-public-children-and-preserves-other-pdf"}
+{"step":"stopped-owned-process","label":"Worker","pid":124500}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\question-check\\a9465114-c9ed-4ca3-9506-131a314c16f5\\state"}
+Question check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\question-check\a9465114-c9ed-4ca3-9506-131a314c16f5\result.json

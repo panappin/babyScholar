@@ -37,6 +37,15 @@ async function runScenario(scenario, expectedExitCode) {
 const success = await runScenario("success", 0);
 assert.equal(success.evidence.result, "passed");
 assert.equal(success.evidence.offlineProviderRequests, 1);
+assert.equal(success.evidence.diagnostics.fixtureFields.every((field) => field.matches), true);
+assert.deepEqual(success.evidence.diagnostics.fixtureFields.find((field) => field.field === "promptVersion"), {
+  field: "promptVersion", expected: "document-metadata-v4", actual: "document-metadata-v4", matches: true,
+});
+for (const name of ["title", "authors", "year", "abstract"]) {
+  assert.deepEqual(success.evidence.diagnostics.fixtureFields.find((field) => field.field === `${name}Evidence`), {
+    field: `${name}Evidence`, expected: [], actual: [], matches: true,
+  });
+}
 assert.deepEqual(success.evidence.diagnostics.persistence, {
   postStatus: 201,
   postErrorKind: null,
