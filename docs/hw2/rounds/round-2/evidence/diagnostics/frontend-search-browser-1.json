@@ -1,0 +1,596 @@
+{
+  "startedAt": "2026-11-08T19:28:45.728Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\7db0d45b-8d96-4b7a-bd9b-c63cb15c1406",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 107220,
+      "frontendPid": 123052,
+      "workerOrigin": "http://127.0.0.1:59622",
+      "viteOrigin": "http://127.0.0.1:59623"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mocked-existing-save-and-library-passed",
+      "existingId": "11111111-1111-4111-8111-111111111111",
+      "createdId": "22222222-2222-4222-8222-222222222222"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-library-errors-retain-records-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-stale-library-response-ignored"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-empty-library-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-duplicate-preserves-id-and-timestamp",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "savedAt": "2025-02-03T04:05:06.000Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mocked-search-empty-errors-and-unexpected-json-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-interrupted-save-reconciles-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 107220
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 123052
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 126600
+    }
+  ],
+  "result": "failed",
+  "failedWait": {
+    "description": "browser refresh",
+    "ui": {
+      "libraryVisible": false,
+      "libraryLoading": false,
+      "libraryCount": 0,
+      "alert": null
+    },
+    "network": [
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595511.082836,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595511.08316,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595511.083901,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595511.085598,
+        "status": 200,
+        "responseAt": 595513.447684
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595511.085749,
+        "status": 200,
+        "responseAt": 595513.452236
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595511.08589,
+        "status": 200,
+        "responseAt": 595513.592239
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595513.638734,
+        "status": 200,
+        "responseAt": 595513.74147
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 595513.757261,
+        "status": 201,
+        "responseAt": 595513.765127
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595514.070964,
+        "status": 503,
+        "responseAt": 595514.077768
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595514.127517,
+        "status": 200,
+        "responseAt": 595514.133415
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595522.394783,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595522.395094,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595522.395398,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595522.396032,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595522.396248,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595522.39645,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595532.710662,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595532.710968,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595532.711266,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595532.711917,
+        "status": 200,
+        "responseAt": 595532.730496
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595532.712126,
+        "status": 200,
+        "responseAt": 595532.77853
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595532.712394,
+        "status": 200,
+        "responseAt": 595532.859167
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595533.43576,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595533.436045,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595533.436351,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595533.437072,
+        "status": 200,
+        "responseAt": 595533.638461
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595533.43728,
+        "status": 200,
+        "responseAt": 595533.647371
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595533.437474,
+        "status": 200,
+        "responseAt": 595533.568447
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595533.634818,
+        "status": 200,
+        "responseAt": 595533.640383
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 595533.688529,
+        "status": 200,
+        "responseAt": 595533.702869
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595533.784862,
+        "status": 502,
+        "responseAt": 595533.790066
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595533.847405,
+        "status": 200,
+        "responseAt": 595533.85282
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595533.911611,
+        "failure": "net::ERR_FAILED",
+        "canceled": false
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595533.921705,
+        "status": 200,
+        "responseAt": 595533.926777
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595556.311928,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595556.312151,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595556.312352,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595556.312971,
+        "status": 200,
+        "responseAt": 595556.454731
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595556.313125,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595556.313283,
+        "status": 200,
+        "responseAt": 595556.426103
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595556.436087,
+        "status": 200,
+        "responseAt": 595556.44053
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 595556.488625,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595556.515361,
+        "status": 200,
+        "responseAt": 595556.550039
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 595556.566085,
+        "status": 201,
+        "responseAt": 595556.571537
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595556.572121,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595556.865638,
+        "status": 200,
+        "responseAt": 595556.869929
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595559.513373,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595559.513696,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595559.513988,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 595559.514374,
+        "status": 200,
+        "responseAt": 595559.954094
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 595559.514497,
+        "status": 200,
+        "responseAt": 595559.957332
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595559.514632,
+        "status": 200,
+        "responseAt": 595559.957522
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 595559.985782,
+        "status": 200,
+        "responseAt": 595559.992927
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 595560.001499,
+        "status": 201,
+        "responseAt": 595560.076544
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 595560.101209,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      }
+    ],
+    "processPipes": [
+      {
+        "pid": 107220,
+        "stdoutBufferedBytes": 3849,
+        "stderrBufferedBytes": 0
+      },
+      {
+        "pid": 123052,
+        "stdoutBufferedBytes": 3630,
+        "stderrBufferedBytes": 0
+      },
+      {
+        "pid": 126600,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 15636
+      }
+    ],
+    "directProbes": [
+      {
+        "origin": "http://127.0.0.1:59622",
+        "status": 200,
+        "paperCount": 1
+      },
+      {
+        "origin": "http://127.0.0.1:59623",
+        "error": "TimeoutError"
+      }
+    ]
+  },
+  "error": "Error: Timed out waiting for browser refresh.\n    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:482:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:776:3)\n    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1222:1",
+  "metadataProviderCalls": 0,
+  "summaryProviderCalls": 0,
+  "questionProviderCalls": 0,
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T19:30:45.923Z"
+}

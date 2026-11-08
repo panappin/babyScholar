@@ -1,0 +1,20 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-2-2026-11-08T19-31-23.583Z/control
+
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 100ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 18ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 13ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 213ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 31ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 30ms
+
+ Test Files  7 passed (7)
+      Tests  163 passed (163)
+   Start at  14:31:24
+   Duration  1.63s (tests 57%, transform 23%, import 15%, worker 5%)
+
+    Isolate  7 workers spawned · ~123ms startup each (spawn + environment, per file)
+             at least ~740ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-2-2026-11-08T19-31-23.583Z/control.tests.json

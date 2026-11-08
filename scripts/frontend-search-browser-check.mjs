@@ -383,6 +383,27 @@ async function main() {
   const target = await cdp.send("Target.createTarget", { url: "about:blank" });
   const attached = await cdp.send("Target.attachToTarget", { targetId: target.targetId, flatten: true });
   const sessionId = attached.sessionId;
+  // Retain metadata-only transport diagnostics for real-flow failures. No
+  // headers, request bodies, PDF text, provider output or credentials are saved.
+  const networkRequests = new Map();
+  cdp.on("Network.requestWillBeSent", (params, eventSessionId) => {
+    if (eventSessionId !== sessionId) return;
+    const path = new URL(params.request.url).pathname;
+    if (path.startsWith("/api/")) networkRequests.set(params.requestId, {
+      path, method: params.request.method, startedAt: params.timestamp,
+    });
+  });
+  cdp.on("Network.responseReceived", (params, eventSessionId) => {
+    if (eventSessionId !== sessionId) return;
+    const record = networkRequests.get(params.requestId);
+    if (record) Object.assign(record, { status: params.response.status, responseAt: params.timestamp });
+  });
+  cdp.on("Network.loadingFailed", (params, eventSessionId) => {
+    if (eventSessionId !== sessionId) return;
+    const record = networkRequests.get(params.requestId);
+    if (record) Object.assign(record, { failure: params.errorText, canceled: params.canceled ?? false });
+  });
+  await cdp.send("Network.enable", {}, sessionId);
   const downloadDirectory = resolve(state, "browser-downloads");
   await mkdir(downloadDirectory, { recursive: true });
   await cdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: downloadDirectory, eventsEnabled: true });
@@ -447,6 +468,17 @@ async function main() {
       await delay(40);
     }
     evidence.failedWait = { description, ui: await evaluate("({ libraryVisible: Boolean(document.querySelector('#library-view')), libraryLoading: document.body.innerText.includes('Loading saved papers'), libraryCount: document.querySelectorAll('#library-view .paper-card').length, alert: document.querySelector('[role=alert]')?.textContent?.trim().slice(0, 240) ?? null })") };
+    evidence.failedWait.network = [...networkRequests.values()];
+    evidence.failedWait.processPipes = [worker, frontend, browser].map((child) => ({
+      pid: child.pid, stdoutBufferedBytes: child.stdout.readableLength, stderrBufferedBytes: child.stderr.readableLength,
+    }));
+    evidence.failedWait.directProbes = await Promise.all([workerOrigin, viteOrigin].map(async (origin) => {
+      try {
+        const response = await fetch(`${origin}/api/library/papers`, { signal: AbortSignal.timeout(2_000) });
+        const body = await response.json();
+        return { origin, status: response.status, paperCount: Array.isArray(body.papers) ? body.papers.length : null };
+      } catch (error) { return { origin, error: error.name }; }
+    }));
     throw new Error(`Timed out waiting for ${description}.`);
   };
   const click = (selector) => evaluate(`(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!(element instanceof HTMLElement)) return false; element.click(); return true; })()`);

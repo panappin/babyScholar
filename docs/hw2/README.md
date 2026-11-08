@@ -1,8 +1,19 @@
-# HW2 initial baseline
+# HW2 baseline and guided test improvements
 
-This is the **initial assessment**, not either of the two required improvement
-rounds. Application source is unchanged. The existing checks are preserved and
-reported separately from the newly generated initial unit suite.
+The initial assessment and both guided improvement rounds are retained here.
+Application source is unchanged. Existing integration/browser checks are
+reported separately from the generated Node unit suite.
+
+- [Six-section report draft](report.md) and [final PDF checklist](final-pdf-checklist.md)
+- [Verbatim user instructions and rubric clarification](improvement-request.md)
+- [New Windows initial reproduction](rounds/initial/assessment.md)
+- [Round 1: inputs and output contracts](rounds/round-1/assessment.md)
+- [Round 2: recovery, source budgets, and UTF-8 fault feedback](rounds/round-2/assessment.md)
+- [Machine-readable comparison](comparison.json) and [all-file coverage comparison](per-file-comparison.csv)
+
+The historical [initial assessment](initial-assessment.md) and `evidence/`
+directory are unchanged. Fair comparisons use the three new Windows runs,
+whose complete selected evidence and exact snapshots are in `rounds/`.
 
 ## Reproduce
 
@@ -82,14 +93,37 @@ reported and no genuine product defect is claimed without a failing
 requirement-based reproduction. Existing check failures must be triaged as
 product, test, or environment failures, not all counted as detected bugs.
 
-## Next improvement rounds (not performed here)
+## Reproduce and inspect the guided rounds
 
-1. Expand requirement-driven boundary/negative cases and review test
-   correctness, especially streaming request failure/timeout paths and
-   validators. Save the actual prompt, results and reasoning.
-2. Use measured gaps to add recovery/timeouts, summary-source Unicode budgets,
-   and integration/UI coverage where the environment supports it. Re-evaluate
-   with the same measures and retain evidence before/after each round.
+The final suite is seven files / 163 tests in `tests/baseline/`. The initial
+24 tests described above remain unchanged. Round 1 adds 82 cases; round 2 adds
+57, selected after inspecting round 1's results and surviving seeded faults.
 
-A final homework report still needs the two distinct guided rounds and the
-required six-section write-up. This baseline is not a completed submission.
+Each `rounds/<phase>/evidence/` directory contains `results.json`, all stage
+logs, per-file CSV, raw coverage JSON, LCOV, CPU profile, structured verifier
+diagnostics, and exact test/configuration/verifier snapshots. `archive.json`
+records the original timestamped raw run and SHA-256 hashes. Git attributes
+preserve archive bytes across platforms; the coverage archive is explicitly
+exempted from the ordinary generated-coverage ignore rule.
+
+```sh
+node scripts/baseline/compare-hw2.mjs
+# Optional selected fault probes in disposable copies; no working source edits:
+node scripts/baseline/fault-probes.mjs round-2
+```
+
+The comparison command validates archive hashes and identical source-tree
+identities, denominators, dependency/configuration snapshots, stage commands,
+profile workloads, and runtime/machine metadata. Fault probes are five selected
+synthetic regressions, not discovered product defects or an exhaustive mutation
+score. Detailed outcomes and limitations are in the report.
+
+The recording helper `node scripts/baseline/archive-hw2.mjs <phase>
+<timestamped-run-path>` was used once per phase immediately after evaluation.
+Its three phase labels are now occupied and it deliberately refuses overwrite.
+Future `npm run baseline` invocations still create new timestamped raw runs;
+keep the historical archives intact. Their snapshots preserve the earlier
+suites if a reviewer wants to replay a prior round separately.
+
+The six-section draft still needs author review and PDF export. The assignment
+has not been submitted and this work is not merged into `main`.

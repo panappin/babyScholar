@@ -1,0 +1,56 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run --reporter=default --reporter=json --outputFile=artifacts/hw2-development/round-2/tests-1.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 166ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 23ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 270ms
+ ❯ tests/baseline/utf8-integrity.test.ts (0 test)
+ ✓ tests/baseline/question-request.test.ts (11 tests) 26ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 12ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+npm.cmd : 
+At line:2 char:1
++ npm.cmd test -- --reporter=default --reporter=json --outputFile=artif ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/utf8-integrity.test.ts [ tests/baseline/utf8-integrity.test.ts ]
+Error: Transform failed with 1 error:
+C:/Users/panap/PycharmProjects/babyScholar/tests/baseline/utf8-integrity.test.ts:42:60: ERROR: Expected ";" but found 
+")"
+  Plugin: vite:esbuild
+  File: C:/Users/panap/PycharmProjects/babyScholar/tests/baseline/utf8-integrity.test.ts:42:60
+  
+  Expected ";" but found ")"
+  40 |  
+  41 |    it('accepts an intentionally supplied, correctly encoded replacement character', async () => {
+  42 |      await expect(read(request(json, encoder.encode('�'))))).resolves.toEqual(expected);
+     |                                                              ^
+  43 |    });
+  44 |  });
+  
+ ❯ failureErrorWithLog node_modules/esbuild/lib/main.js:1752:15
+ ❯ node_modules/esbuild/lib/main.js:1019:50
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:886:9
+ ❯ handleIncomingPacket node_modules/esbuild/lib/main.js:941:12
+ ❯ Socket.readFromStdout node_modules/esbuild/lib/main.js:864:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  153 passed (153)
+   Start at  14:21:01
+   Duration  1.87s (tests 65%, transform 16%, import 13%, worker 6%)
+
+    Isolate  7 workers spawned · ~146ms startup each (spawn + environment, per file)
+             at least ~877ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-development/round-2/tests-1.json

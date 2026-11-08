@@ -1,0 +1,24 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run --reporter=default --reporter=json --outputFile=artifacts/hw2-development/round-2/tests-2.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 22ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 230ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 127ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 31ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 17ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 9ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 4ms
+
+ Test Files  7 passed (7)
+      Tests  163 passed (163)
+   Start at  14:21:13
+   Duration  1.58s (tests 68%, import 15%, transform 10%, worker 6%)
+
+    Isolate  7 workers spawned · ~127ms startup each (spawn + environment, per file)
+             at least ~763ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-development/round-2/tests-2.json

@@ -1,0 +1,317 @@
+{
+  "id": "ebfb1363-98c5-4bef-809e-4da7bcb09d31",
+  "mode": "offline:field-mismatch",
+  "startedAt": "2026-11-08T19:28:12.548Z",
+  "fixture": {
+    "source": "scripts/fixtures/pdf-fixtures.mjs",
+    "license": "CC0-1.0"
+  },
+  "liveProviderRequests": 0,
+  "offlineProviderRequests": 1,
+  "stage": "offline-provider-stopped",
+  "steps": [
+    {
+      "stage": "offline-provider-started",
+      "scenario": "field-mismatch"
+    },
+    {
+      "stage": "migration-started"
+    },
+    {
+      "stage": "owned-process-stopped",
+      "label": "migration",
+      "pid": 118704
+    },
+    {
+      "stage": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "stage": "worker-starting",
+      "localProvider": true,
+      "openAiKeyDisabled": false
+    },
+    {
+      "stage": "worker-started",
+      "pid": 126112,
+      "origin": "http://127.0.0.1:58781",
+      "openAiKeyDisabled": false
+    },
+    {
+      "stage": "upload",
+      "path": "/api/documents",
+      "method": "POST"
+    },
+    {
+      "stage": "extract",
+      "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/extract",
+      "method": "POST"
+    },
+    {
+      "stage": "metadata-post-attempt",
+      "providerMode": "loopback-mock"
+    },
+    {
+      "stage": "metadata-post",
+      "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/metadata",
+      "method": "POST"
+    },
+    {
+      "stage": "metadata-get-after-post",
+      "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/metadata",
+      "method": "GET"
+    },
+    {
+      "stage": "fixture-field-comparison"
+    },
+    {
+      "stage": "cleanup-started",
+      "priorResult": "failed"
+    },
+    {
+      "stage": "owned-process-stopped",
+      "label": "Worker",
+      "pid": 126112
+    },
+    {
+      "stage": "offline-provider-stopped",
+      "requests": 1
+    }
+  ],
+  "diagnostics": {
+    "responses": [
+      {
+        "stage": "upload",
+        "path": "/api/documents",
+        "status": 201,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": null,
+        "created": null,
+        "metadata": null
+      },
+      {
+        "stage": "extract",
+        "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/extract",
+        "status": 201,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": null,
+        "created": true,
+        "metadata": null
+      },
+      {
+        "stage": "metadata-post",
+        "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/metadata",
+        "status": 201,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": null,
+        "created": true,
+        "metadata": {
+          "title": null,
+          "authors": [
+            "Avery Example",
+            "Bao Example"
+          ],
+          "year": 2024,
+          "abstract": "This controlled fixture evaluates source-grounded bibliographic metadata extraction.",
+          "selectedPageNumbers": [
+            1,
+            2
+          ],
+          "sourceExcerptClipped": false,
+          "promptVersion": "document-metadata-v4",
+          "modelPresent": true,
+          "evidenceCounts": {
+            "title": 0,
+            "authors": 0,
+            "year": 0,
+            "abstract": 0
+          }
+        }
+      },
+      {
+        "stage": "metadata-get-after-post",
+        "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/metadata",
+        "status": 200,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": null,
+        "created": null,
+        "metadata": {
+          "title": null,
+          "authors": [
+            "Avery Example",
+            "Bao Example"
+          ],
+          "year": 2024,
+          "abstract": "This controlled fixture evaluates source-grounded bibliographic metadata extraction.",
+          "selectedPageNumbers": [
+            1,
+            2
+          ],
+          "sourceExcerptClipped": false,
+          "promptVersion": "document-metadata-v4",
+          "modelPresent": true,
+          "evidenceCounts": {
+            "title": 0,
+            "authors": 0,
+            "year": 0,
+            "abstract": 0
+          }
+        }
+      }
+    ],
+    "fixtureFields": [
+      {
+        "field": "title",
+        "expected": "Source-Grounded Metadata Fixture",
+        "actual": null,
+        "matches": false
+      },
+      {
+        "field": "authors",
+        "expected": [
+          "Avery Example",
+          "Bao Example"
+        ],
+        "actual": [
+          "Avery Example",
+          "Bao Example"
+        ],
+        "matches": true
+      },
+      {
+        "field": "year",
+        "expected": 2024,
+        "actual": 2024,
+        "matches": true
+      },
+      {
+        "field": "abstract",
+        "expected": "This controlled fixture evaluates source-grounded bibliographic metadata extraction.",
+        "actual": "This controlled fixture evaluates source-grounded bibliographic metadata extraction.",
+        "matches": true
+      },
+      {
+        "field": "sourceSha256",
+        "expected": "897233919e81f6bf4839c0a7d8cce7143e9b5a6ef6fbbb47250af490ff6f152b",
+        "actual": "897233919e81f6bf4839c0a7d8cce7143e9b5a6ef6fbbb47250af490ff6f152b",
+        "matches": true
+      },
+      {
+        "field": "selectedPageNumbers",
+        "expected": [
+          1,
+          2
+        ],
+        "actual": [
+          1,
+          2
+        ],
+        "matches": true
+      },
+      {
+        "field": "sourceExcerptClipped",
+        "expected": false,
+        "actual": false,
+        "matches": true
+      },
+      {
+        "field": "promptVersion",
+        "expected": "document-metadata-v4",
+        "actual": "document-metadata-v4",
+        "matches": true
+      },
+      {
+        "field": "modelPresent",
+        "expected": true,
+        "actual": true,
+        "matches": true
+      },
+      {
+        "field": "titleEvidence",
+        "expected": [],
+        "actual": [],
+        "matches": true
+      },
+      {
+        "field": "authorsEvidence",
+        "expected": [],
+        "actual": [],
+        "matches": true
+      },
+      {
+        "field": "yearEvidence",
+        "expected": [],
+        "actual": [],
+        "matches": true
+      },
+      {
+        "field": "abstractEvidence",
+        "expected": [],
+        "actual": [],
+        "matches": true
+      }
+    ],
+    "cache": null,
+    "persistence": {
+      "postStatus": 201,
+      "postErrorKind": null,
+      "getStatus": 200,
+      "getErrorKind": null,
+      "getMatchesPostMetadata": true
+    },
+    "lastAssertion": {
+      "stage": "fixture-field-comparison",
+      "name": "fixture-field-match:title",
+      "actual": "title",
+      "expected": null
+    },
+    "lastResponse": {
+      "stage": "metadata-get-after-post",
+      "path": "/api/documents/25f37bd6-2aec-4dc3-be70-5e2cf8ebac1f/metadata",
+      "status": 200,
+      "cacheControl": "no-store",
+      "jsonContentType": true,
+      "bodyIsJson": true,
+      "errorKind": null,
+      "created": null,
+      "metadata": {
+        "title": null,
+        "authors": [
+          "Avery Example",
+          "Bao Example"
+        ],
+        "year": 2024,
+        "abstract": "This controlled fixture evaluates source-grounded bibliographic metadata extraction.",
+        "selectedPageNumbers": [
+          1,
+          2
+        ],
+        "sourceExcerptClipped": false,
+        "promptVersion": "document-metadata-v4",
+        "modelPresent": true,
+        "evidenceCounts": {
+          "title": 0,
+          "authors": 0,
+          "year": 0,
+          "abstract": 0
+        }
+      }
+    },
+    "fieldMismatch": "title",
+    "runtimeState": "removed"
+  },
+  "result": "failed",
+  "failure": {
+    "name": "AssertionError",
+    "stage": "fixture-field-comparison"
+  },
+  "completedAt": "2026-11-08T19:28:19.867Z"
+}

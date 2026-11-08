@@ -1,0 +1,3 @@
+src/worker/generation-recovery.ts
+- if (!recoverable) throw error;
++ if (!recoverable && attempt === 2) throw error;

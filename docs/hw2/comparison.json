@@ -1,0 +1,1148 @@
+{
+  "scope": "Same source, denominator, dependency lock, Vitest config, baseline commands, profile workloads and machine. Browser/verifier repairs are separate from unit coverage.",
+  "rounds": [
+    {
+      "label": "initial",
+      "timestamp": "2026-11-08T19:03:28.105Z",
+      "originalRun": "artifacts/baseline/2026-11-08T19-03-28.103Z",
+      "baseCommit": "e2f5c9768aaef353156cbb8249df804383d58da8",
+      "sourceTree": "2b735d17bc59c5e714dee91c837f05ead0a5d30d",
+      "environment": {
+        "node": "v24.11.1",
+        "platform": "win32",
+        "arch": "x64",
+        "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+        "logicalCpus": 32
+      },
+      "configuration": {
+        "vitest.config.ts": "e799e2858d50c2e86aa864e7fef25d06b613285672c82360d9145d6bada361c3",
+        "package.json": "4be6af5b76a07fe2961768f25e9e5da81f1cff7c521f0e8ee3fdf6f9ca4ebaf4",
+        "package-lock.json": "1ef25b167de0b3bc5ec857a5a069ff04c65b3699a0535868ddf0915925ca170c",
+        "scripts/baseline/run.mjs": "a45be31477fa05bd10b1fb74f823b4ceed31a95f69032300e6d966cca8c9e219",
+        "scripts/baseline/profile.mjs": "741da7f3382de0cc11d0c0120dc10cc6820252732a0087a957616a7aef50fc18"
+      },
+      "commands": [
+        {
+          "name": "build",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "build"
+          ]
+        },
+        {
+          "name": "papers",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "papers"
+          ]
+        },
+        {
+          "name": "integrations",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "integrations"
+          ]
+        },
+        {
+          "name": "question-text",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/question-text-check.mjs"
+          ]
+        },
+        {
+          "name": "document-details-timeout",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-details-timeout-check.mjs"
+          ]
+        },
+        {
+          "name": "library",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/library-check.mjs"
+          ]
+        },
+        {
+          "name": "document",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-check.mjs"
+          ]
+        },
+        {
+          "name": "document-delete",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-delete-check.mjs"
+          ]
+        },
+        {
+          "name": "extraction",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/extraction-check.mjs"
+          ]
+        },
+        {
+          "name": "metadata",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/metadata-check.mjs"
+          ]
+        },
+        {
+          "name": "summary",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/summary-check.mjs"
+          ]
+        },
+        {
+          "name": "question",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/question-check.mjs"
+          ]
+        },
+        {
+          "name": "metadata-live-verifier",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/metadata-live-verifier-check.mjs"
+          ]
+        },
+        {
+          "name": "local-reset",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/local-reset-check.mjs"
+          ]
+        },
+        {
+          "name": "frontend-search-browser",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/frontend-search-browser-check.mjs"
+          ]
+        },
+        {
+          "name": "sites-artifact",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/sites-artifact-check.mjs"
+          ]
+        },
+        {
+          "name": "generated-suite-coverage",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "test:coverage"
+          ]
+        },
+        {
+          "name": "profile-prepare",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "checks:prepare"
+          ]
+        },
+        {
+          "name": "profile",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--cpu-prof",
+            "--cpu-prof-dir=<RUN>",
+            "--cpu-prof-name=baseline.cpuprofile",
+            "scripts/baseline/profile.mjs",
+            "<RUN>"
+          ]
+        }
+      ],
+      "tests": 24,
+      "passedStages": 17,
+      "totalStages": 19,
+      "failedStages": [
+        "metadata-live-verifier",
+        "frontend-search-browser"
+      ],
+      "aggregateExitCode": 1,
+      "coverage": {
+        "lines": {
+          "total": 2444,
+          "covered": 86,
+          "skipped": 0,
+          "pct": 3.51
+        },
+        "statements": {
+          "total": 2960,
+          "covered": 91,
+          "skipped": 0,
+          "pct": 3.07
+        },
+        "functions": {
+          "total": 533,
+          "covered": 13,
+          "skipped": 0,
+          "pct": 2.43
+        },
+        "branches": {
+          "total": 2595,
+          "covered": 64,
+          "skipped": 0,
+          "pct": 2.46
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "stages": [
+        {
+          "name": "build",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 9395.472399999999
+        },
+        {
+          "name": "papers",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1511.7451999999994
+        },
+        {
+          "name": "integrations",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1858.3561000000009
+        },
+        {
+          "name": "question-text",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 458.2453999999998
+        },
+        {
+          "name": "document-details-timeout",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 328.2902000000013
+        },
+        {
+          "name": "library",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 24321.7445
+        },
+        {
+          "name": "document",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 24187.622199999998
+        },
+        {
+          "name": "document-delete",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1763.261599999998
+        },
+        {
+          "name": "extraction",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 15139.691400000003
+        },
+        {
+          "name": "metadata",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 14564.141399999993
+        },
+        {
+          "name": "summary",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 40078.5463
+        },
+        {
+          "name": "question",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 48174.546
+        },
+        {
+          "name": "metadata-live-verifier",
+          "status": "failed",
+          "exitCode": 1,
+          "wallMs": 7000.224400000006
+        },
+        {
+          "name": "local-reset",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 18439.408599999995
+        },
+        {
+          "name": "frontend-search-browser",
+          "status": "failed",
+          "exitCode": 1,
+          "wallMs": 103020.562
+        },
+        {
+          "name": "sites-artifact",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 442.71980000002077
+        },
+        {
+          "name": "generated-suite-coverage",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1674.948700000008
+        },
+        {
+          "name": "profile-prepare",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1097.4747000000207
+        },
+        {
+          "name": "profile",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1715.3888999999617
+        }
+      ],
+      "profile": [
+        {
+          "name": "canonicalArxivLink",
+          "iterationsPerBatch": 20000,
+          "millisecondsPerCall": [
+            0.0012397649999999994,
+            0.0007899349999999999,
+            0.0005521099999999998,
+            0.0005312399999999997,
+            0.00071646,
+            0.0007528400000000005,
+            0.0006230249999999998
+          ],
+          "medianMs": 0.00071646,
+          "minMs": 0.0005312399999999997,
+          "maxMs": 0.0012397649999999994
+        },
+        {
+          "name": "selectSummarySource",
+          "iterationsPerBatch": 100,
+          "millisecondsPerCall": [
+            2.2068640000000004,
+            2.117855,
+            2.039652,
+            2.015342999999999,
+            2.0346070000000007,
+            2.115338999999999,
+            2.0958860000000006
+          ],
+          "medianMs": 2.0958860000000006,
+          "minMs": 2.015342999999999,
+          "maxMs": 2.2068640000000004
+        }
+      ],
+      "faultProbes": null
+    },
+    {
+      "label": "round-1",
+      "timestamp": "2026-11-08T19:11:08.391Z",
+      "originalRun": "artifacts/baseline/2026-11-08T19-11-08.389Z",
+      "baseCommit": "e2f5c9768aaef353156cbb8249df804383d58da8",
+      "sourceTree": "2b735d17bc59c5e714dee91c837f05ead0a5d30d",
+      "environment": {
+        "node": "v24.11.1",
+        "platform": "win32",
+        "arch": "x64",
+        "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+        "logicalCpus": 32
+      },
+      "configuration": {
+        "vitest.config.ts": "e799e2858d50c2e86aa864e7fef25d06b613285672c82360d9145d6bada361c3",
+        "package.json": "4be6af5b76a07fe2961768f25e9e5da81f1cff7c521f0e8ee3fdf6f9ca4ebaf4",
+        "package-lock.json": "1ef25b167de0b3bc5ec857a5a069ff04c65b3699a0535868ddf0915925ca170c",
+        "scripts/baseline/run.mjs": "a45be31477fa05bd10b1fb74f823b4ceed31a95f69032300e6d966cca8c9e219",
+        "scripts/baseline/profile.mjs": "741da7f3382de0cc11d0c0120dc10cc6820252732a0087a957616a7aef50fc18"
+      },
+      "commands": [
+        {
+          "name": "build",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "build"
+          ]
+        },
+        {
+          "name": "papers",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "papers"
+          ]
+        },
+        {
+          "name": "integrations",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "integrations"
+          ]
+        },
+        {
+          "name": "question-text",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/question-text-check.mjs"
+          ]
+        },
+        {
+          "name": "document-details-timeout",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-details-timeout-check.mjs"
+          ]
+        },
+        {
+          "name": "library",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/library-check.mjs"
+          ]
+        },
+        {
+          "name": "document",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-check.mjs"
+          ]
+        },
+        {
+          "name": "document-delete",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-delete-check.mjs"
+          ]
+        },
+        {
+          "name": "extraction",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/extraction-check.mjs"
+          ]
+        },
+        {
+          "name": "metadata",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/metadata-check.mjs"
+          ]
+        },
+        {
+          "name": "summary",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/summary-check.mjs"
+          ]
+        },
+        {
+          "name": "question",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/question-check.mjs"
+          ]
+        },
+        {
+          "name": "metadata-live-verifier",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/metadata-live-verifier-check.mjs"
+          ]
+        },
+        {
+          "name": "local-reset",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/local-reset-check.mjs"
+          ]
+        },
+        {
+          "name": "frontend-search-browser",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/frontend-search-browser-check.mjs"
+          ]
+        },
+        {
+          "name": "sites-artifact",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/sites-artifact-check.mjs"
+          ]
+        },
+        {
+          "name": "generated-suite-coverage",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "test:coverage"
+          ]
+        },
+        {
+          "name": "profile-prepare",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "checks:prepare"
+          ]
+        },
+        {
+          "name": "profile",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--cpu-prof",
+            "--cpu-prof-dir=<RUN>",
+            "--cpu-prof-name=baseline.cpuprofile",
+            "scripts/baseline/profile.mjs",
+            "<RUN>"
+          ]
+        }
+      ],
+      "tests": 106,
+      "passedStages": 18,
+      "totalStages": 19,
+      "failedStages": [
+        "frontend-search-browser"
+      ],
+      "aggregateExitCode": 1,
+      "coverage": {
+        "lines": {
+          "total": 2444,
+          "covered": 301,
+          "skipped": 0,
+          "pct": 12.31
+        },
+        "statements": {
+          "total": 2960,
+          "covered": 364,
+          "skipped": 0,
+          "pct": 12.29
+        },
+        "functions": {
+          "total": 533,
+          "covered": 67,
+          "skipped": 0,
+          "pct": 12.57
+        },
+        "branches": {
+          "total": 2595,
+          "covered": 263,
+          "skipped": 0,
+          "pct": 10.13
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "stages": [
+        {
+          "name": "build",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 9553.5851
+        },
+        {
+          "name": "papers",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1572.9560999999994
+        },
+        {
+          "name": "integrations",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1942.8545999999988
+        },
+        {
+          "name": "question-text",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 471.1962000000003
+        },
+        {
+          "name": "document-details-timeout",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 328.509
+        },
+        {
+          "name": "library",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 23128.1223
+        },
+        {
+          "name": "document",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 24358.9329
+        },
+        {
+          "name": "document-delete",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1824.2000000000044
+        },
+        {
+          "name": "extraction",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 15214.765200000009
+        },
+        {
+          "name": "metadata",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 16103.2589
+        },
+        {
+          "name": "summary",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 41570.519000000015
+        },
+        {
+          "name": "question",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 50137.39420000001
+        },
+        {
+          "name": "metadata-live-verifier",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 25574.773600000015
+        },
+        {
+          "name": "local-reset",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 22885.997499999998
+        },
+        {
+          "name": "frontend-search-browser",
+          "status": "failed",
+          "exitCode": 1,
+          "wallMs": 114558.65909999999
+        },
+        {
+          "name": "sites-artifact",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 485.48180000000866
+        },
+        {
+          "name": "generated-suite-coverage",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 2450.1591999999946
+        },
+        {
+          "name": "profile-prepare",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1168.1898999999976
+        },
+        {
+          "name": "profile",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 2034.179599999974
+        }
+      ],
+      "profile": [
+        {
+          "name": "canonicalArxivLink",
+          "iterationsPerBatch": 20000,
+          "millisecondsPerCall": [
+            0.0011014299999999998,
+            0.0008046300000000002,
+            0.0006240100000000006,
+            0.0007467550000000003,
+            0.000722325,
+            0.0006974949999999993,
+            0.0006265299999999996
+          ],
+          "medianMs": 0.000722325,
+          "minMs": 0.0006240100000000006,
+          "maxMs": 0.0011014299999999998
+        },
+        {
+          "name": "selectSummarySource",
+          "iterationsPerBatch": 100,
+          "millisecondsPerCall": [
+            2.2596950000000002,
+            2.2833250000000005,
+            2.487174,
+            2.7645230000000005,
+            2.897867000000001,
+            2.7404179999999996,
+            2.2527949999999985
+          ],
+          "medianMs": 2.487174,
+          "minMs": 2.2527949999999985,
+          "maxMs": 2.897867000000001
+        }
+      ],
+      "faultProbes": [
+        {
+          "name": "control",
+          "outcome": "passed",
+          "failedTests": 0
+        },
+        {
+          "name": "upload-rejects-exact-limit",
+          "outcome": "detected",
+          "failedTests": 1
+        },
+        {
+          "name": "question-lossy-utf8",
+          "outcome": "survived",
+          "failedTests": 0
+        },
+        {
+          "name": "generation-retries-network-failure",
+          "outcome": "survived",
+          "failedTests": 0
+        },
+        {
+          "name": "summary-source-budget-plus-one",
+          "outcome": "survived",
+          "failedTests": 0
+        },
+        {
+          "name": "summary-demands-envelope",
+          "outcome": "detected",
+          "failedTests": 5
+        }
+      ]
+    },
+    {
+      "label": "round-2",
+      "timestamp": "2026-11-08T19:24:56.462Z",
+      "originalRun": "artifacts/baseline/2026-11-08T19-24-56.461Z",
+      "baseCommit": "dd276429bf24cd01e672ddd383b1cd40e6d1b26a",
+      "sourceTree": "2b735d17bc59c5e714dee91c837f05ead0a5d30d",
+      "environment": {
+        "node": "v24.11.1",
+        "platform": "win32",
+        "arch": "x64",
+        "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+        "logicalCpus": 32
+      },
+      "configuration": {
+        "vitest.config.ts": "e799e2858d50c2e86aa864e7fef25d06b613285672c82360d9145d6bada361c3",
+        "package.json": "4be6af5b76a07fe2961768f25e9e5da81f1cff7c521f0e8ee3fdf6f9ca4ebaf4",
+        "package-lock.json": "1ef25b167de0b3bc5ec857a5a069ff04c65b3699a0535868ddf0915925ca170c",
+        "scripts/baseline/run.mjs": "a45be31477fa05bd10b1fb74f823b4ceed31a95f69032300e6d966cca8c9e219",
+        "scripts/baseline/profile.mjs": "741da7f3382de0cc11d0c0120dc10cc6820252732a0087a957616a7aef50fc18"
+      },
+      "commands": [
+        {
+          "name": "build",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "build"
+          ]
+        },
+        {
+          "name": "papers",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "papers"
+          ]
+        },
+        {
+          "name": "integrations",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "integrations"
+          ]
+        },
+        {
+          "name": "question-text",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/question-text-check.mjs"
+          ]
+        },
+        {
+          "name": "document-details-timeout",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-details-timeout-check.mjs"
+          ]
+        },
+        {
+          "name": "library",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/library-check.mjs"
+          ]
+        },
+        {
+          "name": "document",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-check.mjs"
+          ]
+        },
+        {
+          "name": "document-delete",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/document-delete-check.mjs"
+          ]
+        },
+        {
+          "name": "extraction",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/extraction-check.mjs"
+          ]
+        },
+        {
+          "name": "metadata",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/metadata-check.mjs"
+          ]
+        },
+        {
+          "name": "summary",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/summary-check.mjs"
+          ]
+        },
+        {
+          "name": "question",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/question-check.mjs"
+          ]
+        },
+        {
+          "name": "metadata-live-verifier",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/metadata-live-verifier-check.mjs"
+          ]
+        },
+        {
+          "name": "local-reset",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/local-reset-check.mjs"
+          ]
+        },
+        {
+          "name": "frontend-search-browser",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/frontend-search-browser-check.mjs"
+          ]
+        },
+        {
+          "name": "sites-artifact",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/sites-artifact-check.mjs"
+          ]
+        },
+        {
+          "name": "generated-suite-coverage",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "test:coverage"
+          ]
+        },
+        {
+          "name": "profile-prepare",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "checks:prepare"
+          ]
+        },
+        {
+          "name": "profile",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--cpu-prof",
+            "--cpu-prof-dir=<RUN>",
+            "--cpu-prof-name=baseline.cpuprofile",
+            "scripts/baseline/profile.mjs",
+            "<RUN>"
+          ]
+        }
+      ],
+      "tests": 163,
+      "passedStages": 18,
+      "totalStages": 19,
+      "failedStages": [
+        "frontend-search-browser"
+      ],
+      "aggregateExitCode": 1,
+      "coverage": {
+        "lines": {
+          "total": 2444,
+          "covered": 394,
+          "skipped": 0,
+          "pct": 16.12
+        },
+        "statements": {
+          "total": 2960,
+          "covered": 470,
+          "skipped": 0,
+          "pct": 15.87
+        },
+        "functions": {
+          "total": 533,
+          "covered": 82,
+          "skipped": 0,
+          "pct": 15.38
+        },
+        "branches": {
+          "total": 2595,
+          "covered": 317,
+          "skipped": 0,
+          "pct": 12.21
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      },
+      "stages": [
+        {
+          "name": "build",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 8284.32
+        },
+        {
+          "name": "papers",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1674.4002999999993
+        },
+        {
+          "name": "integrations",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1923.0937000000013
+        },
+        {
+          "name": "question-text",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 472.8122999999996
+        },
+        {
+          "name": "document-details-timeout",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 337.6287999999986
+        },
+        {
+          "name": "library",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 24631.7053
+        },
+        {
+          "name": "document",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 23939.820699999997
+        },
+        {
+          "name": "document-delete",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1846.6232999999993
+        },
+        {
+          "name": "extraction",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 15000.046799999996
+        },
+        {
+          "name": "metadata",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 16241.13840000001
+        },
+        {
+          "name": "summary",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 42012.7053
+        },
+        {
+          "name": "question",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 49433.960699999996
+        },
+        {
+          "name": "metadata-live-verifier",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 25763.2935
+        },
+        {
+          "name": "local-reset",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 17542.7396
+        },
+        {
+          "name": "frontend-search-browser",
+          "status": "failed",
+          "exitCode": 1,
+          "wallMs": 120265.66560000004
+        },
+        {
+          "name": "sites-artifact",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 479.2739999999758
+        },
+        {
+          "name": "generated-suite-coverage",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 3094.7582000000402
+        },
+        {
+          "name": "profile-prepare",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1170.5945000000065
+        },
+        {
+          "name": "profile",
+          "status": "passed",
+          "exitCode": 0,
+          "wallMs": 1791.597699999984
+        }
+      ],
+      "profile": [
+        {
+          "name": "canonicalArxivLink",
+          "iterationsPerBatch": 20000,
+          "millisecondsPerCall": [
+            0.0009368350000000003,
+            0.0009583449999999999,
+            0.000786345,
+            0.000759675,
+            0.0006829100000000011,
+            0.0006070449999999994,
+            0.0006016199999999998
+          ],
+          "medianMs": 0.000759675,
+          "minMs": 0.0006016199999999998,
+          "maxMs": 0.0009583449999999999
+        },
+        {
+          "name": "selectSummarySource",
+          "iterationsPerBatch": 100,
+          "millisecondsPerCall": [
+            2.2036510000000002,
+            2.2638559999999996,
+            2.1647479999999995,
+            2.2457659999999997,
+            2.1648040000000015,
+            2.113707999999999,
+            2.028688
+          ],
+          "medianMs": 2.1648040000000015,
+          "minMs": 2.028688,
+          "maxMs": 2.2638559999999996
+        }
+      ],
+      "faultProbes": [
+        {
+          "name": "control",
+          "outcome": "passed",
+          "failedTests": 0
+        },
+        {
+          "name": "upload-rejects-exact-limit",
+          "outcome": "detected",
+          "failedTests": 1
+        },
+        {
+          "name": "question-lossy-utf8",
+          "outcome": "detected",
+          "failedTests": 4
+        },
+        {
+          "name": "generation-retries-network-failure",
+          "outcome": "detected",
+          "failedTests": 13
+        },
+        {
+          "name": "summary-source-budget-plus-one",
+          "outcome": "detected",
+          "failedTests": 5
+        },
+        {
+          "name": "summary-demands-envelope",
+          "outcome": "detected",
+          "failedTests": 5
+        }
+      ]
+    }
+  ]
+}

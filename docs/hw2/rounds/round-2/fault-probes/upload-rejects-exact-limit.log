@@ -1,0 +1,77 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-2-2026-11-08T19-31-23.583Z/upload-rejects-exact-limit
+
+ ❯ tests/baseline/request-streams.test.ts (34 tests | 1 failed) 74ms
+   ✓ library request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 17ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 8ms
+     ✓ maps a broken transport to invalid_request and releases the reader 1ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 3ms
+   ✓ question request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 1ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 1ms
+     ✓ maps a broken transport to invalid_request and releases the reader 0ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 3ms
+   ✓ upload request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 1ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 1ms
+     ✓ maps a broken transport to invalid_request and releases the reader 0ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 1ms
+   ✓ library JSON decoding (round 1) (5)
+     ✓ decodes multibyte code points split across single-byte chunks and clears the timer 2ms
+     ✓ accepts exactly the wrapper byte budget, independent of Content-Length 2ms
+     ✓ rejects invalid JSON with an explicit client error 0ms
+     ✓ rejects invalid UTF-8 with an explicit client error 0ms
+     ✓ rejects incomplete UTF-8 with an explicit client error 0ms
+   ✓ question JSON decoding (round 1) (5)
+     ✓ decodes multibyte code points split across single-byte chunks and clears the timer 1ms
+     ✓ accepts exactly the wrapper byte budget, independent of Content-Length 0ms
+     ✓ rejects invalid JSON with an explicit client error 0ms
+     ✓ rejects invalid UTF-8 with an explicit client error 0ms
+     ✓ rejects incomplete UTF-8 with an explicit client error 0ms
+   ❯ PDF multipart contract (round 1) (12)
+     ✓ retains original bytes and a known SHA-256; MIME and extension are not the oracle 5ms
+     ✓ rejects no file 1ms
+     ✓ rejects text field instead of a file 1ms
+     ✓ rejects duplicate files 1ms
+     ✓ rejects additional field 1ms
+     ✓ rejects empty file 1ms
+     ✓ rejects wrong signature with PDF MIME 1ms
+     ✓ rejects short signature 1ms
+     ✓ rejects 256 code point name 1ms
+     ✓ accepts 255 Unicode code points, rather than counting UTF-16 units 1ms
+     × accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body 17ms
+     ✓ rejects an unparseable multipart envelope 1ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 18ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 14ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 221ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 28ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 7ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 29ms
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  1 failed | 162 passed (163)
+   Start at  14:31:26
+   Duration  1.77s (tests 52%, transform 26%, import 16%, worker 5%)
+
+    Isolate  7 workers spawned · ~138ms startup each (spawn + environment, per file)
+             at least ~825ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-2-2026-11-08T19-31-23.583Z/upload-rejects-exact-limit.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/request-streams.test.ts > PDF multipart contract (round 1) > accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body
+DocumentError: The PDF file must not exceed 10485760 bytes.
+ ❯ tooLarge src/worker/document-validation.ts:29:9
+     27|
+     28| function tooLarge(message: string): never {
+     29|   throw new DocumentError("body_too_large", 413, message);
+       |         ^
+     30| }
+     31|
+ ❯ readUploadedDocument src/worker/document-validation.ts:134:5
+ ❯ tests/baseline/request-streams.test.ts:146:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

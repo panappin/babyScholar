@@ -1,0 +1,135 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-2-2026-11-08T19-31-23.583Z/summary-demands-envelope
+
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 103ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 20ms
+ ❯ tests/baseline/output-validation.test.ts (48 tests | 5 failed) 21ms
+   ✓ metadata output contract (round 1) (17)
+     ✓ allows nullable bibliographic fields without citations 2ms
+     ✓ retains supplied fields, filters warnings, and discards unverified new quotes 0ms
+     ✓ rejects invalid metadata case 0 1ms
+     ✓ rejects invalid metadata case 1 0ms
+     ✓ rejects invalid metadata case 2 0ms
+     ✓ rejects invalid metadata case 3 0ms
+     ✓ rejects invalid metadata case 4 0ms
+     ✓ rejects invalid metadata case 5 0ms
+     ✓ rejects invalid metadata case 6 0ms
+     ✓ rejects invalid metadata case 7 0ms
+     ✓ rejects invalid metadata case 8 0ms
+     ✓ rejects invalid metadata case 9 0ms
+     ✓ rejects invalid metadata case 10 0ms
+     ✓ rejects invalid metadata case 11 0ms
+     ✓ rejects invalid metadata case 12 0ms
+     ✓ rejects invalid metadata case 13 0ms
+     ✓ accepts exact UTF-8 field limits and bounded author count 1ms
+   ❯ summary output contract (round 1) (16)
+     × accepts plain prose without a JSON envelope or evidence 4ms
+     × decodes a legacy envelope, preserves text and warnings, and omits unverified quotes 0ms
+     × keeps non-envelope text as prose: {unfinished prose 0ms
+     × keeps non-envelope text as prose: {"note":"ordinary text, no overview"} 0ms
+     × accepts exactly 12000 UTF-8 bytes and rejects one byte more 0ms
+     ✓ enforces the aggregate prose budget across sections 0ms
+     ✓ rejects invalid summary case 0 0ms
+     ✓ rejects invalid summary case 1 0ms
+     ✓ rejects invalid summary case 2 0ms
+     ✓ rejects invalid summary case 3 0ms
+     ✓ rejects invalid summary case 4 0ms
+     ✓ rejects invalid summary case 5 0ms
+     ✓ rejects invalid summary case 6 0ms
+     ✓ rejects invalid summary case 7 0ms
+     ✓ rejects invalid summary case 8 0ms
+     ✓ rejects invalid summary case 9 0ms
+   ✓ question answer contract (round 1) (15)
+     ✓ accepts ordinary answers and does not impose a hard 300-word validation rule 2ms
+     ✓ accepts a legacy answer envelope and strips even malformed optional evidence 0ms
+     ✓ preserves a usable insufficient-source explanation 0ms
+     ✓ accepts exactly 16000 UTF-8 bytes and rejects one extra byte 1ms
+     ✓ counts separators in the combined answer budget 0ms
+     ✓ rejects unusable answer case 0 1ms
+     ✓ rejects unusable answer case 1 0ms
+     ✓ rejects unusable answer case 2 0ms
+     ✓ rejects unusable answer case 3 0ms
+     ✓ rejects unusable answer case 4 0ms
+     ✓ rejects unusable answer case 5 0ms
+     ✓ rejects unusable answer case 6 0ms
+     ✓ rejects unusable answer case 7 0ms
+     ✓ rejects unusable answer case 8 0ms
+     ✓ rejects unusable answer case 9 0ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 232ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 25ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 28ms
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  5 failed | 158 passed (163)
+   Start at  14:31:35
+   Duration  1.70s (tests 58%, transform 23%, import 14%, worker 5%)
+
+    Isolate  7 workers spawned · ~124ms startup each (spawn + environment, per file)
+             at least ~746ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-2-2026-11-08T19-31-23.583Z/summary-demands-envelope.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > accepts plain prose without a JSON envelope or evidence
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:50:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > decodes a legacy envelope, preserves text and warnings, and omits unverified quotes
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:58:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > keeps non-envelope text as prose: {unfinished prose
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > keeps non-envelope text as prose: {"note":"ordinary text, no overview"}
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:64:59
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > accepts exactly 12000 UTF-8 bytes and rejects one byte more
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:68:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+

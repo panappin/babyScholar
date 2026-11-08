@@ -1,0 +1,3 @@
+src/worker/summary-source.ts
+- let remaining = SUMMARY_MAX_TEXT_BYTES;
++ let remaining = SUMMARY_MAX_TEXT_BYTES + 1;
