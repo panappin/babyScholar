@@ -1,0 +1,80 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/arxiv-shared-author-array
+
+ ❯ tests/baseline/arxiv-service.test.ts (37 tests | 1 failed) 53ms
+   ✓ arXiv public service: independent Atom and query oracles (23)
+     ✓ returns ordered authors, first-submission year, normalized text and canonical links 24ms
+     ✓ treats field syntax, quotes and operators as plain text terms 1ms
+     ✓ rejects invalid query null before transport 1ms
+     ✓ rejects invalid query "" before transport 0ms
+     ✓ rejects invalid query " \t\n " before transport 1ms
+     ✓ rejects invalid query "?!_*" before transport 0ms
+     ✓ rejects invalid query "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" before transport 0ms
+     ✓ counts Unicode code points at the inclusive 200-character limit 1ms
+     ✓ reads prefixed Atom, CDATA and numeric entities without requiring optional metadata 1ms
+     ✓ accepts an empty Atom feed as a successful empty search 1ms
+     ✓ rejects empty body with a safe public upstream failure 1ms
+     ✓ rejects DTD with a safe public upstream failure 0ms
+     ✓ rejects entity declaration with a safe public upstream failure 0ms
+     ✓ rejects outside-root text with a safe public upstream failure 0ms
+     ✓ rejects outside-root CDATA with a safe public upstream failure 0ms
+     ✓ rejects mismatched nesting with a safe public upstream failure 0ms
+     ✓ rejects unclosed root with a safe public upstream failure 0ms
+     ✓ rejects multiple roots with a safe public upstream failure 0ms
+     ✓ rejects wrong root with a safe public upstream failure 0ms
+     ✓ rejects declaration with a safe public upstream failure 0ms
+     ✓ rejects missing identifier with a safe public upstream failure 0ms
+     ✓ rejects invalid character entity with a safe public upstream failure 0ms
+     ✓ rejects Atom error feed with a safe public upstream failure 0ms
+   ❯ arXiv cache, coalescing and queue recovery with injected time (5)
+     × coalesces equivalent expressions but preserves each caller query and independent records 6ms
+     ✓ uses cache before expiry and refetches at the exact TTL boundary 1ms
+     ✓ starts TTL when a response completes, so time spent waiting does not consume it 1ms
+     ✓ evicts the oldest inserted entry at capacity while keeping newer cached results 1ms
+     ✓ does not cache failures or poison the serialized queue, and respects injected spacing 1ms
+   ✓ arXiv transport bounds and timeout classification (9)
+     ✓ maps HTTP 429 to an upstream failure without leaking response text 0ms
+     ✓ maps HTTP 500 to an upstream failure without leaking response text 0ms
+     ✓ maps HTTP 503 to an upstream failure without leaking response text 0ms
+     ✓ accepts the exact UTF-8 byte budget even when chunks split a multibyte character 1ms
+     ✓ rejects one-byte overflow despite a false low Content-Length and cancels the stream 1ms
+     ✓ rejects declared oversized content before trying to read a stalled body 0ms
+     ✓ times out stalled headers and recovers on the next explicit search 3ms
+     ✓ times out stalled body and recovers on the next explicit search 1ms
+     ✓ keeps probe requirements distinct from empty search results 1ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  17:32:48
+   Duration  284ms (transform 47%, tests 37%, import 13%, worker 3%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/arxiv-shared-author-array.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/arxiv-service.test.ts > arXiv cache, coalescing and queue recovery with injected time > coalesces equivalent expressions but preserves each caller query and independent records
+AssertionError: expected { id: '2401.01234', …(6) } to match object { title: 'Café & learning', …(1) }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "authors": [
+      "Ada Author",
+      "Bea Researcher",
++     "caller author",
+    ],
+    "title": "Café & learning",
+  }
+
+ ❯ tests/baseline/arxiv-service.test.ts:102:25
+    100|     a.papers.push({ ...a.papers[0] });
+    101|     expect(b.papers).toHaveLength(1);
+    102|     expect(b.papers[0]).toMatchObject({ title: 'Café & learning', auth…
+       |                         ^
+    103|     const cached = await search('graph learning');
+    104|     expect(cached.papers).toEqual(b.papers);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

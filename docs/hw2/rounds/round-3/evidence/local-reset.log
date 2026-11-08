@@ -1,0 +1,2 @@
+Stopped only the verified project dev session.
+{"result":"passed","steps":["running-server-and-failed-backup-stop-before-migration","backup-preserves-record-and-fresh-isolated-migrations-pass","windows-actual-worker-vite-storage-startup-and-owned-tree-cleanup-verified","state-rename-and-migrations-after-owned-runtime-shutdown-passed"],"liveProviderRequests":0,"evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\local-reset-check\\1e9d7957-2304-43d2-8364-f216685c147d\\result.json"}

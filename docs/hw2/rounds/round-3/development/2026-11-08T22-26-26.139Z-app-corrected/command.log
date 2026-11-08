@@ -1,0 +1,35 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/app-workflows.test.tsx tests/baseline/arxiv-service.test.ts --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T22-26-26.139Z-app-corrected\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ✓ tests/baseline/app-workflows.test.tsx (21 tests) 7409ms
+   ✓ Search and library observable workflows (21)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 525ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 407ms
+     ✓ handles application failure with useful feedback and no fabricated result 332ms
+     ✓ handles malformed success with useful feedback and no fabricated result 367ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 378ms
+     ✓ handles network failure with useful feedback and no fabricated result 373ms
+     ✓ retains the authoritative duplicate record when saved and reopened 548ms
+     ✓ recognizes a previously saved base ID when search returns another version 347ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 510ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 461ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 497ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 445ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 488ms
+     ✓ does not let an older library read erase a successful save 483ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 622ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 42ms
+
+ Test Files  2 passed (2)
+      Tests  58 passed (58)
+   Start at  17:26:27
+   Duration  9.54s (tests 81%, environment 13%, import 5%, transform 1%)
+
+    Isolate  2 workers spawned · ~731ms startup each (spawn + environment, per file)
+             at least ~731ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T22-26-26.139Z-app-corrected/test-results.json

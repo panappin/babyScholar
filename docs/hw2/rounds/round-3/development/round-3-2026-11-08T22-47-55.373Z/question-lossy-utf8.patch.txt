@@ -1,0 +1,3 @@
+src/worker/question-request.ts
+- fatal: true, ignoreBOM: false
++ fatal: false, ignoreBOM: false

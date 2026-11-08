@@ -1,0 +1,22 @@
+{
+  "label": "workflow-faults-final",
+  "startedAt": "2026-11-08T22:51:54.476Z",
+  "timeoutMs": 600000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "scripts/baseline/workflow-fault-probes.mjs",
+    "refined"
+  ],
+  "baseCommit": "2c83268c424699ed6818c5b5b2672e9ebd3bafbb",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "0ea6df465799f6defbb240b16b0e8abab7c906d8",
+  "workingTree": "M scripts/baseline/archive-workflows.mjs\n?? babyScholar-phase-0b2-hosting-changes.zip\n?? babyScholar-phase-0b2-hosting-changes/\n?? docs/hw2/rounds/round-3-preflight/\n?? docs/hw2/rounds/round-3/development-notes.md\n?? docs/hw2/rounds/round-3/development/\n?? docs/hw2/rounds/round-3/instructions.md\n?? docs/hw2/rounds/round-3/prior-report.md\n?? docs/hw2/rounds/round-3/session.json\n?? docs/hw2/rounds/round-3/user-request.txt\n?? scripts/baseline/compare-workflows.mjs\n?? scripts/baseline/render-report.mjs",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-08T22-51-54.396Z-workflow-faults-final",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-11-08T22:53:15.149Z"
+}

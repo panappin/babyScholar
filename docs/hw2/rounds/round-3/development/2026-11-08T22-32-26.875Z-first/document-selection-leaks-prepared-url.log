@@ -1,0 +1,67 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/document-selection-leaks-prepared-url
+
+ ❯ tests/baseline/document-workspace.test.tsx (35 tests | 1 failed) 7076ms
+   ✓ PDF list and stored detail reads (11)
+     ✓ shows loading, then empty state without performing generation 142ms
+     ✓ retains listed documents after a malformed reload 117ms
+     ✓ retains listed documents after a application error reload 82ms
+     ✓ reopens saved text, metadata, summary and answer using read-only requests; quotes are optional 162ms
+     ✓ keeps unknown metadata explicit and older optional quotes readable 155ms
+     ✓ ignores late detail responses from the previous selection even if transport ignores abort 264ms
+     ✓ rejects saved summary belonging to another document 88ms
+     ✓ rejects saved questions belonging to another document 93ms
+     ✓ reports malformed text and recovers through explicit detail reads 162ms
+     ✓ reports malformed metadata and recovers through explicit detail reads 167ms
+     ✓ bounds a stalled detail read and provides a read-only retry action 53ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ generates one summary after an explicit action without requiring metadata or citations 188ms
+     ✓ reconciles summary lost response without another POST 168ms
+     ✓ reconciles summary malformed success without another POST 171ms
+     ✓ reconciles summary wrong document without another POST 158ms
+     ✓ retains a saved summary if a reload fails, without generating again 139ms
+     ✓ handles summary already-in-progress by waiting for an explicit GET reload 227ms
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 588ms
+     ✓ rejects invalid question "" before transport 165ms
+     ✓ rejects invalid question " untrimmed " before transport 139ms
+     ✓ rejects invalid question "🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪🧪x" before transport 171ms
+     ✓ accepts an exact 2 KiB Unicode question and renders an explicit insufficient-source answer 159ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 503ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 552ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 589ms
+   ❯ Upload, download and deletion intent (10)
+     ✓ rejects a missing upload before transport 92ms
+     ✓ rejects a empty upload before transport 139ms
+     ✓ rejects a too large upload before transport 154ms
+     ✓ uploads an exact-limit file, processes missing text and metadata once, and leaves summary/questions explicit 165ms
+     ✓ resumes only missing metadata without reuploading or re-extracting the document 163ms
+     ✓ leaves an interrupted upload uncertain and does not repeat it 145ms
+     × prepares a PDF with a safe filename and revokes its link on selection change and unmount 258ms
+     ✓ expires a prepared download after one minute 103ms
+     ✓ rejects a non-PDF download while preserving a usable fallback 162ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 289ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 34 passed (35)
+   Start at  17:33:18
+   Duration  8.86s (tests 81%, environment 13%, import 4%, transform 2%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/document-selection-leaks-prepared-url.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/document-workspace.test.tsx > Upload, download and deletion intent > prepares a PDF with a safe filename and revokes its link on selection change and unmount
+AssertionError: expected "vi.fn()" to be called with arguments: [ 'blob:fixture-one' ]
+
+Number of calls: 0
+
+ ❯ tests/baseline/document-workspace.test.tsx:323:20
+    321|     expect(screen.getByRole('link', { name: 'Open original PDF in a ne…
+    322|     await select(user, secondDocument.filename);
+    323|     expect(revoke).toHaveBeenCalledWith('blob:fixture-one');
+       |                    ^
+    324|     expect(screen.queryByRole('link', { name: 'Download prepared PDF' …
+    325|     await user.click(screen.getByRole('button', { name: 'Prepare origi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

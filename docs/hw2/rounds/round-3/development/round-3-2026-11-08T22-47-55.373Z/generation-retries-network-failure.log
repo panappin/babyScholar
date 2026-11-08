@@ -1,0 +1,125 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-3-2026-11-08T22-47-55.373Z/generation-retries-network-failure
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 8911ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 683ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 566ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 630ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 578ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 372ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 348ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 8042ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 557ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 422ms
+     ✓ handles application failure with useful feedback and no fabricated result 368ms
+     ✓ handles malformed success with useful feedback and no fabricated result 331ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 359ms
+     ✓ handles network failure with useful feedback and no fabricated result 364ms
+     ✓ retains the authoritative duplicate record when saved and reopened 558ms
+     ✓ recognizes a previously saved base ID when search returns another version 356ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 497ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 496ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 502ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 539ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 467ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 398ms
+     ✓ does not let an older library read erase a successful save 456ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 636ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 50ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 105ms
+ ❯ tests/baseline/generation-recovery.test.ts (27 tests | 13 failed) 17ms
+   ❯ generation recovery and ownership (round 2) (27)
+     ✓ validates one successful response and supplies the default 25-second budget 3ms
+     ✓ corrects one invalid metadata output within the same budget 1ms
+     ✓ corrects one invalid summary output within the same budget 0ms
+     ✓ corrects one invalid question output within the same budget 0ms
+     ✓ corrects malformed successful provider data (status undefined) 0ms
+     ✓ corrects malformed successful provider data (status 200) 0ms
+     × never retries authentication 3ms
+     × never retries quota_or_rate_limit 1ms
+     × never retries model_access 1ms
+     × never retries network_failure 0ms
+     × never retries timeout 0ms
+     × never retries upstream_error 0ms
+     × never retries refusal 0ms
+     × never retries incomplete_response 0ms
+     × never retries missing_configuration 0ms
+     × does not retry malformed upstream HTTP failures (400) 1ms
+     × does not retry malformed upstream HTTP failures (503) 0ms
+     × does not misclassify an unrelated error as a summary correction 0ms
+     × does not misclassify an unrelated error as a summary correction 0ms
+     ✓ stops after two invalid metadata attempts without echoing provider content 1ms
+     ✓ stops after two invalid summary attempts without echoing provider content 0ms
+     ✓ stops after two invalid question attempts without echoing provider content 0ms
+     ✓ does not request generation if ownership is already lost 0ms
+     ✓ rechecks ownership before the corrective attempt 0ms
+     ✓ includes ownership-check time in the overall budget 0ms
+     ✓ rejects a valid response arriving at the deadline 0ms
+     ✓ does not grant a fresh budget after a recoverable failure uses the deadline 0ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 10ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 234ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 26ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 27ms
+
+ Test Files  1 failed | 9 passed (10)
+      Tests  13 failed | 247 passed (260)
+   Start at  17:49:09
+   Duration  22.69s (tests 82%, environment 11%, import 5%, transform 2%)
+
+    Isolate  10 workers spawned · ~363ms startup each (spawn + environment, per file)
+             at least ~3.27s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-3-2026-11-08T22-47-55.373Z/generation-retries-network-failure.tests.json
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries authentication
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries quota_or_rate_limit
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries model_access
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries network_failure
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries timeout
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries upstream_error
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries refusal
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries incomplete_response
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries missing_configuration
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/generation-recovery.test.ts:64:21
+     62|     const validate = vi.fn();
+     63|     await expect(generateWithRecovery('question', request, validate, a…
+     64|     expect(request).toHaveBeenCalledOnce();
+       |                     ^
+     65|     expect(validate).not.toHaveBeenCalled();
+     66|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not retry malformed upstream HTTP failures (400)
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not retry malformed upstream HTTP failures (503)
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/generation-recovery.test.ts:72:21
+     70|     const request = vi.fn().mockRejectedValue(failure);
+     71|     await expect(generateWithRecovery('metadata', request, value => va…
+     72|     expect(request).toHaveBeenCalledOnce();
+       |                     ^
+     73|   });
+     74|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not misclassify an unrelated error as a summary correction
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not misclassify an unrelated error as a summary correction
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/generation-recovery.test.ts:79:21
+     77|     const request = vi.fn().mockRejectedValue(failure);
+     78|     await expect(generateWithRecovery('summary', request, value => val…
+     79|     expect(request).toHaveBeenCalledOnce();
+       |                     ^
+     80|   });
+     81|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+

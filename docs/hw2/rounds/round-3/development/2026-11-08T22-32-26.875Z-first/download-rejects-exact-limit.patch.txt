@@ -1,0 +1,3 @@
+src/DocumentWorkspace.tsx
+- if (byteCount > MAX_PDF_BYTES)
++ if (byteCount >= MAX_PDF_BYTES)

@@ -1,0 +1,151 @@
+{
+  "mode": "control",
+  "startedAt": "2026-11-08T22:42:39.989Z",
+  "results": [
+    {
+      "pass": 0,
+      "results": [
+        {
+          "path": "/",
+          "status": 200,
+          "bytes": 692,
+          "wallMs": 668.9792
+        },
+        {
+          "path": "/@vite/client",
+          "status": 200,
+          "bytes": 179014,
+          "wallMs": 667.9775999999999
+        },
+        {
+          "path": "/@react-refresh",
+          "status": 200,
+          "bytes": 111894,
+          "wallMs": 488.60630000000003
+        },
+        {
+          "path": "/src/main.tsx",
+          "status": 200,
+          "bytes": 2330,
+          "wallMs": 684.2506
+        },
+        {
+          "path": "/src/App.tsx",
+          "status": 200,
+          "bytes": 115219,
+          "wallMs": 716.827
+        },
+        {
+          "path": "/src/DocumentWorkspace.tsx",
+          "status": 200,
+          "bytes": 299649,
+          "wallMs": 723.9084
+        },
+        {
+          "path": "/api/library/papers",
+          "status": 200,
+          "bytes": 27,
+          "wallMs": 508.8002
+        }
+      ]
+    },
+    {
+      "pass": 1,
+      "results": [
+        {
+          "path": "/",
+          "status": 200,
+          "bytes": 692,
+          "wallMs": 139.64419999999996
+        },
+        {
+          "path": "/@vite/client",
+          "status": 200,
+          "bytes": 179014,
+          "wallMs": 81.2226999999998
+        },
+        {
+          "path": "/@react-refresh",
+          "status": 200,
+          "bytes": 111894,
+          "wallMs": 80.86410000000001
+        },
+        {
+          "path": "/src/main.tsx",
+          "status": 200,
+          "bytes": 2330,
+          "wallMs": 81.28780000000006
+        },
+        {
+          "path": "/src/App.tsx",
+          "status": 200,
+          "bytes": 115219,
+          "wallMs": 81.87980000000016
+        },
+        {
+          "path": "/src/DocumentWorkspace.tsx",
+          "status": 200,
+          "bytes": 299649,
+          "wallMs": 83.48450000000003
+        },
+        {
+          "path": "/api/library/papers",
+          "status": 200,
+          "bytes": 27,
+          "wallMs": 115.34550000000013
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "results": [
+        {
+          "path": "/",
+          "status": 200,
+          "bytes": 692,
+          "wallMs": 69.89830000000006
+        },
+        {
+          "path": "/@vite/client",
+          "status": 200,
+          "bytes": 179014,
+          "wallMs": 5.819899999999961
+        },
+        {
+          "path": "/@react-refresh",
+          "status": 200,
+          "bytes": 111894,
+          "wallMs": 7.595700000000079
+        },
+        {
+          "path": "/src/main.tsx",
+          "status": 200,
+          "bytes": 2330,
+          "wallMs": 9.807299999999941
+        },
+        {
+          "path": "/src/App.tsx",
+          "status": 200,
+          "bytes": 115219,
+          "wallMs": 10.825500000000147
+        },
+        {
+          "path": "/src/DocumentWorkspace.tsx",
+          "status": 200,
+          "bytes": 299649,
+          "wallMs": 12.938799999999901
+        },
+        {
+          "path": "/api/library/papers",
+          "status": 200,
+          "bytes": 27,
+          "wallMs": 16.223700000000008
+        }
+      ]
+    }
+  ],
+  "result": "passed",
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T22:42:41.650Z",
+  "viteOutput": "\n  VITE v7.3.7  ready in 289 ms\n\n  ➜  Local:   http://127.0.0.1:62786/\n"
+}

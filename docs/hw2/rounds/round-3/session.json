@@ -1,0 +1,9 @@
+{
+  "startUtc": "2026-11-08T22:15:29Z",
+  "timezone": "America/Indianapolis",
+  "ceilingUtc": "2026-11-09T03:15:29Z",
+  "beginFinalizationByUtc": "2026-11-09T02:30:29Z",
+  "baselineCommit": "d66051c8ec08cc4f0daadeadae8cc3e8ab32b835",
+  "note": "Five hours is a ceiling, not a target. Preserve at least the final 45 minutes for reporting and publication. Finalization began with more than four hours remaining; the ceiling was tracked using the UTC clock.",
+  "finalizationStartedAt": "2026-11-08T22:47:25Z"
+}

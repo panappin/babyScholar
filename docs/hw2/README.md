@@ -1,14 +1,17 @@
 # HW2 baseline and guided test improvements
 
-The initial assessment and both guided improvement rounds are retained here.
-Application source is unchanged. Existing integration/browser checks are
-reported separately from the generated Node unit suite.
+The initial assessment, two required guided rounds, and a further workflow
+improvement round are retained here. Source stayed unchanged through round 2;
+round 3 confirms and fixes one narrow save-reconciliation bug. Existing
+integration/browser checks remain separate from combined Node/jsdom coverage.
 
-- [Six-section report draft](report.md) and [final PDF checklist](final-pdf-checklist.md)
+- [Six-section editable report](report.md), [PDF](report.pdf), and [handoff checklist](final-pdf-checklist.md)
 - [Verbatim user instructions and rubric clarification](improvement-request.md)
 - [New Windows initial reproduction](rounds/initial/assessment.md)
 - [Round 1: inputs and output contracts](rounds/round-1/assessment.md)
 - [Round 2: recovery, source budgets, and UTF-8 fault feedback](rounds/round-2/assessment.md)
+- [Round 3: React workflows, deterministic arXiv service, and browser diagnosis](rounds/round-3/assessment.md)
+- [Workflow comparison including the configuration bridge](workflow-comparison.json) and [all-file CSV](workflow-per-file-comparison.csv)
 - [Machine-readable comparison](comparison.json) and [all-file coverage comparison](per-file-comparison.csv)
 
 The historical [initial assessment](initial-assessment.md) and `evidence/`
@@ -25,6 +28,7 @@ npm run baseline
 # Or individual parts:
 npm test
 npm run test:coverage
+npm run test:workflows:types
 npm run profile
 ```
 
@@ -95,9 +99,25 @@ product, test, or environment failures, not all counted as detected bugs.
 
 ## Reproduce and inspect the guided rounds
 
-The final suite is seven files / 163 tests in `tests/baseline/`. The initial
+The round-2 suite is seven files / 163 tests in `tests/baseline/`. The initial
 24 tests described above remain unchanged. Round 1 adds 82 cases; round 2 adds
 57, selected after inspecting round 1's results and surviving seeded faults.
+
+Round 3 adds 97 cases: 37 arXiv service tests, 22 App workflows and 38 document
+workflows. The final suite has 260 tests in 10 files (200 Node, 60 jsdom).
+The unchanged 163-test suite was measured under the new TSX/DOM configuration
+before these additions, reproducing its prior counts exactly. Overall final
+line coverage is 55.64% (1360/2444), with all untested source still included.
+Statement/function denominators increase by one because of the documented
+App fix. The old comparison files remain unchanged; use the workflow
+comparison for the extension.
+
+Eight selected new workflow faults improved from 7/8 to 8/8 detections after
+adding a missing download boundary pair. The original five seeds also remain
+detected in the current 260-test suite. These are selected probes, not an
+exhaustive mutation score or existing bugs. Browser preview mode passed the
+complete workflow verifier; intermittent development-server readiness stalls
+remain a separate limitation. See the report for the final baseline outcome.
 
 Each `rounds/<phase>/evidence/` directory contains `results.json`, all stage
 logs, per-file CSV, raw coverage JSON, LCOV, CPU profile, structured verifier
@@ -108,11 +128,16 @@ exempted from the ordinary generated-coverage ignore rule.
 
 ```sh
 node scripts/baseline/compare-hw2.mjs
+node scripts/baseline/compare-workflows.mjs
 # Optional selected fault probes in disposable copies; no working source edits:
-node scripts/baseline/fault-probes.mjs round-2
+node scripts/baseline/fault-probes.mjs round-3
+node scripts/baseline/workflow-fault-probes.mjs refined
+# Separate built-app browser mode (normal baseline still uses the dev server):
+npm run build:frontend
+node scripts/baseline/browser-experiment.mjs preview
 ```
 
-The comparison command validates archive hashes and identical source-tree
+The original three-round comparison validates archive hashes and identical source-tree
 identities, denominators, dependency/configuration snapshots, stage commands,
 profile workloads, and runtime/machine metadata. Fault probes are five selected
 synthetic regressions, not discovered product defects or an exhaustive mutation
@@ -120,10 +145,12 @@ score. Detailed outcomes and limitations are in the report.
 
 The recording helper `node scripts/baseline/archive-hw2.mjs <phase>
 <timestamped-run-path>` was used once per phase immediately after evaluation.
-Its three phase labels are now occupied and it deliberately refuses overwrite.
+It deliberately refuses to overwrite an existing phase archive.
 Future `npm run baseline` invocations still create new timestamped raw runs;
 keep the historical archives intact. Their snapshots preserve the earlier
 suites if a reviewer wants to replay a prior round separately.
 
-The six-section draft still needs author review and PDF export. The assignment
-has not been submitted and this work is not merged into `main`.
+The editable report and PDF require the student's review, especially the
+agent-authored reflection. PDF generation and verification details are in the
+handoff checklist. The assignment is not submitted and this work is not merged
+into `main`.

@@ -1,0 +1,13 @@
+{"experiment":"drain","hypothesis":"Unconsumed child pipes stall an owned server","startedAt":"2026-11-08T22:26:58.928Z"}
+{"step":"migration-applied","exitCode":0}
+{"step":"local-worker-and-vite-started","workerPid":103616,"frontendPid":127628,"workerOrigin":"http://127.0.0.1:56636","viteOrigin":"http://127.0.0.1:56637"}
+Error: Timed out waiting for the initial page.
+    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:489:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async navigate (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:588:5)
+    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:607:3)
+    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1229:1
+{"step":"stopped-owned-process","pid":103616}
+{"step":"stopped-owned-process","pid":127628}
+{"step":"stopped-owned-process","pid":119700}
+{"result":"failed","evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\2052e548-13c1-4883-a221-df5dbccd475a\\result.json"}

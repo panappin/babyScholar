@@ -1,0 +1,54 @@
+{
+  "originalRun": "artifacts/hw2-extension/2026-11-08T22-17-15.094Z-preflight-install",
+  "archivedAt": "2026-11-08T22:48:39.825Z",
+  "files": [
+    {
+      "path": "command.json",
+      "sha256": "50886162a1bd2ce8eac1af0abe488c725fa4082f59cdd3d9d54c02a874e81024"
+    },
+    {
+      "path": "command.log",
+      "sha256": "335c3531585cbff0f220fb0aa63ab13921988e289ab0cf001ef2caefe6f66cff"
+    },
+    {
+      "path": "snapshot/package-lock.json",
+      "sha256": "1ef25b167de0b3bc5ec857a5a069ff04c65b3699a0535868ddf0915925ca170c"
+    },
+    {
+      "path": "snapshot/package.json",
+      "sha256": "4be6af5b76a07fe2961768f25e9e5da81f1cff7c521f0e8ee3fdf6f9ca4ebaf4"
+    },
+    {
+      "path": "snapshot/tests/baseline/generation-recovery.test.ts",
+      "sha256": "1355f00b7257dc705f5d689a11b116d8a64707ffeef274f8be976cbe79fe5b16"
+    },
+    {
+      "path": "snapshot/tests/baseline/identity.test.ts",
+      "sha256": "0835b5915988a8d10f5412a132fbba14a8ce5543ee0f9264ed24e0aa5fa27c49"
+    },
+    {
+      "path": "snapshot/tests/baseline/output-validation.test.ts",
+      "sha256": "a82f7f75fbd853556dcd2bb9c6c1cdf3d5a321d4b4ead967d4536f984e6124ca"
+    },
+    {
+      "path": "snapshot/tests/baseline/question-request.test.ts",
+      "sha256": "06768c8acc357a3a917785d296cdab488c18e4facc308728ec87e6a6b7b0c808"
+    },
+    {
+      "path": "snapshot/tests/baseline/request-streams.test.ts",
+      "sha256": "67b3b8e8b094fdad3acd63f9e4e7a420051769524762e83464643f77fbef8df4"
+    },
+    {
+      "path": "snapshot/tests/baseline/source-selection.test.ts",
+      "sha256": "8f344f178a8289e873f1ced3ef1219406ce2130110c9aeaba9c0cf4dd8fcf160"
+    },
+    {
+      "path": "snapshot/tests/baseline/utf8-integrity.test.ts",
+      "sha256": "63f5c3cd5a77d1d4de1d97e5d0ac6e69a33b55ddd428a9312df3f30132b1ca7a"
+    },
+    {
+      "path": "snapshot/vitest.config.ts",
+      "sha256": "e799e2858d50c2e86aa864e7fef25d06b613285672c82360d9145d6bada361c3"
+    }
+  ]
+}

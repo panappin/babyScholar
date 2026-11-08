@@ -1,0 +1,741 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-51-54.638Z-refined/download-rejects-exact-limit
+
+ ❯ tests/baseline/document-workspace.test.tsx (38 tests | 1 failed) 8703ms
+   ✓ PDF list and stored detail reads (11)
+     ✓ shows loading, then empty state without performing generation 132ms
+     ✓ retains listed documents after a malformed reload 124ms
+     ✓ retains listed documents after a application error reload 93ms
+     ✓ reopens saved text, metadata, summary and answer using read-only requests; quotes are optional 200ms
+     ✓ keeps unknown metadata explicit and older optional quotes readable 169ms
+     ✓ ignores late detail responses from the previous selection even if transport ignores abort 233ms
+     ✓ rejects saved summary belonging to another document 105ms
+     ✓ rejects saved questions belonging to another document 109ms
+     ✓ reports malformed text and recovers through explicit detail reads 157ms
+     ✓ reports malformed metadata and recovers through explicit detail reads 154ms
+     ✓ bounds a stalled detail read and provides a read-only retry action 50ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ generates one summary after an explicit action without requiring metadata or citations 220ms
+     ✓ reconciles summary lost response without another POST 125ms
+     ✓ reconciles summary malformed success without another POST 152ms
+     ✓ reconciles summary wrong document without another POST 153ms
+     ✓ retains a saved summary if a reload fails, without generating again 145ms
+     ✓ handles summary already-in-progress by waiting for an explicit GET reload 224ms
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 619ms
+     ✓ rejects a blank question before transport 183ms
+     ✓ rejects a untrimmed question before transport 141ms
+     ✓ rejects a one byte over the Unicode limit question before transport 156ms
+     ✓ accepts an exact 2 KiB Unicode question and renders an explicit insufficient-source answer 171ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 489ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 569ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 556ms
+   ❯ Upload, download and deletion intent (13)
+     ✓ rejects a missing upload before transport 92ms
+     ✓ rejects a empty upload before transport 154ms
+     ✓ rejects a too large upload before transport 155ms
+     ✓ uploads an exact-limit file, processes missing text and metadata once, and leaves summary/questions explicit 148ms
+     ✓ resumes only missing metadata without reuploading or re-extracting the document 149ms
+     ✓ leaves an interrupted upload uncertain and does not repeat it 162ms
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 305ms
+     ✓ expires a prepared download after one minute 116ms
+     ✓ rejects a non-PDF download while preserving a usable fallback 148ms
+     × enforces the downloaded PDF byte boundary at 10 MiB plus 0 bytes 1152ms
+     ✓ enforces the downloaded PDF byte boundary at 10 MiB plus 1 bytes 139ms
+     ✓ does not publish a download that finishes after selecting another document 251ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 300ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 passed (38)
+   Start at  17:53:04
+   Duration  10.51s (tests 84%, environment 10%, import 4%, transform 1%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-51-54.638Z-refined/download-rejects-exact-limit.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/document-workspace.test.tsx > Upload, download and deletion intent > enforces the downloaded PDF byte boundary at 10 MiB plus 0 bytes
+TestingLibraryElementError: Unable to find role="link" and name "Download prepared PDF"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-labelledby[39m=[32m"pdfs-tab"[39m
+      [33mclass[39m=[32m"results-panel pdfs-panel"[39m
+      [33mid[39m=[32m"pdfs-view"[39m
+      [33mrole[39m=[32m"tabpanel"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"results-heading"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mPersistent documents[0m
+          [36m</p>[39m
+          [36m<h2>[39m
+            [0mPDFs[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"reload-button"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mReload PDFs[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"results-note"[39m
+      [36m>[39m
+        [0mUpload a PDF once, then explicitly process its saved original. Viewing, refreshing, and selecting use read-only requests only.[0m
+      [36m</p>[39m
+      [36m<form[39m
+        [33mclass[39m=[32m"pdf-upload-form"[39m
+        [33mnovalidate[39m=[32m""[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m"pdf-upload"[39m
+        [36m>[39m
+          [0mPDF file[0m
+        [36m</label>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"upload-controls"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33maccept[39m=[32m"application/pdf,.pdf"[39m
+            [33maria-describedby[39m=[32m"pdf-upload-help pdf-upload-error"[39m
+            [33mid[39m=[32m"pdf-upload"[39m
+            [33mtype[39m=[32m"file"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mUpload and process[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"search-help"[39m
+          [33mid[39m=[32m"pdf-upload-help"[39m
+        [36m>[39m
+          [0mChoose one nonempty PDF up to 10 MiB. File and content validation remain authoritative on the server.[0m
+        [36m</p>[39m
+      [36m</form>[39m
+      [36m<ol[39m
+        [33maria-label[39m=[32m"Uploaded PDFs"[39m
+        [33mclass[39m=[32m"document-list"[39m
+      [36m>[39m
+        [36m<li>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"document-select"[39m
+            [33mdata-document-id[39m=[32m"44444444-4444-4444-8444-444444444444"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0mgraph-study.pdf[0m
+            [36m</span>[39m
+            [36m<small>[39m
+              [0mUploaded [0m
+              [0m12/31/2025, 7:00:00 PM[0m
+              [0m · [0m
+              [0m0.00 MiB[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</li>[39m
+      [36m</ol>[39m
+      [36m<section[39m
+        [33maria-labelledby[39m=[32m"selected-pdf-title"[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"document-detail"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"results-heading"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"eyebrow"[39m
+            [36m>[39m
+              [0mSelected PDF[0m
+            [36m</p>[39m
+            [36m<h3[39m
+              [33mid[39m=[32m"selected-pdf-title"[39m
+            [36m>[39m
+              [0mgraph-study.pdf[0m
+            [36m</h3>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"paper-link"[39m
+            [33mdata-download-original[39m=[32m"true"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPrepare original PDF download[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"search-feedback search-feedback--error"[39m
+          [33mrole[39m=[32m"alert"[39m
+        [36m>[39m
+          [0mThe original download exceeded the 10 MiB PDF limit.[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Original PDF download options"[39m
+          [33mclass[39m=[32m"download-actions"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"paper-link"[39m
+            [33mdata-download-new-tab[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/api/documents/44444444-4444-4444-8444-444444444444/pdf"[39m
+            [33mrel[39m=[32m"noopener"[39m
+            [33mtarget[39m=[32m"_blank"[39m
+          [36m>[39m
+            [0mOpen original PDF in a new tab[0m
+          [36m</a>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"results-note download-note"[39m
+        [36m>[39m
+          [0mThe prepared link remains available for one minute and uses a fresh browser click. The new-tab fallback uses your normal signed-in session; its viewer may offer its own save control.[0m
+        [36m</p>[39m
+        [36m<dl[39m
+          [33mclass[39m=[32m"paper-metadata"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<dt>[39m
+              [0mUploaded[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [36m<time[39m
+                [33mdatetime[39m=[32m"2026-01-01T00:00:00.000Z"[39m
+              [36m>[39m
+                [0m12/31/2025, 7:00:00 PM[0m
+              [36m</time>[39m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt>[39m
+              [0mSize[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m0.00 MiB[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt>[39m
+              [0mStatus[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0mText extracted — metadata pending[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+        [36m</dl>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"delete-document-controls"[39m
+        [36m>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mdata-confirm-delete[39m=[32m"true"[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0m Delete this PDF's original, extracted text, metadata, summary, and Q&A history.[0m
+          [36m</label>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"reload-button"[39m
+            [33mdata-delete-document[39m=[32m"true"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mDelete PDF[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"save-button"[39m
+          [33mdata-resume-processing[39m=[32m"true"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mRetry metadata only[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"document-summary-title"[39m
+          [33mclass[39m=[32m"document-summary"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"summary-heading"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0mPDF context[0m
+              [36m</p>[39m
+              [36m<h4[39m
+                [33mid[39m=[32m"document-summary-title"[39m
+              [36m>[39m
+                [0mSummary[0m
+              [36m</h4>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"reload-button"[39m
+              [33mdata-summary-reload[39m=[32m"true"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mReload summary[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"results-note"[39m
+          [36m>[39m
+            [0mNo summary has been generated. Generation is explicit and uses saved extracted text; metadata is not required.[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"save-button"[39m
+            [33mdata-generate-summary[39m=[32m"true"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mGenerate summary[0m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"document-questions-title"[39m
+          [33mclass[39m=[32m"document-questions"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"summary-heading"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0mAsk with PDF context[0m
+              [36m</p>[39m
+              [36m<h4[39m
+                [33mid[39m=[32m"document-questions-title"[39m
+              [36m>[39m
+                [0mQuestions and answers[0m
+              [36m</h4>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"reload-button"[39m
+              [33mdata-question-reload[39m=[32m"true"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mReload question history[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"results-note"[39m
+          [36m>[39m
+            [0mEach question uses the selected PDF's saved extracted text as context. Answers may include general knowledge and will acknowledge uncertainty when the PDF does not cover a topic. Each question is independent; metadata and summaries are not required.[0m
+          [36m</p>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"question-form"[39m
+            [33mnovalidate[39m=[32m""[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"document-question-input"[39m
+            [36m>[39m
+              [0mQuestion about this PDF[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"question-controls"[39m
+            [36m>[39m
+              [36m<textarea[39m
+                [33maria-describedby[39m=[32m"document-question-help document-question-error"[39m
+                [33mid[39m=[32m"document-question-input"[39m
+                [33mplaceholder[39m=[32m"Ask about the saved extracted text"[39m
+                [33mrows[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"save-button"[39m
+                [33mdata-question-submit[39m=[32m"true"[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mAsk[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"search-help"[39m
+              [33mid[39m=[32m"document-question-help"[39m
+            [36m>[39m
+              [0mUse a trimmed question of up to 2 KiB UTF-8. Asking is explicit and is never retried automatically.[0m
+            [36m</p>[39m
+          [36m</form>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"search-feedback"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0mNo saved questions yet. Ask an explicit question to create one.[0m
+          [36m</p>[39m
+        [36m</section>[39m
+        [36m<details[39m
+          [33mclass[39m=[32m"document-text"[39m
+        [36m>[39m
+          [36m<summary>[39m
+            [0mExtracted page text ([0m
+            [0m1[0m
+            [0m [0m
+            [0mpage[0m
+            [0m)[0m
+          [36m</summary>[39m
+          [36m<section>[39m
+            [36m<h4>[39m
+              [0mPage [0m
+              [0m1[0m
+            [36m</h4>[39m
+            [36m<pre>[39m
+              [0mPersisted source for 44444444-4444-4444-8444-444444444444.[0m
+            [36m</pre>[39m
+          [36m</section>[39m
+        [36m</details>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-labelledby[39m=[32m"pdfs-tab"[39m
+      [33mclass[39m=[32m"results-panel pdfs-panel"[39m
+      [33mid[39m=[32m"pdfs-view"[39m
+      [33mrole[39m=[32m"tabpanel"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"results-heading"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mPersistent documents[0m
+          [36m</p>[39m
+          [36m<h2>[39m
+            [0mPDFs[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"reload-button"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mReload PDFs[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"results-note"[39m
+      [36m>[39m
+        [0mUpload a PDF once, then explicitly process its saved original. Viewing, refreshing, and selecting use read-only requests only.[0m
+      [36m</p>[39m
+      [36m<form[39m
+        [33mclass[39m=[32m"pdf-upload-form"[39m
+        [33mnovalidate[39m=[32m""[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mfor[39m=[32m"pdf-upload"[39m
+        [36m>[39m
+          [0mPDF file[0m
+        [36m</label>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"upload-controls"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33maccept[39m=[32m"application/pdf,.pdf"[39m
+            [33maria-describedby[39m=[32m"pdf-upload-help pdf-upload-error"[39m
+            [33mid[39m=[32m"pdf-upload"[39m
+            [33mtype[39m=[32m"file"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mUpload and process[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"search-help"[39m
+          [33mid[39m=[32m"pdf-upload-help"[39m
+        [36m>[39m
+          [0mChoose one nonempty PDF up to 10 MiB. File and content validation remain authoritative on the server.[0m
+        [36m</p>[39m
+      [36m</form>[39m
+      [36m<ol[39m
+        [33maria-label[39m=[32m"Uploaded PDFs"[39m
+        [33mclass[39m=[32m"document-list"[39m
+      [36m>[39m
+        [36m<li>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"document-select"[39m
+            [33mdata-document-id[39m=[32m"44444444-4444-4444-8444-444444444444"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0mgraph-study.pdf[0m
+            [36m</span>[39m
+            [36m<small>[39m
+              [0mUploaded [0m
+              [0m12/31/2025, 7:00:00 PM[0m
+              [0m · [0m
+              [0m0.00 MiB[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</li>[39m
+      [36m</ol>[39m
+      [36m<section[39m
+        [33maria-labelledby[39m=[32m"selected-pdf-title"[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"document-detail"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"results-heading"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"eyebrow"[39m
+            [36m>[39m
+              [0mSelected PDF[0m
+            [36m</p>[39m
+            [36m<h3[39m
+              [33mid[39m=[32m"selected-pdf-title"[39m
+            [36m>[39m
+              [0mgraph-study.pdf[0m
+            [36m</h3>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"paper-link"[39m
+            [33mdata-download-original[39m=[32m"true"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPrepare original PDF download[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"search-feedback search-feedback--error"[39m
+          [33mrole[39m=[32m"alert"[39m
+        [36m>[39m
+          [0mThe original download exceeded the 10 MiB PDF limit.[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Original PDF download options"[39m
+          [33mclass[39m=[32m"download-actions"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"paper-link"[39m
+            [33mdata-download-new-tab[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/api/documents/44444444-4444-4444-8444-444444444444/pdf"[39m
+            [33mrel[39m=[32m"noopener"[39m
+            [33mtarget[39m=[32m"_blank"[39m
+          [36m>[39m
+            [0mOpen original PDF in a new tab[0m
+          [36m</a>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"results-note download-note"[39m
+        [36m>[39m
+          [0mThe prepared link remains available for one minute and uses a fresh browser click. The new-tab fallback uses your normal signed-in session; its viewer may offer its own save control.[0m
+        [36m</p>[39m
+        [36m<dl[39m
+          [33mclass[39m=[32m"paper-metadata"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<dt>[39m
+              [0mUploaded[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [36m<time[39m
+                [33mdatetime[39m=[32m"2026-01-01T00:00:00.000Z"[39m
+              [36m>[39m
+                [0m12/31/2025, 7:00:00 PM[0m
+              [36m</time>[39m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt>[39m
+              [0mSize[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m0.00 MiB[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt>[39m
+              [0mStatus[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0mText extracted — metadata pending[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+        [36m</dl>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"delete-document-controls"[39m
+        [36m>[39m
+          [36m<label>[39m
+            [36m<input[39m
+              [33mdata-confirm-delete[39m=[32m"true"[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0m Delete this PDF's original, extracted text, metadata, summary, and Q&A history.[0m
+          [36m</label>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"reload-button"[39m
+            [33mdata-delete-document[39m=[32m"true"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mDelete PDF[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"save-button"[39m
+          [33mdata-resume-processing[39m=[32m"true"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mRetry metadata only[0m
+        [36m</button>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"document-summary-title"[39m
+          [33mclass[39m=[32m"document-summary"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"summary-heading"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0mPDF context[0m
+              [36m</p>[39m
+              [36m<h4[39m
+                [33mid[39m=[32m"document-summary-title"[39m
+              [36m>[39m
+                [0mSummary[0m
+              [36m</h4>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"reload-button"[39m
+              [33mdata-summary-reload[39m=[32m"true"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mReload summary[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"results-note"[39m
+          [36m>[39m
+            [0mNo summary has been generated. Generation is explicit and uses saved extracted text; metadata is not required.[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"save-button"[39m
+            [33mdata-generate-summary[39m=[32m"true"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mGenerate summary[0m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"document-questions-title"[39m
+          [33mclass[39m=[32m"document-questions"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"summary-heading"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0mAsk with PDF context[0m
+              [36m</p>[39m
+              [36m<h4[39m
+                [33mid[39m=[32m"document-questions-title"[39m
+              [36m>[39m
+                [0mQuestions and answers[0m
+              [36m</h4>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"reload-button"[39m
+              [33mdata-question-reload[39m=[32m"true"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mReload question history[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"results-note"[39m
+          [36m>[39m
+            [0mEach question uses the selected PDF's saved extracted text as context. Answers may include general knowledge and will acknowledge uncertainty when the PDF does not cover a topic. Each question is independent; metadata and summaries are not required.[0m
+          [36m</p>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"question-form"[39m
+            [33mnovalidate[39m=[32m""[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"document-question-input"[39m
+            [36m>[39m
+              [0mQuestion about this PDF[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"question-controls"[39m
+            [36m>[39m
+              [36m<textarea[39m
+                [33maria-describedby[39m=[32m"document-question-help document-question-error"[39m
+                [33mid[39m=[32m"document-question-input"[39m
+                [33mplaceholder[39m=[32m"Ask about the saved extracted text"[39m
+                [33mrows[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"save-button"[39m
+                [33mdata-question-submit[39m=[32m"true"[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mAsk[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"search-help"[39m
+              [33mid[39m=[32m"document-question-help"[39m
+            [36m>[39m
+              [0mUse a trimmed question of up to 2 KiB UTF-8. Asking is explicit and is never retried automatically.[0m
+            [36m</p>[39m
+          [36m</form>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"search-feedback"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0mNo saved questions yet. Ask an explicit question to create one.[0m
+          [36m</p>[39m
+        [36m</section>[39m
+        [36m<details[39m
+          [33mclass[39m=[32m"document-text"[39m
+        [36m>[39m
+          [36m<summary>[39m
+            [0mExtracted page text ([0m
+            [0m1[0m
+            [0m [0m
+            [0mpage[0m
+            [0m)[0m
+          [36m</summary>[39m
+          [36m<section>[39m
+            [36m<h4>[39m
+              [0mPage [0m
+              [0m1[0m
+            [36m</h4>[39m
+            [36m<pre>[39m
+              [0mPersisted source for 44444444-4444-4444-8444-444444444444.[0m
+            [36m</pre>[39m
+          [36m</section>[39m
+        [36m</details>[39m
+      [36m</section>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../../../node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../../../node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/baseline/document-workspace.test.tsx:370:27
+    368|       expect(screen.queryByRole('link', { name: 'Download prepared PDF…
+    369|     } else {
+    370|       expect(await screen.findByRole('link', { name: 'Download prepare…
+       |                           ^
+    371|       expect(create).toHaveBeenCalledTimes(1);
+    372|       expect(create.mock.calls[0][0]).toMatchObject({ size: 10 * 1024 …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

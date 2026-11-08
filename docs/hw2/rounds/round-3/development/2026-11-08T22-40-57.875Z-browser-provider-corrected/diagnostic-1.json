@@ -1,0 +1,88 @@
+{
+  "startedAt": "2026-11-08T22:40:58.370Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\3a5add6e-168b-4055-a0af-8c0f9583d10b",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 119700,
+      "frontendPid": 121796,
+      "workerOrigin": "http://127.0.0.1:60920",
+      "viteOrigin": "http://127.0.0.1:60921"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 119700
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 121796
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 115356
+    }
+  ],
+  "result": "failed",
+  "failedWait": {
+    "description": "the initial page",
+    "ui": {
+      "libraryVisible": false,
+      "libraryLoading": false,
+      "libraryCount": 0,
+      "alert": null
+    },
+    "network": [],
+    "processPipes": [
+      {
+        "pid": 119700,
+        "stdoutBufferedBytes": 3039,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 121796,
+        "stdoutBufferedBytes": 73,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 115356,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 2368,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 0
+        }
+      }
+    ],
+    "directProbes": [
+      {
+        "origin": "http://127.0.0.1:60920",
+        "path": "/api/library/papers",
+        "status": 200,
+        "paperCount": 0
+      },
+      {
+        "origin": "http://127.0.0.1:60921",
+        "path": "/api/library/papers",
+        "error": "TimeoutError"
+      }
+    ]
+  },
+  "error": "Error: Timed out waiting for the initial page.\n    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:514:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async navigate (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:613:5)\n    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:632:3)\n    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1258:1",
+  "metadataProviderCalls": 0,
+  "summaryProviderCalls": 0,
+  "questionProviderCalls": 0,
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T22:41:39.221Z"
+}

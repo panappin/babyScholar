@@ -1,0 +1,590 @@
+[
+  {
+    "directory": "2026-11-08T22-17-15.094Z-preflight-install",
+    "type": "command",
+    "label": "preflight-install",
+    "startedAt": "2026-11-08T22:17:15.138Z",
+    "finishedAt": "2026-11-08T22:17:36.333Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-18-04.844Z-preflight-baseline",
+    "type": "command",
+    "label": "preflight-baseline",
+    "startedAt": "2026-11-08T22:18:04.861Z",
+    "finishedAt": "2026-11-08T22:22:59.216Z",
+    "exitCode": 1,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-23-04.942Z-test-tooling-install",
+    "type": "command",
+    "label": "test-tooling-install",
+    "startedAt": "2026-11-08T22:23:05.008Z",
+    "finishedAt": "2026-11-08T22:23:17.536Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-23-24.278Z-configuration-bridge",
+    "type": "command",
+    "label": "configuration-bridge",
+    "startedAt": "2026-11-08T22:23:24.333Z",
+    "finishedAt": "2026-11-08T22:23:27.504Z",
+    "exitCode": 0,
+    "tests": {
+      "total": 163,
+      "passed": 163,
+      "failed": 0
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-24-28.143Z-arxiv-first",
+    "type": "command",
+    "label": "arxiv-first",
+    "startedAt": "2026-11-08T22:24:28.209Z",
+    "finishedAt": "2026-11-08T22:24:29.426Z",
+    "exitCode": 1,
+    "tests": {
+      "total": 37,
+      "passed": 36,
+      "failed": 1
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-25-47.425Z-app-first",
+    "type": "command",
+    "label": "app-first",
+    "startedAt": "2026-11-08T22:25:47.484Z",
+    "finishedAt": "2026-11-08T22:25:57.173Z",
+    "exitCode": 1,
+    "tests": {
+      "total": 58,
+      "passed": 53,
+      "failed": 5
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-26-26.139Z-app-corrected",
+    "type": "command",
+    "label": "app-corrected",
+    "startedAt": "2026-11-08T22:26:26.204Z",
+    "finishedAt": "2026-11-08T22:26:36.597Z",
+    "exitCode": 0,
+    "tests": {
+      "total": 58,
+      "passed": 58,
+      "failed": 0
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-26-58.720Z-browser-drain-experiment",
+    "type": "command",
+    "label": "browser-drain-experiment",
+    "startedAt": "2026-11-08T22:26:58.778Z",
+    "finishedAt": "2026-11-08T22:27:41.065Z",
+    "exitCode": 1,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "failed",
+        "failedWait": "the initial page",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-29-30.247Z-documents-first",
+    "type": "command",
+    "label": "documents-first",
+    "startedAt": "2026-11-08T22:29:30.317Z",
+    "finishedAt": "2026-11-08T22:29:42.793Z",
+    "exitCode": 1,
+    "tests": {
+      "total": 35,
+      "passed": 34,
+      "failed": 1
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-30-22.360Z-expanded-coverage-first",
+    "type": "command",
+    "label": "expanded-coverage-first",
+    "startedAt": "2026-11-08T22:30:22.422Z",
+    "finishedAt": "2026-11-08T22:30:48.887Z",
+    "exitCode": 0,
+    "tests": {
+      "total": 256,
+      "passed": 256,
+      "failed": 0
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-30-32.554Z-browser-network-experiment",
+    "type": "command",
+    "label": "browser-network-experiment",
+    "startedAt": "2026-11-08T22:30:32.618Z",
+    "finishedAt": "2026-11-08T22:32:12.399Z",
+    "exitCode": 1,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "failed",
+        "failedWait": "question asking feedback",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-31-22.936Z-test-typecheck",
+    "type": "command",
+    "label": "test-typecheck",
+    "startedAt": "2026-11-08T22:31:23.016Z",
+    "finishedAt": "2026-11-08T22:31:25.880Z",
+    "exitCode": 2,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-31-45.373Z-workflow-typecheck",
+    "type": "command",
+    "label": "workflow-typecheck",
+    "startedAt": "2026-11-08T22:31:45.443Z",
+    "finishedAt": "2026-11-08T22:31:47.637Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-32-26.634Z-workflow-faults-first",
+    "type": "command",
+    "label": "workflow-faults-first",
+    "startedAt": "2026-11-08T22:32:26.709Z",
+    "finishedAt": "2026-11-08T22:33:37.042Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-32-26.875Z-first",
+    "type": "fault-probe",
+    "label": "first",
+    "startedAt": "2026-11-08T22:32:26.894Z",
+    "finishedAt": "2026-11-08T22:33:37.034Z",
+    "diagnostics": [],
+    "runs": [
+      {
+        "name": "control",
+        "outcome": "passed",
+        "tests": 256,
+        "failedTests": 0
+      },
+      {
+        "name": "arxiv-expiry-off-by-one",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 2
+      },
+      {
+        "name": "arxiv-shared-author-array",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 1
+      },
+      {
+        "name": "arxiv-poisoned-request-queue",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 3
+      },
+      {
+        "name": "library-stale-read-erases-save",
+        "outcome": "detected",
+        "tests": 21,
+        "failedTests": 1
+      },
+      {
+        "name": "document-stale-details-overwrite-selection",
+        "outcome": "detected",
+        "tests": 35,
+        "failedTests": 1
+      },
+      {
+        "name": "summary-reload-discards-confirmed-result",
+        "outcome": "detected",
+        "tests": 35,
+        "failedTests": 1
+      },
+      {
+        "name": "document-selection-leaks-prepared-url",
+        "outcome": "detected",
+        "tests": 35,
+        "failedTests": 1
+      },
+      {
+        "name": "download-rejects-exact-limit",
+        "outcome": "survived",
+        "tests": 35,
+        "failedTests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-34-17.012Z-browser-fresh-http-experiment",
+    "type": "command",
+    "label": "browser-fresh-http-experiment",
+    "startedAt": "2026-11-08T22:34:17.081Z",
+    "finishedAt": "2026-11-08T22:36:16.587Z",
+    "exitCode": 1,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "failed",
+        "failedWait": "summary fixture text retained after unavailable metadata",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-34-27.205Z-boundary-refinement",
+    "type": "command",
+    "label": "boundary-refinement",
+    "startedAt": "2026-11-08T22:34:27.309Z",
+    "finishedAt": "2026-11-08T22:34:53.375Z",
+    "exitCode": 0,
+    "tests": {
+      "total": 260,
+      "passed": 260,
+      "failed": 0
+    },
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-35-34.043Z-workflow-types-final",
+    "type": "command",
+    "label": "workflow-types-final",
+    "startedAt": "2026-11-08T22:35:34.141Z",
+    "finishedAt": "2026-11-08T22:35:36.754Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-36-32.991Z-workflow-faults-refined",
+    "type": "command",
+    "label": "workflow-faults-refined",
+    "startedAt": "2026-11-08T22:36:33.057Z",
+    "finishedAt": "2026-11-08T22:37:47.296Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-36-33.216Z-refined",
+    "type": "fault-probe",
+    "label": "refined",
+    "startedAt": "2026-11-08T22:36:33.227Z",
+    "finishedAt": "2026-11-08T22:37:47.288Z",
+    "diagnostics": [],
+    "runs": [
+      {
+        "name": "control",
+        "outcome": "passed",
+        "tests": 260,
+        "failedTests": 0
+      },
+      {
+        "name": "arxiv-expiry-off-by-one",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 2
+      },
+      {
+        "name": "arxiv-shared-author-array",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 1
+      },
+      {
+        "name": "arxiv-poisoned-request-queue",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 3
+      },
+      {
+        "name": "library-stale-read-erases-save",
+        "outcome": "detected",
+        "tests": 22,
+        "failedTests": 1
+      },
+      {
+        "name": "document-stale-details-overwrite-selection",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "summary-reload-discards-confirmed-result",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "document-selection-leaks-prepared-url",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "download-rejects-exact-limit",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-38-16.576Z-browser-corrected-control",
+    "type": "command",
+    "label": "browser-corrected-control",
+    "startedAt": "2026-11-08T22:38:16.648Z",
+    "finishedAt": "2026-11-08T22:40:23.309Z",
+    "exitCode": 1,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "failed",
+        "failedWait": "actual explicit question answer and later-page evidence",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-40-57.875Z-browser-provider-corrected",
+    "type": "command",
+    "label": "browser-provider-corrected",
+    "startedAt": "2026-11-08T22:40:57.943Z",
+    "finishedAt": "2026-11-08T22:41:39.248Z",
+    "exitCode": 1,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "failed",
+        "failedWait": "the initial page",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-42-39.736Z-vite-isolation-control",
+    "type": "command",
+    "label": "vite-isolation-control",
+    "startedAt": "2026-11-08T22:42:39.805Z",
+    "finishedAt": "2026-11-08T22:42:41.662Z",
+    "exitCode": 0,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "passed",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-42-41.928Z-browser-final-diagnostics",
+    "type": "command",
+    "label": "browser-final-diagnostics",
+    "startedAt": "2026-11-08T22:42:41.994Z",
+    "finishedAt": "2026-11-08T22:44:24.744Z",
+    "exitCode": 1,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "failed",
+        "failedWait": "mocked PDFs page",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-46-30.888Z-preview-build",
+    "type": "command",
+    "label": "preview-build",
+    "startedAt": "2026-11-08T22:46:30.989Z",
+    "finishedAt": "2026-11-08T22:46:33.337Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-46-33.647Z-browser-preview",
+    "type": "command",
+    "label": "browser-preview",
+    "startedAt": "2026-11-08T22:46:33.722Z",
+    "finishedAt": "2026-11-08T22:46:51.297Z",
+    "exitCode": 0,
+    "diagnostics": [
+      {
+        "file": "diagnostic-1.json",
+        "result": "passed",
+        "frontendMode": "preview",
+        "liveProviderRequests": 0
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-47-25.072Z-final-install",
+    "type": "command",
+    "label": "final-install",
+    "startedAt": "2026-11-08T22:47:25.163Z",
+    "finishedAt": "2026-11-08T22:47:42.064Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-47-55.065Z-original-faults-final",
+    "type": "command",
+    "label": "original-faults-final",
+    "startedAt": "2026-11-08T22:47:55.148Z",
+    "finishedAt": "2026-11-08T22:50:19.282Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-51-54.396Z-workflow-faults-final",
+    "type": "command",
+    "label": "workflow-faults-final",
+    "startedAt": "2026-11-08T22:51:54.476Z",
+    "finishedAt": "2026-11-08T22:53:15.149Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T22-51-54.638Z-refined",
+    "type": "fault-probe",
+    "label": "refined",
+    "startedAt": "2026-11-08T22:51:54.652Z",
+    "finishedAt": "2026-11-08T22:53:15.141Z",
+    "diagnostics": [],
+    "runs": [
+      {
+        "name": "control",
+        "outcome": "passed",
+        "tests": 260,
+        "failedTests": 0
+      },
+      {
+        "name": "arxiv-expiry-off-by-one",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 2
+      },
+      {
+        "name": "arxiv-shared-author-array",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 1
+      },
+      {
+        "name": "arxiv-poisoned-request-queue",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 3
+      },
+      {
+        "name": "library-stale-read-erases-save",
+        "outcome": "detected",
+        "tests": 22,
+        "failedTests": 1
+      },
+      {
+        "name": "document-stale-details-overwrite-selection",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "summary-reload-discards-confirmed-result",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "document-selection-leaks-prepared-url",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "download-rejects-exact-limit",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T22-53-26.991Z-final-baseline",
+    "type": "command",
+    "label": "final-baseline",
+    "startedAt": "2026-11-08T22:53:27.060Z",
+    "finishedAt": "2026-11-08T22:59:20.915Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "2026-11-08T23-00-19.048Z-delivery-types",
+    "type": "command",
+    "label": "delivery-types",
+    "startedAt": "2026-11-08T23:00:19.150Z",
+    "finishedAt": "2026-11-08T23:00:21.200Z",
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  {
+    "directory": "round-3-2026-11-08T22-47-55.373Z",
+    "type": "fault-probe",
+    "label": "round-3",
+    "startedAt": "2026-11-08T22:47:55.375Z",
+    "diagnostics": [],
+    "runs": [
+      {
+        "name": "control",
+        "outcome": "passed",
+        "tests": 260,
+        "failedTests": 0
+      },
+      {
+        "name": "upload-rejects-exact-limit",
+        "outcome": "detected",
+        "tests": 260,
+        "failedTests": 1
+      },
+      {
+        "name": "question-lossy-utf8",
+        "outcome": "detected",
+        "tests": 260,
+        "failedTests": 4
+      },
+      {
+        "name": "generation-retries-network-failure",
+        "outcome": "detected",
+        "tests": 260,
+        "failedTests": 13
+      },
+      {
+        "name": "summary-source-budget-plus-one",
+        "outcome": "detected",
+        "tests": 260,
+        "failedTests": 5
+      },
+      {
+        "name": "summary-demands-envelope",
+        "outcome": "detected",
+        "tests": 260,
+        "failedTests": 5
+      }
+    ]
+  }
+]

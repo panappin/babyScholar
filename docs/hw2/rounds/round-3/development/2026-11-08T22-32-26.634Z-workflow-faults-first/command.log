@@ -1,0 +1,10 @@
+control: passed (0 failing tests)
+arxiv-expiry-off-by-one: detected (2 failing tests)
+arxiv-shared-author-array: detected (1 failing tests)
+arxiv-poisoned-request-queue: detected (3 failing tests)
+library-stale-read-erases-save: detected (1 failing tests)
+document-stale-details-overwrite-selection: detected (1 failing tests)
+summary-reload-discards-confirmed-result: detected (1 failing tests)
+document-selection-leaks-prepared-url: detected (1 failing tests)
+download-rejects-exact-limit: survived (0 failing tests)
+Workflow fault evidence: artifacts\hw2-workflow-faults\2026-11-08T22-32-26.875Z-first

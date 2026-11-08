@@ -1,0 +1,2334 @@
+{
+  "startedAt": "2026-11-08T22:30:32.791Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\4f76ef69-1bd9-48e3-b4ab-45608ba65882",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 108508,
+      "frontendPid": 126612,
+      "workerOrigin": "http://127.0.0.1:49261",
+      "viteOrigin": "http://127.0.0.1:49262"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mocked-existing-save-and-library-passed",
+      "existingId": "11111111-1111-4111-8111-111111111111",
+      "createdId": "22222222-2222-4222-8222-222222222222"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-library-errors-retain-records-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-stale-library-response-ignored"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-empty-library-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-duplicate-preserves-id-and-timestamp",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "savedAt": "2025-02-03T04:05:06.000Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mocked-search-empty-errors-and-unexpected-json-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-interrupted-save-reconciles-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed",
+      "id": "4e66d5df-72fa-41d8-bb42-3d0be158b64f",
+      "savedAt": "2026-11-08T22:31:31.476Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-remove-and-resave-uses-new-application-id"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mocked-pdfs-summary-loading-partial-evidence-get-only-stale-and-inprogress-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mocked-metadata-timeout-reconciles-with-fresh-read-signal-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 403,
+      "body": "redacted non-JSON"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 401,
+      "body": "redacted non-JSON"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mocked-question-non-application-401-403-preserve-input-and-recover-with-get-only-passed",
+      "deniedPostStatus": 403,
+      "deniedGetStatus": 401
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 108508
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 126612
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 114484
+    }
+  ],
+  "result": "failed",
+  "failedWait": {
+    "description": "question asking feedback",
+    "ui": {
+      "libraryVisible": false,
+      "libraryLoading": false,
+      "libraryCount": 0,
+      "alert": null
+    },
+    "network": [
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606390.595559,
+        "status": 200,
+        "responseAt": 606391.66701
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606391.670662,
+        "status": 200,
+        "responseAt": 606392.253758
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606391.670891,
+        "status": 200,
+        "responseAt": 606391.688923
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606391.672969,
+        "status": 200,
+        "responseAt": 606391.699869
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606391.6894,
+        "status": 200,
+        "responseAt": 606391.777337
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606391.689485,
+        "status": 200,
+        "responseAt": 606391.850291
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606391.689517,
+        "status": 200,
+        "responseAt": 606392.544109
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606391.689552,
+        "status": 200,
+        "responseAt": 606392.399698
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606391.689585,
+        "status": 200,
+        "responseAt": 606414.208287
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606391.777584,
+        "status": 200,
+        "responseAt": 606392.64857
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606392.254071,
+        "status": 200,
+        "responseAt": 606392.782541
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606392.400002,
+        "status": 200,
+        "responseAt": 606393.145872
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606392.400049,
+        "status": 200,
+        "responseAt": 606393.107153
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606392.545904,
+        "status": 200,
+        "responseAt": 606393.058782
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606414.288438,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606414.288692,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606414.289199,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606414.290475,
+        "status": 200,
+        "responseAt": 606415.296932
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606414.290602,
+        "status": 200,
+        "responseAt": 606415.496577
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606414.290726,
+        "status": 200,
+        "responseAt": 606415.626476
+      },
+      {
+        "path": "/favicon.svg",
+        "method": "GET",
+        "startedAt": 606414.294312,
+        "status": 200,
+        "responseAt": 606415.719904
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606415.680252,
+        "status": 200,
+        "responseAt": 606415.778178
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606415.825933,
+        "status": 201,
+        "responseAt": 606415.832275
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606416.062252,
+        "status": 503,
+        "responseAt": 606416.067772
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606416.121737,
+        "status": 200,
+        "responseAt": 606416.127817
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606416.140744,
+        "status": 200,
+        "responseAt": 606420.278405
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606420.280628,
+        "status": 200,
+        "responseAt": 606420.303657
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606420.280764,
+        "status": 200,
+        "responseAt": 606420.292314
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606420.28246,
+        "status": 200,
+        "responseAt": 606420.303413
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606420.292553,
+        "status": 200,
+        "responseAt": 606420.306603
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606420.292608,
+        "status": 200,
+        "responseAt": 606420.306754
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606420.292637,
+        "status": 200,
+        "responseAt": 606420.32013
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606420.292664,
+        "status": 200,
+        "responseAt": 606420.308891
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606420.292694,
+        "status": 200,
+        "responseAt": 606420.308063
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606420.303832,
+        "status": 200,
+        "responseAt": 606420.308206
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606420.306822,
+        "status": 200,
+        "responseAt": 606420.310711
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606420.310544,
+        "status": 200,
+        "responseAt": 606420.316844
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606420.310618,
+        "status": 200,
+        "responseAt": 606420.315276
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606420.320739,
+        "status": 200,
+        "responseAt": 606420.322611
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606420.336792,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606420.336996,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606420.337282,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606420.337682,
+        "status": 200,
+        "responseAt": 606420.371022
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606420.337787,
+        "status": 200,
+        "responseAt": 606420.379601
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606420.337888,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606420.479527,
+        "status": 200,
+        "responseAt": 606420.634799
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606420.637503,
+        "status": 304,
+        "responseAt": 606420.664886
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606420.637726,
+        "status": 304,
+        "responseAt": 606420.673687
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606420.639498,
+        "status": 304,
+        "responseAt": 606420.73653
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606420.665153,
+        "status": 304,
+        "responseAt": 606420.784543
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606420.673965,
+        "status": 200,
+        "responseAt": 606420.673996
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606420.674036,
+        "status": 200,
+        "responseAt": 606420.674059
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606420.674413,
+        "status": 200,
+        "responseAt": 606420.674443
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606420.674505,
+        "status": 304,
+        "responseAt": 606420.838314
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606420.674554,
+        "status": 304,
+        "responseAt": 606421.171303
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606420.674748,
+        "status": 200,
+        "responseAt": 606420.67477
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606420.674845,
+        "status": 200,
+        "responseAt": 606420.674862
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606420.838563,
+        "status": 304,
+        "responseAt": 606421.437813
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606420.838621,
+        "status": 304,
+        "responseAt": 606421.438129
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606421.445038,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606421.445162,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606421.445299,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606421.445576,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606421.445652,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606421.445749,
+        "status": 200,
+        "responseAt": 606421.598641
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606421.610129,
+        "status": 200,
+        "responseAt": 606426.255195
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606426.257367,
+        "status": 304,
+        "responseAt": 606426.26916
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606426.257487,
+        "status": 304,
+        "responseAt": 606426.269867
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606426.259061,
+        "status": 304,
+        "responseAt": 606426.270039
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606426.269559,
+        "status": 304,
+        "responseAt": 606426.27215
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606426.270166,
+        "status": 200,
+        "responseAt": 606426.270191
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606426.270223,
+        "status": 200,
+        "responseAt": 606426.27024
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606426.270537,
+        "status": 200,
+        "responseAt": 606426.270569
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606426.270613,
+        "status": 304,
+        "responseAt": 606426.273846
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606426.270659,
+        "status": 304,
+        "responseAt": 606426.274373
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606426.270816,
+        "status": 200,
+        "responseAt": 606426.270832
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606426.270903,
+        "status": 200,
+        "responseAt": 606426.27092
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606426.274242,
+        "status": 304,
+        "responseAt": 606426.27656
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606426.274297,
+        "status": 304,
+        "responseAt": 606426.276936
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606426.284368,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606426.284512,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606426.284745,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606426.285091,
+        "status": 200,
+        "responseAt": 606426.293589
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606426.285186,
+        "status": 200,
+        "responseAt": 606426.299694
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606426.285279,
+        "status": 200,
+        "responseAt": 606426.433905
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606426.48357,
+        "status": 200,
+        "responseAt": 606426.486819
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606426.540187,
+        "status": 200,
+        "responseAt": 606426.543795
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606426.607752,
+        "status": 502,
+        "responseAt": 606426.611407
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606426.669993,
+        "status": 200,
+        "responseAt": 606426.673987
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606426.732714,
+        "failure": "net::ERR_FAILED",
+        "canceled": false
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606426.741126,
+        "status": 200,
+        "responseAt": 606426.747859
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606426.796936,
+        "status": 200,
+        "responseAt": 606427.173688
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606427.176072,
+        "status": 304,
+        "responseAt": 606427.189535
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606427.176243,
+        "status": 304,
+        "responseAt": 606427.190433
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606427.178527,
+        "status": 304,
+        "responseAt": 606427.191363
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606427.190235,
+        "status": 304,
+        "responseAt": 606427.193196
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606427.190631,
+        "status": 200,
+        "responseAt": 606427.190662
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606427.1907,
+        "status": 200,
+        "responseAt": 606427.190725
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606427.191069,
+        "status": 200,
+        "responseAt": 606427.1911
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606427.19115,
+        "status": 304,
+        "responseAt": 606427.195278
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606427.191199,
+        "status": 304,
+        "responseAt": 606427.196249
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606427.191622,
+        "status": 200,
+        "responseAt": 606427.19166
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606427.191857,
+        "status": 200,
+        "responseAt": 606427.19189
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606427.195563,
+        "status": 304,
+        "responseAt": 606427.197771
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606427.195624,
+        "status": 304,
+        "responseAt": 606427.198866
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606427.206045,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606427.206241,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606427.206404,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606427.206735,
+        "status": 200,
+        "responseAt": 606427.242119
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606427.20682,
+        "status": 200,
+        "responseAt": 606427.255872
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606427.20692,
+        "status": 200,
+        "responseAt": 606427.337766
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606427.388503,
+        "status": 200,
+        "responseAt": 606427.394771
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606427.444749,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606427.472005,
+        "status": 200,
+        "responseAt": 606427.506741
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606427.553983,
+        "status": 201,
+        "responseAt": 606427.558258
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606427.558685,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606427.836615,
+        "status": 200,
+        "responseAt": 606427.839675
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606427.853425,
+        "status": 200,
+        "responseAt": 606441.203325
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606441.20632,
+        "status": 200,
+        "responseAt": 606441.216169
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606441.206491,
+        "status": 200,
+        "responseAt": 606441.21589
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606441.208882,
+        "status": 200,
+        "responseAt": 606441.216582
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606441.216834,
+        "status": 200,
+        "responseAt": 606441.216867
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606441.21691,
+        "status": 200,
+        "responseAt": 606441.21693
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606441.217522,
+        "status": 200,
+        "responseAt": 606441.217548
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606441.217589,
+        "status": 200,
+        "responseAt": 606441.220864
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606441.217641,
+        "status": 200,
+        "responseAt": 606441.220646
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606441.218285,
+        "status": 200,
+        "responseAt": 606441.221065
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606441.219561,
+        "status": 200,
+        "responseAt": 606441.219595
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606441.219924,
+        "status": 200,
+        "responseAt": 606441.219966
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606441.221157,
+        "status": 200,
+        "responseAt": 606441.225612
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606441.221209,
+        "status": 200,
+        "responseAt": 606441.223698
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606441.236694,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606441.23685,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606441.237001,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606441.237341,
+        "status": 200,
+        "responseAt": 606441.267053
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606441.237424,
+        "status": 200,
+        "responseAt": 606441.287081
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606441.237586,
+        "status": 200,
+        "responseAt": 606441.288567
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606441.337177,
+        "status": 200,
+        "responseAt": 606441.340586
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606441.391362,
+        "status": 201,
+        "responseAt": 606441.432714
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606441.440786,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606441.452118,
+        "status": 200,
+        "responseAt": 606443.755292
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606443.757536,
+        "status": 304,
+        "responseAt": 606443.771628
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606443.757725,
+        "status": 304,
+        "responseAt": 606443.771702
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606443.759294,
+        "status": 304,
+        "responseAt": 606443.77187
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606443.771953,
+        "status": 304,
+        "responseAt": 606443.774636
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606443.772191,
+        "status": 200,
+        "responseAt": 606443.772215
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606443.772249,
+        "status": 200,
+        "responseAt": 606443.772268
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606443.772562,
+        "status": 200,
+        "responseAt": 606443.772592
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606443.772639,
+        "status": 304,
+        "responseAt": 606443.775386
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606443.77268,
+        "status": 304,
+        "responseAt": 606443.777217
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606443.772844,
+        "status": 200,
+        "responseAt": 606443.77286
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606443.772931,
+        "status": 200,
+        "responseAt": 606443.772945
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606443.776855,
+        "status": 304,
+        "responseAt": 606443.788911
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606443.776921,
+        "status": 304,
+        "responseAt": 606443.789355
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606443.800546,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606443.800724,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606443.800901,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606443.802005,
+        "status": 200,
+        "responseAt": 606443.830528
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606443.802156,
+        "status": 200,
+        "responseAt": 606443.838323
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606443.802293,
+        "status": 200,
+        "responseAt": 606443.84421
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606443.877029,
+        "status": 200,
+        "responseAt": 606443.885701
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606443.887779,
+        "status": 200,
+        "responseAt": 606443.898242
+      },
+      {
+        "path": "/api/library/papers/4e66d5df-72fa-41d8-bb42-3d0be158b64f",
+        "method": "DELETE",
+        "startedAt": 606443.89206,
+        "status": 200,
+        "responseAt": 606443.90308
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606443.903647,
+        "status": 200,
+        "responseAt": 606443.911401
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606443.946357,
+        "status": 200,
+        "responseAt": 606443.949835
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606444.001636,
+        "status": 201,
+        "responseAt": 606444.01031
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606444.061596,
+        "status": 200,
+        "responseAt": 606444.069834
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 606444.076399,
+        "status": 200,
+        "responseAt": 606446.276273
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 606446.278453,
+        "status": 200,
+        "responseAt": 606446.293673
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 606446.278569,
+        "status": 200,
+        "responseAt": 606446.292082
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 606446.280128,
+        "status": 200,
+        "responseAt": 606446.293393
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 606446.292327,
+        "status": 200,
+        "responseAt": 606446.292357
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 606446.292396,
+        "status": 200,
+        "responseAt": 606446.292416
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 606446.292878,
+        "status": 200,
+        "responseAt": 606446.292916
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 606446.292966,
+        "status": 200,
+        "responseAt": 606446.296886
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 606446.293023,
+        "status": 200,
+        "responseAt": 606446.29673
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 606446.293188,
+        "status": 200,
+        "responseAt": 606446.29327
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 606446.293591,
+        "status": 200,
+        "responseAt": 606446.293613
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 606446.293793,
+        "status": 200,
+        "responseAt": 606446.297473
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 606446.297074,
+        "status": 200,
+        "responseAt": 606446.302842
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 606446.297129,
+        "status": 200,
+        "responseAt": 606446.301659
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606446.310183,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606446.310337,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606446.310605,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606446.310965,
+        "status": 200,
+        "responseAt": 606446.322135
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606446.311062,
+        "status": 200,
+        "responseAt": 606446.327452
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606446.311162,
+        "status": 200,
+        "responseAt": 606446.332104
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606446.337981,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606446.338635,
+        "status": 200,
+        "responseAt": 606446.453225
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606446.5,
+        "status": 503,
+        "responseAt": 606446.50185
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606446.546329,
+        "status": 200,
+        "responseAt": 606446.548699
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606446.59203,
+        "status": 200,
+        "responseAt": 606446.595233
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+        "method": "GET",
+        "startedAt": 606446.652972,
+        "status": 200,
+        "responseAt": 606446.661706
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+        "method": "GET",
+        "startedAt": 606446.653136,
+        "status": 200,
+        "responseAt": 606446.661791
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606446.653353,
+        "status": 404,
+        "responseAt": 606446.662793
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+        "method": "GET",
+        "startedAt": 606446.653525,
+        "status": 200,
+        "responseAt": 606446.657408
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+        "method": "GET",
+        "startedAt": 606446.71571,
+        "status": 503,
+        "responseAt": 606446.723552
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "POST",
+        "startedAt": 606446.774843,
+        "status": 201,
+        "responseAt": 606446.784577
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606446.842001,
+        "status": 200,
+        "responseAt": 606446.850389
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+        "method": "GET",
+        "startedAt": 606446.85761,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606446.866667,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606446.866862,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606446.866948,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606446.867041,
+        "status": 200,
+        "responseAt": 606446.870861
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+        "method": "GET",
+        "startedAt": 606446.872119,
+        "status": 200,
+        "responseAt": 606446.877499
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+        "method": "GET",
+        "startedAt": 606446.872249,
+        "status": 200,
+        "responseAt": 606446.87817
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606446.872322,
+        "status": 200,
+        "responseAt": 606446.878813
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+        "method": "GET",
+        "startedAt": 606446.872399,
+        "status": 200,
+        "responseAt": 606446.876835
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606446.889383,
+        "status": 200,
+        "responseAt": 606446.894872
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606446.88953,
+        "status": 404,
+        "responseAt": 606446.895553
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606446.889625,
+        "status": 404,
+        "responseAt": 606446.896379
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606446.88971,
+        "status": 200,
+        "responseAt": 606446.893307
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "POST",
+        "startedAt": 606446.947903,
+        "status": 409,
+        "responseAt": 606446.954143
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606447.010494,
+        "status": 200,
+        "responseAt": 606447.017501
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606447.010655,
+        "status": 404,
+        "responseAt": 606447.018195
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.010965,
+        "status": 404,
+        "responseAt": 606447.018981
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.011058,
+        "status": 200,
+        "responseAt": 606447.01578
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "POST",
+        "startedAt": 606447.019602,
+        "status": 409,
+        "responseAt": 606447.056541
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606447.103068,
+        "status": 200,
+        "responseAt": 606447.109106
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606447.103229,
+        "status": 404,
+        "responseAt": 606447.110041
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.103302,
+        "status": 404,
+        "responseAt": 606447.110889
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.103382,
+        "status": 200,
+        "responseAt": 606447.107672
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "POST",
+        "startedAt": 606447.111295,
+        "status": 200,
+        "responseAt": 606447.149257
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606447.149889,
+        "status": 200,
+        "responseAt": 606447.179994
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606447.149981,
+        "status": 404,
+        "responseAt": 606447.18066
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.150026,
+        "status": 404,
+        "responseAt": 606447.181267
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.150074,
+        "status": 200,
+        "responseAt": 606447.15466
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.227035,
+        "status": 200,
+        "responseAt": 606447.233592
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "POST",
+        "startedAt": 606447.240166,
+        "status": 502,
+        "responseAt": 606447.24727
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "POST",
+        "startedAt": 606447.2538,
+        "status": 200,
+        "responseAt": 606447.260335
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.260935,
+        "status": 404,
+        "responseAt": 606447.288549
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606447.294822,
+        "status": 200,
+        "responseAt": 606447.301349
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606447.294971,
+        "status": 404,
+        "responseAt": 606447.302061
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.295072,
+        "status": 404,
+        "responseAt": 606447.302739
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.295154,
+        "status": 200,
+        "responseAt": 606447.29971
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "POST",
+        "startedAt": 606447.303226,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606447.506603,
+        "status": 200,
+        "responseAt": 606447.523233
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606447.506743,
+        "status": 404,
+        "responseAt": 606447.524158
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606447.5068,
+        "status": 404,
+        "responseAt": 606447.525037
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.506854,
+        "status": 200,
+        "responseAt": 606447.511562
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.563829,
+        "status": 503,
+        "responseAt": 606447.57113
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.61722,
+        "status": 200,
+        "responseAt": 606447.623232
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.679811,
+        "status": 200,
+        "responseAt": 606447.686369
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606447.703913,
+        "status": 403,
+        "responseAt": 606447.710837
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.758599,
+        "status": 200,
+        "responseAt": 606447.765374
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.819865,
+        "status": 401,
+        "responseAt": 606447.825809
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606447.83161,
+        "status": 200,
+        "responseAt": 606447.837938
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606447.887842
+      }
+    ],
+    "processPipes": [
+      {
+        "pid": 108508,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 4421,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 126612,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 9628,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 114484,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 15799
+        }
+      }
+    ],
+    "directProbes": [
+      {
+        "origin": "http://127.0.0.1:49261",
+        "path": "/api/library/papers",
+        "status": 200,
+        "paperCount": 1
+      },
+      {
+        "origin": "http://127.0.0.1:49262",
+        "path": "/api/library/papers",
+        "error": "TimeoutError"
+      },
+      {
+        "origin": "http://127.0.0.1:49262",
+        "path": "/",
+        "error": "TimeoutError"
+      },
+      {
+        "origin": "http://127.0.0.1:49262",
+        "path": "/@vite/client",
+        "error": "TimeoutError"
+      },
+      {
+        "origin": "http://127.0.0.1:49262",
+        "path": "/src/main.tsx",
+        "error": "TimeoutError"
+      }
+    ]
+  },
+  "error": "Error: Timed out waiting for question asking feedback.\n    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:494:11)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at runNextTicks (node:internal/process/task_queues:68:3)\n    at process.processTimers (node:internal/timers:538:9)\n    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:989:3)\n    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1234:1",
+  "metadataProviderCalls": 0,
+  "summaryProviderCalls": 0,
+  "questionProviderCalls": 0,
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T22:32:12.379Z"
+}

@@ -1,0 +1,509 @@
+{
+  "id": "cb2afe93-d025-4dc0-99d6-6c112188724c",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\metadata-check\\cb2afe93-d025-4dc0-99d6-6c112188724c\\state",
+  "startedAt": "2026-11-08T22:19:28.863Z",
+  "fixture": {
+    "source": "scripts/fixtures/pdf-fixtures.mjs",
+    "license": "CC0-1.0"
+  },
+  "steps": [
+    {
+      "step": "built-worker-missing-storage-and-configuration-failures-passed",
+      "missingStorage": 503,
+      "missingConfiguration": 424
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 107048
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 119576,
+      "origin": "http://127.0.0.1:59055"
+    },
+    {
+      "step": "actual-worker-four-fields-evidence-cache-and-original-bytes-passed",
+      "documentId": "c4adb9ed-545b-49a2-a7c8-9ca5ee92ed9e",
+      "providerCalls": 1
+    },
+    {
+      "step": "concurrent-metadata-request-used-one-provider-call",
+      "documentId": "dbe68098-a484-4e06-96c9-45ec610c990c"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 119576
+    },
+    {
+      "step": "worker-started",
+      "pid": 127480,
+      "origin": "http://127.0.0.1:59086"
+    },
+    {
+      "step": "restart-read-metadata-before-another-provider-call-passed",
+      "documentId": "c4adb9ed-545b-49a2-a7c8-9ca5ee92ed9e"
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 127480
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "migration",
+      "pid": 125196
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 123384,
+      "origin": "http://127.0.0.1:59122"
+    },
+    {
+      "step": "migration-reapply-preserves-metadata-text-and-original-bytes",
+      "documentId": "c4adb9ed-545b-49a2-a7c8-9ca5ee92ed9e"
+    },
+    {
+      "step": "metadata-years-accepted-without-source-evidence-and-null-keeps-other-fields-text-pdf-cache"
+    },
+    {
+      "step": "wrapped-word-literal-and-joined-comparison-preserves-dashes-compounds-numbers-evidence-and-cache",
+      "documentId": "8c76f0f3-549e-4159-8152-733590ff67f6"
+    },
+    {
+      "step": "metadata-does-not-require-or-validate-evidence",
+      "ignoredQuoteBytes": [
+        600,
+        601
+      ]
+    },
+    {
+      "step": "unknown-fields-and-clipped-page-selection-passed",
+      "unknownDocumentId": "9010c03e-242a-43c1-ba1f-18cb0bebb327",
+      "clippedDocumentId": "1adcb0d7-867b-4efb-bbef-45531518113b"
+    },
+    {
+      "step": "malformed-refused-incomplete-provider-failures-and-claim-release-passed",
+      "failureModes": 4
+    },
+    {
+      "step": "stopped-owned-process",
+      "label": "Worker",
+      "pid": 123384
+    },
+    {
+      "step": "removed-owned-test-state",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\metadata-check\\cb2afe93-d025-4dc0-99d6-6c112188724c\\state"
+    }
+  ],
+  "providerRequests": [
+    {
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "slow",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "ambiguous_year",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "correct_nullable_year",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "wrapped",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "wrapped_literal",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "wrapped_compound_deleted",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "wrapped_number_changed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "wrapped_word_changed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "wrapped_wrong_page",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "dash_removed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1
+      ]
+    },
+    {
+      "mode": "evidence_quote_600_multibyte",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_quote_shape",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_page_number_type",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_page_number_integer",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_quote_type",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_quote_empty",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_quote_untrimmed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "evidence_quote_601_multibyte",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "unknown",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "unknown",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "mode": "wrong_evidence",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "malformed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "malformed",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "refusal",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "incomplete",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "http_error",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    },
+    {
+      "mode": "valid",
+      "model": "gpt-6-luna",
+      "store": false,
+      "maxOutputTokens": 4096,
+      "hasTools": false,
+      "strictSchema": true,
+      "hasEvidenceQuoteLimitInstruction": false,
+      "pageMarkers": [
+        1,
+        2
+      ]
+    }
+  ],
+  "result": "passed",
+  "finishedAt": "2026-11-08T22:19:45.898Z"
+}

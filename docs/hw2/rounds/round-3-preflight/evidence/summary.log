@@ -1,0 +1,20 @@
+{"step":"built-worker-summary-storage-and-configuration-failures-passed","missingStorage":503,"missingConfiguration":424}
+{"step":"stopped-owned-process","label":"migration","pid":125400}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":34712,"origin":"http://127.0.0.1:59194"}
+{"step":"actual-worker-summary-includes-opening-and-later-pages-evidence-cache-and-unchanged-metadata-text-pdf","documentId":"bccd207d-9259-464f-ae83-f8a2078db830","summaryProviderCalls":1,"metadataProviderCalls":1}
+{"step":"concurrent-summary-request-used-one-provider-call","documentId":"5ad2dac6-dadd-4afe-be18-131ecea4bb3b"}
+{"step":"stopped-owned-process","label":"Worker","pid":34712}
+{"step":"worker-started","pid":115164,"origin":"http://127.0.0.1:59222"}
+{"step":"restart-read-summary-before-another-provider-call-preserves-metadata-text-and-pdf","documentId":"bccd207d-9259-464f-ae83-f8a2078db830"}
+{"step":"stopped-owned-process","label":"Worker","pid":115164}
+{"step":"stopped-owned-process","label":"migration","pid":125620}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":123056,"origin":"http://127.0.0.1:59257"}
+{"step":"migration-reapply-preserves-summary-metadata-and-original-bytes","documentId":"bccd207d-9259-464f-ae83-f8a2078db830"}
+{"step":"summary-source-budget-truncates-at-a-page-aware-utf8-boundary","documentId":"8927a745-268e-4704-869a-9123fc5b5860","byteBudget":98304,"includedPages":[1,2,3,4],"totalPages":4}
+{"step":"summary-ordinary-text-with-empty-evidence-and-prose-output-limits-passed","proseByteLimit":12000}
+{"step":"summary-malformed-refusal-incomplete-provider-timeout-failures-leave-no-summary","failureModes":5}
+{"step":"stopped-owned-process","label":"Worker","pid":123056}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\summary-check\\74878921-e6a2-40d1-8239-84bceaf8ca6f\\state"}
+Summary check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\summary-check\74878921-e6a2-40d1-8239-84bceaf8ca6f\result.json

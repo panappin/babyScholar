@@ -1,0 +1,3 @@
+src/DocumentWorkspace.tsx
+- ? { ...summary, summary: current.summary.summary }
++ ? { ...summary, summary: null }

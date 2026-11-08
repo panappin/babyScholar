@@ -1,0 +1,2099 @@
+{
+  "startedAt": "2026-11-08T22:38:17.066Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\0dfda5d1-cd5d-4969-9888-185df471dd7f",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 111824,
+      "frontendPid": 122516,
+      "workerOrigin": "http://127.0.0.1:56648",
+      "viteOrigin": "http://127.0.0.1:56649"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mocked-existing-save-and-library-passed",
+      "existingId": "11111111-1111-4111-8111-111111111111",
+      "createdId": "22222222-2222-4222-8222-222222222222"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-library-errors-retain-records-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-stale-library-response-ignored"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-empty-library-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-duplicate-preserves-id-and-timestamp",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "savedAt": "2025-02-03T04:05:06.000Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mocked-search-empty-errors-and-unexpected-json-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-interrupted-save-reconciles-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed",
+      "id": "889f196f-8e36-4f62-9d53-47f8743e7e5e",
+      "savedAt": "2026-11-08T22:39:08.969Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-remove-and-resave-uses-new-application-id"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mocked-pdfs-summary-loading-partial-evidence-get-only-stale-and-inprogress-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mocked-metadata-timeout-reconciles-with-fresh-read-signal-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 403,
+      "body": "redacted non-JSON"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 401,
+      "body": "redacted non-JSON"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mocked-question-non-application-401-403-preserve-input-and-recover-with-get-only-passed",
+      "deniedPostStatus": 403,
+      "deniedGetStatus": 401
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mocked-pdfs-questions-loading-empty-errors-partial-cache-insufficient-reconciliation-stale-and-narrow-passed",
+      "answeredId": "66666666-6666-4666-8666-666666666666",
+      "insufficientId": "77777777-7777-4777-8777-777777777777"
+    },
+    {
+      "step": "actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-prepared-download-passed",
+      "documentId": "030a8879-4b5a-4a8d-b138-45585ab57e7c",
+      "providerCalls": 1,
+      "downloadBytes": 1752,
+      "chromeDownloadPermissionForcedForHarness": true,
+      "defaultBrowserSavingUnverified": true
+    },
+    {
+      "step": "actual-browser-metadata-failure-retains-upload-and-text-passed",
+      "providerCalls": 2
+    },
+    {
+      "step": "actual-browser-metadata-only-retry-without-upload-or-extraction-post"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 111824
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 122516
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 99076
+    }
+  ],
+  "result": "failed",
+  "failedWait": {
+    "description": "actual explicit question answer and later-page evidence",
+    "ui": {
+      "libraryVisible": false,
+      "libraryLoading": false,
+      "libraryCount": 0,
+      "alert": "The metadata provider returned an error."
+    },
+    "network": [
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606873.787883,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606873.788106,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606873.788633,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606873.790327,
+        "status": 200,
+        "responseAt": 606873.804592
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606873.790604,
+        "status": 200,
+        "responseAt": 606873.848156
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606873.79081,
+        "status": 200,
+        "responseAt": 606874.00504
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606874.073043,
+        "status": 200,
+        "responseAt": 606874.154982
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606874.204452,
+        "status": 201,
+        "responseAt": 606874.210742
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606874.459798,
+        "status": 503,
+        "responseAt": 606874.466929
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606874.516399,
+        "status": 200,
+        "responseAt": 606874.521351
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606879.742424,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606879.742578,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606879.742708,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606879.743,
+        "status": 200,
+        "responseAt": 606879.779668
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606879.743098,
+        "status": 200,
+        "responseAt": 606879.785196
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606879.743184,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606880.170016,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606880.17017,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606880.170304,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606880.170583,
+        "status": 200,
+        "responseAt": 606880.181983
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606880.170674,
+        "status": 200,
+        "responseAt": 606880.188572
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606880.170769,
+        "status": 200,
+        "responseAt": 606880.306478
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606885.749769,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606885.749925,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606885.750052,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606885.750344,
+        "status": 200,
+        "responseAt": 606885.769032
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606885.750424,
+        "status": 200,
+        "responseAt": 606885.774292
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606885.75062,
+        "status": 200,
+        "responseAt": 606885.907507
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606885.917633,
+        "status": 200,
+        "responseAt": 606885.923943
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606885.967691,
+        "status": 200,
+        "responseAt": 606885.971798
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606885.991898,
+        "status": 502,
+        "responseAt": 606885.995133
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606886.049477,
+        "status": 200,
+        "responseAt": 606886.054893
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606886.111634,
+        "failure": "net::ERR_FAILED",
+        "canceled": false
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606886.158087,
+        "status": 200,
+        "responseAt": 606886.16115
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606886.815161,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606886.815316,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606886.815465,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606886.815767,
+        "status": 200,
+        "responseAt": 606886.847808
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606886.81586,
+        "status": 200,
+        "responseAt": 606886.853858
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606886.815951,
+        "status": 200,
+        "responseAt": 606886.961229
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606887.013074,
+        "status": 200,
+        "responseAt": 606887.016512
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606887.069652,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606887.095638,
+        "status": 200,
+        "responseAt": 606887.115292
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606887.12037,
+        "status": 201,
+        "responseAt": 606887.124591
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606887.125029,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606887.401823,
+        "status": 200,
+        "responseAt": 606887.403854
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606898.682369,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606898.682545,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606898.682714,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606898.68331,
+        "status": 200,
+        "responseAt": 606898.76234
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606898.683447,
+        "status": 200,
+        "responseAt": 606898.786089
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606898.683555,
+        "status": 200,
+        "responseAt": 606898.78802
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606898.84572,
+        "status": 200,
+        "responseAt": 606898.849522
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606898.899714,
+        "status": 201,
+        "responseAt": 606898.913163
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606898.950701,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606901.482378,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606901.482531,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606901.482677,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606901.483083,
+        "status": 200,
+        "responseAt": 606901.495591
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606901.483219,
+        "status": 200,
+        "responseAt": 606901.501994
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606901.483335,
+        "status": 200,
+        "responseAt": 606901.507476
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606901.512281,
+        "status": 200,
+        "responseAt": 606901.520854
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606901.517634,
+        "status": 200,
+        "responseAt": 606901.526658
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606901.528158,
+        "status": 200,
+        "responseAt": 606901.536882
+      },
+      {
+        "path": "/api/library/papers/889f196f-8e36-4f62-9d53-47f8743e7e5e",
+        "method": "DELETE",
+        "startedAt": 606901.532509,
+        "status": 200,
+        "responseAt": 606901.542922
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606901.543403,
+        "status": 200,
+        "responseAt": 606901.551314
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 606901.592933,
+        "status": 200,
+        "responseAt": 606901.598225
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 606901.647333,
+        "status": 201,
+        "responseAt": 606901.65582
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606901.693677,
+        "status": 200,
+        "responseAt": 606901.701858
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606904.221632,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606904.222007,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606904.222203,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606904.222556,
+        "status": 200,
+        "responseAt": 606904.241342
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606904.222656,
+        "status": 200,
+        "responseAt": 606904.255429
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606904.222757,
+        "status": 200,
+        "responseAt": 606904.255592
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606904.24771,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606904.248126,
+        "status": 200,
+        "responseAt": 606904.363155
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606904.408936,
+        "status": 503,
+        "responseAt": 606904.411137
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606904.455281,
+        "status": 200,
+        "responseAt": 606904.457254
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606904.500475,
+        "status": 200,
+        "responseAt": 606904.502436
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+        "method": "GET",
+        "startedAt": 606904.547878,
+        "status": 200,
+        "responseAt": 606904.557481
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+        "method": "GET",
+        "startedAt": 606904.548037,
+        "status": 200,
+        "responseAt": 606904.557578
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606904.548195,
+        "status": 404,
+        "responseAt": 606904.558716
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+        "method": "GET",
+        "startedAt": 606904.54872,
+        "status": 200,
+        "responseAt": 606904.552863
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+        "method": "GET",
+        "startedAt": 606904.610055,
+        "status": 503,
+        "responseAt": 606904.61713
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "POST",
+        "startedAt": 606904.672552,
+        "status": 201,
+        "responseAt": 606904.681085
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606904.736732,
+        "status": 200,
+        "responseAt": 606904.744639
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+        "method": "GET",
+        "startedAt": 606904.751894,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606904.760404,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606904.760548,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606904.760628,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606904.760708,
+        "status": 200,
+        "responseAt": 606904.764658
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+        "method": "GET",
+        "startedAt": 606904.766039,
+        "status": 200,
+        "responseAt": 606904.771371
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+        "method": "GET",
+        "startedAt": 606904.766168,
+        "status": 200,
+        "responseAt": 606904.772411
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606904.766244,
+        "status": 200,
+        "responseAt": 606904.773033
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+        "method": "GET",
+        "startedAt": 606904.766318,
+        "status": 200,
+        "responseAt": 606904.76977
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606904.783761,
+        "status": 200,
+        "responseAt": 606904.789042
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606904.783896,
+        "status": 404,
+        "responseAt": 606904.78969
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606904.783985,
+        "status": 404,
+        "responseAt": 606904.790369
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606904.784059,
+        "status": 200,
+        "responseAt": 606904.787735
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "POST",
+        "startedAt": 606904.841625,
+        "status": 409,
+        "responseAt": 606904.846745
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606904.852173,
+        "status": 200,
+        "responseAt": 606904.858591
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606904.852314,
+        "status": 404,
+        "responseAt": 606904.859357
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606904.852411,
+        "status": 404,
+        "responseAt": 606904.860027
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606904.852488,
+        "status": 200,
+        "responseAt": 606904.856779
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "POST",
+        "startedAt": 606904.860534,
+        "status": 409,
+        "responseAt": 606904.887302
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606904.934558,
+        "status": 200,
+        "responseAt": 606904.940402
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606904.934708,
+        "status": 404,
+        "responseAt": 606904.941126
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606904.934783,
+        "status": 404,
+        "responseAt": 606904.941656
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606904.934853,
+        "status": 200,
+        "responseAt": 606904.938823
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "POST",
+        "startedAt": 606904.942062,
+        "status": 200,
+        "responseAt": 606904.981112
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606904.981802,
+        "status": 200,
+        "responseAt": 606905.011459
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606904.981894,
+        "status": 404,
+        "responseAt": 606905.012098
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606904.981941,
+        "status": 404,
+        "responseAt": 606905.012715
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606904.981984,
+        "status": 200,
+        "responseAt": 606904.986033
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606905.058945,
+        "status": 200,
+        "responseAt": 606905.064281
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "POST",
+        "startedAt": 606905.068915,
+        "status": 502,
+        "responseAt": 606905.073895
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "POST",
+        "startedAt": 606905.12055,
+        "status": 200,
+        "responseAt": 606905.126005
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606905.126538,
+        "status": 404,
+        "responseAt": 606905.151184
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606905.157074,
+        "status": 200,
+        "responseAt": 606905.162786
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606905.157208,
+        "status": 404,
+        "responseAt": 606905.163427
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606905.157293,
+        "status": 404,
+        "responseAt": 606905.164102
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.157383,
+        "status": 200,
+        "responseAt": 606905.16154
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "POST",
+        "startedAt": 606905.164497,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+        "method": "GET",
+        "startedAt": 606905.367922,
+        "status": 200,
+        "responseAt": 606905.383984
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+        "method": "GET",
+        "startedAt": 606905.368065,
+        "status": 404,
+        "responseAt": 606905.384855
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+        "method": "GET",
+        "startedAt": 606905.368135,
+        "status": 404,
+        "responseAt": 606905.385501
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.368187,
+        "status": 200,
+        "responseAt": 606905.373318
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.418273,
+        "status": 503,
+        "responseAt": 606905.425302
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.47784,
+        "status": 200,
+        "responseAt": 606905.48442
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.490941,
+        "status": 200,
+        "responseAt": 606905.497331
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606905.509998,
+        "status": 403,
+        "responseAt": 606905.516098
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.573131,
+        "status": 200,
+        "responseAt": 606905.578771
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.584453,
+        "status": 401,
+        "responseAt": 606905.590142
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.636316,
+        "status": 200,
+        "responseAt": 606905.641727
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606905.689662,
+        "status": 201,
+        "responseAt": 606905.761078
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.876397,
+        "status": 503,
+        "responseAt": 606905.883842
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606905.899567,
+        "status": 200,
+        "responseAt": 606905.907771
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606905.924594,
+        "status": 201,
+        "responseAt": 606905.932106
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606905.988476,
+        "status": 409,
+        "responseAt": 606905.995557
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606905.996212,
+        "status": 200,
+        "responseAt": 606906.028778
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606906.076914,
+        "status": 200,
+        "responseAt": 606906.084492
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "POST",
+        "startedAt": 606906.098661,
+        "status": 200,
+        "responseAt": 606906.106645
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606906.107177,
+        "status": 200,
+        "responseAt": 606906.13755
+      },
+      {
+        "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+        "method": "GET",
+        "startedAt": 606906.18503,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+        "method": "GET",
+        "startedAt": 606906.191976,
+        "status": 200,
+        "responseAt": 606906.197717
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+        "method": "GET",
+        "startedAt": 606906.192118,
+        "status": 200,
+        "responseAt": 606906.198368
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+        "method": "GET",
+        "startedAt": 606906.192198,
+        "status": 200,
+        "responseAt": 606906.199232
+      },
+      {
+        "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+        "method": "GET",
+        "startedAt": 606906.192291,
+        "status": 200,
+        "responseAt": 606906.196115
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606937.810747,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606937.810892,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606937.811028,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606937.811396,
+        "status": 200,
+        "responseAt": 606937.843477
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606937.81149,
+        "status": 200,
+        "responseAt": 606937.86045
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606937.811616,
+        "status": 200,
+        "responseAt": 606937.863723
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606937.842849,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606937.843219,
+        "status": 200,
+        "responseAt": 606937.868388
+      },
+      {
+        "path": "/api/documents",
+        "method": "POST",
+        "startedAt": 606937.906109,
+        "status": 201,
+        "responseAt": 606937.9257
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/text",
+        "method": "GET",
+        "startedAt": 606937.926398,
+        "status": 404,
+        "responseAt": 606937.948727
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/metadata",
+        "method": "GET",
+        "startedAt": 606937.926499,
+        "status": 404,
+        "responseAt": 606937.966274
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/summary",
+        "method": "GET",
+        "startedAt": 606937.926552,
+        "status": 404,
+        "responseAt": 606937.971357
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/questions",
+        "method": "GET",
+        "startedAt": 606937.926605,
+        "status": 404,
+        "responseAt": 606937.976063
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/extract",
+        "method": "POST",
+        "startedAt": 606937.976827,
+        "status": 201,
+        "responseAt": 606938.558886
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/questions",
+        "method": "GET",
+        "startedAt": 606938.559341,
+        "status": 200,
+        "responseAt": 606938.607627
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/metadata",
+        "method": "POST",
+        "startedAt": 606938.60852,
+        "status": 201,
+        "responseAt": 606938.709297
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/pdf",
+        "method": "GET",
+        "startedAt": 606938.738453,
+        "status": 200,
+        "responseAt": 606939.786492
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606940.254832,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606940.254974,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606940.25512,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 606940.255481,
+        "status": 200,
+        "responseAt": 606940.263894
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 606940.255567,
+        "status": 200,
+        "responseAt": 606940.270914
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 606940.255659,
+        "status": 200,
+        "responseAt": 606940.271181
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606940.289909,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/documents",
+        "method": "GET",
+        "startedAt": 606940.290222,
+        "status": 200,
+        "responseAt": 606940.320701
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/text",
+        "method": "GET",
+        "startedAt": 606940.334314,
+        "status": 200,
+        "responseAt": 606940.343806
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/metadata",
+        "method": "GET",
+        "startedAt": 606940.334422,
+        "status": 200,
+        "responseAt": 606940.357826
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/summary",
+        "method": "GET",
+        "startedAt": 606940.334478,
+        "status": 404,
+        "responseAt": 606940.35818
+      },
+      {
+        "path": "/api/documents/030a8879-4b5a-4a8d-b138-45585ab57e7c/questions",
+        "method": "GET",
+        "startedAt": 606940.334533,
+        "status": 200,
+        "responseAt": 606940.367239
+      },
+      {
+        "path": "/api/documents",
+        "method": "POST",
+        "startedAt": 606940.387483,
+        "status": 201,
+        "responseAt": 606940.39932
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/text",
+        "method": "GET",
+        "startedAt": 606940.399853,
+        "status": 404,
+        "responseAt": 606940.411204
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/metadata",
+        "method": "GET",
+        "startedAt": 606940.399951,
+        "status": 404,
+        "responseAt": 606940.42579
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/summary",
+        "method": "GET",
+        "startedAt": 606940.399998,
+        "status": 404,
+        "responseAt": 606940.427268
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/questions",
+        "method": "GET",
+        "startedAt": 606940.400046,
+        "status": 404,
+        "responseAt": 606940.427401
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/extract",
+        "method": "POST",
+        "startedAt": 606940.42786,
+        "status": 201,
+        "responseAt": 606940.445647
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/questions",
+        "method": "GET",
+        "startedAt": 606940.446097,
+        "status": 200,
+        "responseAt": 606940.45612
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/metadata",
+        "method": "POST",
+        "startedAt": 606940.456507,
+        "status": 502,
+        "responseAt": 606940.4801
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/text",
+        "method": "GET",
+        "startedAt": 606940.536976,
+        "status": 200,
+        "responseAt": 606940.544474
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/text",
+        "method": "GET",
+        "startedAt": 606940.546113,
+        "status": 200,
+        "responseAt": 606940.556495
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/metadata",
+        "method": "GET",
+        "startedAt": 606940.546232,
+        "status": 404,
+        "responseAt": 606940.578435
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/summary",
+        "method": "GET",
+        "startedAt": 606940.546302,
+        "status": 404,
+        "responseAt": 606940.579522
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/questions",
+        "method": "GET",
+        "startedAt": 606940.546377,
+        "status": 200,
+        "responseAt": 606940.579637
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/metadata",
+        "method": "POST",
+        "startedAt": 606940.580112,
+        "status": 201,
+        "responseAt": 606940.604595
+      },
+      {
+        "path": "/api/documents/a979179d-6441-4f54-9e9e-2c6159658728/text",
+        "method": "GET",
+        "startedAt": 606940.645109,
+        "status": 200,
+        "responseAt": 606940.652093
+      },
+      {
+        "path": "/api/documents",
+        "method": "POST",
+        "startedAt": 606940.659207,
+        "status": 201,
+        "responseAt": 606940.671637
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/text",
+        "method": "GET",
+        "startedAt": 606940.672089,
+        "status": 404,
+        "responseAt": 606940.684727
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/metadata",
+        "method": "GET",
+        "startedAt": 606940.672172,
+        "status": 404,
+        "responseAt": 606940.698853
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/summary",
+        "method": "GET",
+        "startedAt": 606940.672213,
+        "status": 404,
+        "responseAt": 606940.698995
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/questions",
+        "method": "GET",
+        "startedAt": 606940.672257,
+        "status": 404,
+        "responseAt": 606940.699201
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/extract",
+        "method": "POST",
+        "startedAt": 606940.699552,
+        "status": 201,
+        "responseAt": 606940.717498
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/questions",
+        "method": "GET",
+        "startedAt": 606940.717905,
+        "status": 200,
+        "responseAt": 606940.728483
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/metadata",
+        "method": "POST",
+        "startedAt": 606940.728874,
+        "status": 502,
+        "responseAt": 606940.750051
+      },
+      {
+        "path": "/api/documents/c50990ba-6665-420b-ba1d-a47736035042/questions",
+        "method": "POST",
+        "startedAt": 606940.807721,
+        "status": 502,
+        "responseAt": 606940.841321
+      }
+    ],
+    "processPipes": [
+      {
+        "pid": 111824,
+        "stdoutBufferedBytes": 8660,
+        "stderrBufferedBytes": 814,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 122516,
+        "stdoutBufferedBytes": 7752,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 99076,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 15191,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 0
+        }
+      }
+    ],
+    "directProbes": [
+      {
+        "origin": "http://127.0.0.1:56648",
+        "path": "/api/library/papers",
+        "status": 200,
+        "paperCount": 1
+      },
+      {
+        "origin": "http://127.0.0.1:56649",
+        "path": "/api/library/papers",
+        "status": 200,
+        "paperCount": 1
+      }
+    ]
+  },
+  "error": "Error: Timed out waiting for actual explicit question answer and later-page evidence.\n    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:511:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1170:3)\n    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1255:1",
+  "metadataProviderCalls": 4,
+  "summaryProviderCalls": 0,
+  "questionProviderCalls": 0,
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T22:40:23.275Z"
+}

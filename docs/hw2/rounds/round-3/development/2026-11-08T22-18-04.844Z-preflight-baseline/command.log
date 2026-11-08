@@ -1,0 +1,43 @@
+
+> ai-research-assistant@0.1.0 baseline
+> node scripts/baseline/run.mjs
+
+BASELINE build
+build: passed (9586 ms)
+BASELINE papers
+papers: passed (1866 ms)
+BASELINE integrations
+integrations: passed (2301 ms)
+BASELINE question-text
+question-text: passed (508 ms)
+BASELINE document-details-timeout
+document-details-timeout: passed (357 ms)
+BASELINE library
+library: passed (25544 ms)
+BASELINE document
+document: passed (25414 ms)
+BASELINE document-delete
+document-delete: passed (1924 ms)
+BASELINE extraction
+extraction: passed (15844 ms)
+BASELINE metadata
+metadata: passed (17160 ms)
+BASELINE summary
+summary: passed (42185 ms)
+BASELINE question
+question: passed (50686 ms)
+BASELINE metadata-live-verifier
+metadata-live-verifier: passed (28064 ms)
+BASELINE local-reset
+local-reset: passed (20671 ms)
+BASELINE frontend-search-browser
+frontend-search-browser: failed (44011 ms)
+BASELINE sites-artifact
+sites-artifact: passed (552 ms)
+BASELINE generated-suite-coverage
+generated-suite-coverage: passed (3649 ms)
+BASELINE profile-prepare
+profile-prepare: passed (1227 ms)
+BASELINE profile
+profile: passed (1941 ms)
+Evidence: C:\Users\panap\PycharmProjects\babyScholar\artifacts\baseline\2026-11-08T22-18-05.281Z

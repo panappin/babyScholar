@@ -1,0 +1,74 @@
+{
+  "startedAt": "2026-11-08T22:22:07.594Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\63f1f15d-6500-4c0c-81e4-50148fc23190",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 122784,
+      "frontendPid": 106780,
+      "workerOrigin": "http://127.0.0.1:64908",
+      "viteOrigin": "http://127.0.0.1:64909"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 122784
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 106780
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 123308
+    }
+  ],
+  "result": "failed",
+  "failedWait": {
+    "description": "the initial page",
+    "ui": {
+      "libraryVisible": false,
+      "libraryLoading": false,
+      "libraryCount": 0,
+      "alert": null
+    },
+    "network": [],
+    "processPipes": [
+      {
+        "pid": 122784,
+        "stdoutBufferedBytes": 3040,
+        "stderrBufferedBytes": 0
+      },
+      {
+        "pid": 106780,
+        "stdoutBufferedBytes": 73,
+        "stderrBufferedBytes": 0
+      },
+      {
+        "pid": 123308,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 2596
+      }
+    ],
+    "directProbes": [
+      {
+        "origin": "http://127.0.0.1:64908",
+        "status": 200,
+        "paperCount": 0
+      },
+      {
+        "origin": "http://127.0.0.1:64909",
+        "error": "TimeoutError"
+      }
+    ]
+  },
+  "error": "Error: Timed out waiting for the initial page.\n    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:482:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async navigate (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:581:5)\n    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:600:3)\n    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1222:1",
+  "metadataProviderCalls": 0,
+  "summaryProviderCalls": 0,
+  "questionProviderCalls": 0,
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T22:22:51.508Z"
+}

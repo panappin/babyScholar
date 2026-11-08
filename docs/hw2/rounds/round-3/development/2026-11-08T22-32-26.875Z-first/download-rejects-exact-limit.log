@@ -1,0 +1,18 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/download-rejects-exact-limit
+
+ ✓ tests/baseline/document-workspace.test.tsx (35 tests) 7231ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 590ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 506ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 562ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 577ms
+   ✓ Upload, download and deletion intent (10)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 320ms
+
+ Test Files  1 passed (1)
+      Tests  35 passed (35)
+   Start at  17:33:27
+   Duration  9.05s (tests 81%, environment 13%, import 4%, transform 1%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/download-rejects-exact-limit.tests.json

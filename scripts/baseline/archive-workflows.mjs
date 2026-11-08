@@ -1,12 +1,13 @@
 // Append-only archive of completed extension commands and selected fault probes.
 import { cp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '../..');
 const destinationRoot = resolve(root, 'docs/hw2/rounds/round-3/development');
 const input = resolve(root, process.argv[2] ?? '');
-const allowed = ['artifacts/hw2-extension', 'artifacts/hw2-workflow-faults'];
+const allowed = ['artifacts/hw2-extension', 'artifacts/hw2-workflow-faults', 'artifacts/hw2-fault-probes'];
 if (!allowed.some(parent => {
   const local = relative(resolve(root, parent), input);
   return local && !local.startsWith('..') && !isAbsolute(local) && !local.includes('/') && !local.includes('\\');
@@ -34,7 +35,7 @@ if (command) {
   if (diagnostics.length) await writeFile(resolve(destination, 'diagnostics.json'), JSON.stringify(diagnostics, null, 2) + '\n');
 } else {
   const report = JSON.parse(await readFile(resolve(input, 'results.json'), 'utf8'));
-  if (!report.finishedAt) throw new Error('Fault experiment is still running.');
+  if (!report.finishedAt && !(report.runs?.length === 6 && Object.keys(report.testFiles ?? {}).length)) throw new Error('Fault experiment is still running.');
   for (const entry of await readdir(input, { withFileTypes: true })) {
     if (entry.isFile()) await cp(resolve(input, entry.name), resolve(destination, entry.name));
   }
@@ -42,7 +43,7 @@ if (command) {
   // mutation. The explicit patch files specify the mutant differences.
   await mkdir(resolve(destination, 'snapshot'));
   for (const path of ['src', 'tests', 'package.json', 'package-lock.json', 'vitest.config.ts']) {
-    await cp(resolve(input, 'control', path), resolve(destination, 'snapshot', path), { recursive: true });
+    if (existsSync(resolve(input, 'control', path))) await cp(resolve(input, 'control', path), resolve(destination, 'snapshot', path), { recursive: true });
   }
 }
 try {

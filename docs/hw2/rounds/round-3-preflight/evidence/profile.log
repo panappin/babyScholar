@@ -1,0 +1,49 @@
+{
+  "scope": "Node local pure-function microbenchmark; excludes I/O, browser, workerd, D1/R2 and provider latency",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "arch": "x64",
+  "timestamp": "2026-11-08T22:22:59.168Z",
+  "measurements": [
+    {
+      "name": "canonicalArxivLink",
+      "iterationsPerBatch": 20000,
+      "millisecondsPerCall": [
+        0.0010382399999999997,
+        0.0008603699999999996,
+        0.00098129,
+        0.0008783650000000002,
+        0.0007086099999999995,
+        0.0006740449999999995,
+        0.0006716499999999997
+      ],
+      "medianMs": 0.0008603699999999996,
+      "minMs": 0.0006716499999999997,
+      "maxMs": 0.0010382399999999997
+    },
+    {
+      "name": "selectSummarySource",
+      "iterationsPerBatch": 100,
+      "millisecondsPerCall": [
+        2.4154609999999996,
+        2.4599519999999995,
+        2.6343869999999994,
+        2.2779330000000004,
+        2.528578,
+        2.0973800000000007,
+        2.236381000000001
+      ],
+      "medianMs": 2.4154609999999996,
+      "minMs": 2.0973800000000007,
+      "maxMs": 2.6343869999999994
+    }
+  ],
+  "memoryAfter": {
+    "rss": 73633792,
+    "heapTotal": 24174592,
+    "heapUsed": 5837824,
+    "external": 3905552,
+    "arrayBuffers": 1042041
+  },
+  "sink": 77083060
+}

@@ -1,0 +1,7 @@
+control: passed (0 failing tests)
+upload-rejects-exact-limit: detected (1 failing tests)
+question-lossy-utf8: detected (4 failing tests)
+generation-retries-network-failure: detected (13 failing tests)
+summary-source-budget-plus-one: detected (5 failing tests)
+summary-demands-envelope: detected (5 failing tests)
+Fault-probe evidence: artifacts\hw2-fault-probes\round-3-2026-11-08T22-47-55.373Z

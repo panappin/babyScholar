@@ -1,0 +1,12 @@
+{"step":"migration-applied","exitCode":0}
+{"step":"local-worker-and-vite-started","workerPid":122784,"frontendPid":106780,"workerOrigin":"http://127.0.0.1:64908","viteOrigin":"http://127.0.0.1:64909"}
+Error: Timed out waiting for the initial page.
+    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:482:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async navigate (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:581:5)
+    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:600:3)
+    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1222:1
+{"step":"stopped-owned-process","pid":122784}
+{"step":"stopped-owned-process","pid":106780}
+{"step":"stopped-owned-process","pid":123308}
+{"result":"failed","evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\63f1f15d-6500-4c0c-81e4-50148fc23190\\result.json"}

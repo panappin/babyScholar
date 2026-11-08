@@ -1,0 +1,13 @@
+
+> ai-research-assistant@0.1.0 build:frontend
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 31 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/frontend/index.html                   0.54 kB │ gzip:  0.31 kB
+dist/frontend/assets/index-CskUxwHG.css   10.48 kB │ gzip:  2.60 kB
+dist/frontend/assets/index-CXLts3xW.js   286.37 kB │ gzip: 84.48 kB
+✓ built in 1.34s

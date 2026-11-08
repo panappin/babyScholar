@@ -1,0 +1,1536 @@
+{
+  "startedAt": "2026-11-08T22:42:42.193Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\fe475d44-4e28-40ba-b145-83daef4af09d",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 47204,
+      "frontendPid": 117048,
+      "workerOrigin": "http://127.0.0.1:62816",
+      "viteOrigin": "http://127.0.0.1:62817"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mocked-existing-save-and-library-passed",
+      "existingId": "11111111-1111-4111-8111-111111111111",
+      "createdId": "22222222-2222-4222-8222-222222222222"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-library-errors-retain-records-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-stale-library-response-ignored"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-empty-library-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-duplicate-preserves-id-and-timestamp",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "savedAt": "2025-02-03T04:05:06.000Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mocked-search-empty-errors-and-unexpected-json-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-interrupted-save-reconciles-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed",
+      "id": "187b2d7f-6ae6-41ea-b3cd-9015f386845d",
+      "savedAt": "2026-11-08T22:43:43.630Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-remove-and-resave-uses-new-application-id"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 47204
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 117048
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 115372
+    }
+  ],
+  "result": "failed",
+  "failedWait": {
+    "description": "mocked PDFs page",
+    "ui": {
+      "libraryVisible": false,
+      "libraryLoading": false,
+      "libraryCount": 0,
+      "alert": null
+    },
+    "network": [
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607119.844001,
+        "status": 200,
+        "responseAt": 607120.909606
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607120.913286,
+        "status": 200,
+        "responseAt": 607121.078687
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607120.913698,
+        "status": 200,
+        "responseAt": 607120.937699
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607120.91632,
+        "status": 200,
+        "responseAt": 607120.949285
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607120.938042,
+        "status": 200,
+        "responseAt": 607120.968991
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607120.938117,
+        "status": 200,
+        "responseAt": 607120.970211
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607120.93815,
+        "status": 200,
+        "responseAt": 607121.237273
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607120.938191,
+        "status": 200,
+        "responseAt": 607121.308954
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607120.938224,
+        "status": 200,
+        "responseAt": 607143.034598
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607120.969296,
+        "status": 200,
+        "responseAt": 607122.455555
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607121.079016,
+        "status": 200,
+        "responseAt": 607122.481314
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607121.238664,
+        "status": 200,
+        "responseAt": 607122.547396
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607121.309306,
+        "status": 200,
+        "responseAt": 607122.674861
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607121.309383,
+        "status": 200,
+        "responseAt": 607122.664964
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607143.13186,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607143.132177,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607143.132752,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607143.134232,
+        "status": 200,
+        "responseAt": 607143.356665
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607143.134357,
+        "status": 200,
+        "responseAt": 607143.360204
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607143.134472,
+        "status": 200,
+        "responseAt": 607143.509226
+      },
+      {
+        "path": "/favicon.svg",
+        "method": "GET",
+        "startedAt": 607143.148579,
+        "status": 200,
+        "responseAt": 607143.321511
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607143.576966,
+        "status": 200,
+        "responseAt": 607143.680883
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607143.731623,
+        "status": 201,
+        "responseAt": 607143.741421
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607144.02496,
+        "status": 503,
+        "responseAt": 607144.032503
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607144.087401,
+        "status": 200,
+        "responseAt": 607144.093729
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607144.161925,
+        "status": 200,
+        "responseAt": 607150.57375
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607150.584849,
+        "status": 200,
+        "responseAt": 607150.605371
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607150.585127,
+        "status": 200,
+        "responseAt": 607150.603456
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607150.588055,
+        "status": 200,
+        "responseAt": 607150.60492
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607150.603766,
+        "status": 200,
+        "responseAt": 607150.608136
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607150.603834,
+        "status": 200,
+        "responseAt": 607150.608418
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607150.603875,
+        "status": 200,
+        "responseAt": 607150.624706
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607150.603925,
+        "status": 200,
+        "responseAt": 607150.611096
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607150.603978,
+        "status": 200,
+        "responseAt": 607150.609846
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607150.605578,
+        "status": 200,
+        "responseAt": 607150.611365
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607150.608322,
+        "status": 200,
+        "responseAt": 607150.614011
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607150.61148,
+        "status": 200,
+        "responseAt": 607150.619391
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607150.611553,
+        "status": 200,
+        "responseAt": 607150.618975
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607150.625448,
+        "status": 200,
+        "responseAt": 607150.627518
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607150.6436,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607150.643767,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607150.643918,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607150.644252,
+        "status": 200,
+        "responseAt": 607150.684086
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607150.644349,
+        "status": 200,
+        "responseAt": 607150.689894
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607150.644447,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607150.767947,
+        "status": 200,
+        "responseAt": 607150.914328
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607150.917582,
+        "status": 304,
+        "responseAt": 607150.966768
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607150.917706,
+        "status": 304,
+        "responseAt": 607150.96751
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607150.91951,
+        "status": 304,
+        "responseAt": 607150.967578
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607150.967178,
+        "status": 304,
+        "responseAt": 607151.194061
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607150.96791,
+        "status": 200,
+        "responseAt": 607150.967947
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607150.967995,
+        "status": 200,
+        "responseAt": 607150.968015
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607150.968306,
+        "status": 200,
+        "responseAt": 607150.968335
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607150.968386,
+        "status": 304,
+        "responseAt": 607151.195158
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607150.968431,
+        "status": 304,
+        "responseAt": 607151.195419
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607150.968599,
+        "status": 200,
+        "responseAt": 607150.968615
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607150.968785,
+        "status": 200,
+        "responseAt": 607150.968804
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607151.195523,
+        "status": 304,
+        "responseAt": 607152.295897
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607151.195589,
+        "status": 304,
+        "responseAt": 607152.296614
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607152.304435,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607152.304623,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607152.304767,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607152.305072,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607152.30516,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607152.305253,
+        "status": 200,
+        "responseAt": 607152.439751
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607152.449872,
+        "status": 200,
+        "responseAt": 607156.944312
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607156.946509,
+        "status": 304,
+        "responseAt": 607156.958129
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607156.946653,
+        "status": 304,
+        "responseAt": 607156.958897
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607156.948404,
+        "status": 304,
+        "responseAt": 607156.95907
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607156.958388,
+        "status": 304,
+        "responseAt": 607156.962448
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607156.959199,
+        "status": 200,
+        "responseAt": 607156.959231
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607156.959267,
+        "status": 200,
+        "responseAt": 607156.959284
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607156.959595,
+        "status": 200,
+        "responseAt": 607156.959622
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607156.959668,
+        "status": 304,
+        "responseAt": 607156.963589
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607156.959712,
+        "status": 304,
+        "responseAt": 607156.964822
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607156.959882,
+        "status": 200,
+        "responseAt": 607156.959902
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607156.95998,
+        "status": 200,
+        "responseAt": 607156.960007
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607156.964686,
+        "status": 304,
+        "responseAt": 607156.967126
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607156.964746,
+        "status": 304,
+        "responseAt": 607156.967598
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607156.985127,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607156.985286,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607156.985441,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607156.985749,
+        "status": 200,
+        "responseAt": 607156.995892
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607156.985834,
+        "status": 200,
+        "responseAt": 607157.002008
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607156.985922,
+        "status": 200,
+        "responseAt": 607157.107544
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607157.157903,
+        "status": 200,
+        "responseAt": 607157.16177
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607157.212922,
+        "status": 200,
+        "responseAt": 607157.21737
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607157.294846,
+        "status": 502,
+        "responseAt": 607157.298738
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607157.304847,
+        "status": 200,
+        "responseAt": 607157.311332
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607157.354125,
+        "failure": "net::ERR_FAILED",
+        "canceled": false
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607157.414864,
+        "status": 200,
+        "responseAt": 607157.418448
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607157.476961,
+        "status": 200,
+        "responseAt": 607161.011754
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607161.014733,
+        "status": 304,
+        "responseAt": 607170.519028
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607161.014925,
+        "status": 304,
+        "responseAt": 607170.589425
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607161.017035,
+        "status": 304,
+        "responseAt": 607170.528123
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607170.519316,
+        "status": 200,
+        "responseAt": 607170.577508
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607170.589881,
+        "status": 200,
+        "responseAt": 607170.589941
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607170.590024,
+        "status": 200,
+        "responseAt": 607170.590065
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607170.590856,
+        "status": 200,
+        "responseAt": 607170.590907
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607170.590976,
+        "status": 200,
+        "responseAt": 607170.605416
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607170.591031,
+        "status": 200,
+        "responseAt": 607170.60473
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607170.59121,
+        "status": 200,
+        "responseAt": 607170.59123
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607170.591319,
+        "status": 200,
+        "responseAt": 607170.591337
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607170.605656,
+        "status": 200,
+        "responseAt": 607170.615645
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607170.605717,
+        "status": 200,
+        "responseAt": 607170.612505
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607170.626524,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607170.626746,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607170.626937,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607170.627471,
+        "status": 200,
+        "responseAt": 607170.6756
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607170.627654,
+        "status": 200,
+        "responseAt": 607170.70707
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607170.627841,
+        "status": 200,
+        "responseAt": 607170.752792
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607170.821963,
+        "status": 200,
+        "responseAt": 607170.829024
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607170.889091,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607170.915982,
+        "status": 200,
+        "responseAt": 607170.953863
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607171.017678,
+        "status": 201,
+        "responseAt": 607171.024502
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607171.025185,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607171.301972,
+        "status": 200,
+        "responseAt": 607171.306219
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607171.325707,
+        "status": 200,
+        "responseAt": 607173.396229
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607173.398452,
+        "status": 304,
+        "responseAt": 607173.401221
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607173.398585,
+        "status": 304,
+        "responseAt": 607173.401394
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607173.400389,
+        "status": 304,
+        "responseAt": 607173.402537
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607173.401533,
+        "status": 304,
+        "responseAt": 607173.403826
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607173.40162,
+        "status": 200,
+        "responseAt": 607173.401642
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607173.401677,
+        "status": 200,
+        "responseAt": 607173.401693
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607173.40207,
+        "status": 200,
+        "responseAt": 607173.402117
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607173.402173,
+        "status": 304,
+        "responseAt": 607173.404808
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607173.40222,
+        "status": 304,
+        "responseAt": 607173.405012
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607173.402386,
+        "status": 200,
+        "responseAt": 607173.402404
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607173.402681,
+        "status": 200,
+        "responseAt": 607173.402787
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607173.405137,
+        "status": 304,
+        "responseAt": 607173.407895
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607173.405199,
+        "status": 304,
+        "responseAt": 607173.408221
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607173.418668,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607173.418853,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607173.419027,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607173.419429,
+        "status": 200,
+        "responseAt": 607173.448951
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607173.419554,
+        "status": 200,
+        "responseAt": 607173.453529
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607173.419671,
+        "status": 200,
+        "responseAt": 607173.460121
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607173.488173,
+        "status": 200,
+        "responseAt": 607173.492785
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607173.540172,
+        "status": 201,
+        "responseAt": 607173.581621
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607173.590479,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607173.602904,
+        "status": 200,
+        "responseAt": 607175.380072
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607175.382495,
+        "status": 200,
+        "responseAt": 607175.398316
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607175.382622,
+        "status": 200,
+        "responseAt": 607175.395434
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607175.384385,
+        "status": 200,
+        "responseAt": 607175.39775
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607175.395687,
+        "status": 200,
+        "responseAt": 607175.39572
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607175.395761,
+        "status": 200,
+        "responseAt": 607175.395779
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607175.39612,
+        "status": 200,
+        "responseAt": 607175.396153
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607175.396201,
+        "status": 200,
+        "responseAt": 607175.401559
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607175.396254,
+        "status": 200,
+        "responseAt": 607175.401057
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607175.396416,
+        "status": 200,
+        "responseAt": 607175.396432
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607175.396508,
+        "status": 200,
+        "responseAt": 607175.396521
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607175.398586,
+        "status": 200,
+        "responseAt": 607175.401755
+      },
+      {
+        "path": "/src/DocumentWorkspace.tsx",
+        "method": "GET",
+        "startedAt": 607175.401919,
+        "status": 200,
+        "responseAt": 607175.413462
+      },
+      {
+        "path": "/src/paper-identity.ts",
+        "method": "GET",
+        "startedAt": 607175.402027,
+        "status": 200,
+        "responseAt": 607175.413111
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607175.421663,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607175.421825,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607175.421971,
+        "failure": "net::ERR_ABORTED",
+        "canceled": true
+      },
+      {
+        "path": "/api/health",
+        "method": "GET",
+        "startedAt": 607175.422277,
+        "status": 200,
+        "responseAt": 607175.469095
+      },
+      {
+        "path": "/api/storage/status",
+        "method": "GET",
+        "startedAt": 607175.422367,
+        "status": 200,
+        "responseAt": 607175.475564
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607175.422476,
+        "status": 200,
+        "responseAt": 607175.48133
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607175.492541,
+        "status": 200,
+        "responseAt": 607175.501996
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607175.504143,
+        "status": 200,
+        "responseAt": 607175.513097
+      },
+      {
+        "path": "/api/library/papers/187b2d7f-6ae6-41ea-b3cd-9015f386845d",
+        "method": "DELETE",
+        "startedAt": 607175.509679,
+        "status": 200,
+        "responseAt": 607175.520068
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607175.521261,
+        "status": 200,
+        "responseAt": 607175.53003
+      },
+      {
+        "path": "/api/papers/search",
+        "method": "GET",
+        "startedAt": 607175.577497,
+        "status": 200,
+        "responseAt": 607175.584045
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "POST",
+        "startedAt": 607175.632371,
+        "status": 201,
+        "responseAt": 607175.641874
+      },
+      {
+        "path": "/api/library/papers",
+        "method": "GET",
+        "startedAt": 607175.67853,
+        "status": 200,
+        "responseAt": 607175.689759
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "startedAt": 607175.698808,
+        "status": 200,
+        "responseAt": 607177.380636
+      },
+      {
+        "path": "/@vite/client",
+        "method": "GET",
+        "startedAt": 607177.383576,
+        "status": 304,
+        "responseAt": 607177.942123
+      },
+      {
+        "path": "/src/main.tsx",
+        "method": "GET",
+        "startedAt": 607177.38373,
+        "status": 304,
+        "responseAt": 607177.942631
+      },
+      {
+        "path": "/@react-refresh",
+        "method": "GET",
+        "startedAt": 607177.385653,
+        "status": 304,
+        "responseAt": 607177.945294
+      },
+      {
+        "path": "/node_modules/vite/dist/client/env.mjs",
+        "method": "GET",
+        "startedAt": 607177.942492,
+        "failure": "net::ERR_CONNECTION_RESET",
+        "canceled": false
+      },
+      {
+        "path": "/node_modules/.vite/deps/react_jsx-dev-runtime.js",
+        "method": "GET",
+        "startedAt": 607177.943011,
+        "status": 200,
+        "responseAt": 607177.943077
+      },
+      {
+        "path": "/node_modules/.vite/deps/react.js",
+        "method": "GET",
+        "startedAt": 607177.943152,
+        "status": 200,
+        "responseAt": 607177.943187
+      },
+      {
+        "path": "/node_modules/.vite/deps/react-dom_client.js",
+        "method": "GET",
+        "startedAt": 607177.943881,
+        "status": 200,
+        "responseAt": 607177.943938
+      },
+      {
+        "path": "/src/App.tsx",
+        "method": "GET",
+        "startedAt": 607177.944727,
+        "failure": "net::ERR_CONNECTION_RESET",
+        "canceled": false
+      },
+      {
+        "path": "/src/styles.css",
+        "method": "GET",
+        "startedAt": 607177.944806,
+        "failure": "net::ERR_CONNECTION_RESET",
+        "canceled": false
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-WKR7DC2A.js",
+        "method": "GET",
+        "startedAt": 607177.945143,
+        "status": 200,
+        "responseAt": 607177.945192
+      },
+      {
+        "path": "/node_modules/.vite/deps/chunk-NDLJRXDV.js",
+        "method": "GET",
+        "startedAt": 607177.945676,
+        "status": 200,
+        "responseAt": 607177.945744
+      }
+    ],
+    "processPipes": [
+      {
+        "pid": 47204,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 4469,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 117048,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 73,
+          "stderr": 0
+        }
+      },
+      {
+        "pid": 115372,
+        "stdoutBufferedBytes": 0,
+        "stderrBufferedBytes": 0,
+        "drainedBytes": {
+          "stdout": 0,
+          "stderr": 15703
+        }
+      }
+    ],
+    "directProbes": [
+      {
+        "origin": "http://127.0.0.1:62816",
+        "path": "/api/library/papers",
+        "status": 200,
+        "paperCount": 1
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/api/library/papers",
+        "error": "TimeoutError"
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/",
+        "error": "TimeoutError"
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/@vite/client",
+        "error": "TimeoutError"
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/src/main.tsx",
+        "error": "TimeoutError"
+      }
+    ],
+    "viteOutput": "\n  VITE v7.3.7  ready in 287 ms\n\n  ➜  Local:   http://127.0.0.1:62817/\n",
+    "freshHttpProbes": [
+      {
+        "origin": "http://127.0.0.1:62816",
+        "path": "/api/library/papers",
+        "status": 200,
+        "bytes": 460
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/api/library/papers",
+        "error": "fresh HTTP timeout"
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/",
+        "error": "fresh HTTP timeout"
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/@vite/client",
+        "error": "fresh HTTP timeout"
+      },
+      {
+        "origin": "http://127.0.0.1:62817",
+        "path": "/src/main.tsx",
+        "error": "fresh HTTP timeout"
+      }
+    ]
+  },
+  "error": "Error: Timed out waiting for mocked PDFs page.\n    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:514:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:846:3)\n    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1258:1",
+  "metadataProviderCalls": 0,
+  "summaryProviderCalls": 0,
+  "questionProviderCalls": 0,
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-08T22:44:24.714Z"
+}

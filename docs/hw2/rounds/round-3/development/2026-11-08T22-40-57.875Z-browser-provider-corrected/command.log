@@ -1,0 +1,16 @@
+
+> ai-research-assistant@0.1.0 papers:ui:check
+> node scripts/frontend-search-browser-check.mjs
+
+{"step":"migration-applied","exitCode":0}
+{"step":"local-worker-and-vite-started","workerPid":119700,"frontendPid":121796,"workerOrigin":"http://127.0.0.1:60920","viteOrigin":"http://127.0.0.1:60921"}
+Error: Timed out waiting for the initial page.
+    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:514:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async navigate (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:613:5)
+    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:632:3)
+    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1258:1
+{"step":"stopped-owned-process","pid":119700}
+{"step":"stopped-owned-process","pid":121796}
+{"step":"stopped-owned-process","pid":115356}
+{"result":"failed","evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\3a5add6e-168b-4055-a0af-8c0f9583d10b\\result.json"}

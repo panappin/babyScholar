@@ -1,0 +1,41 @@
+{"experiment":"network","hypothesis":"Unconsumed child pipes stall an owned server","startedAt":"2026-11-08T22:42:42.166Z"}
+{"step":"migration-applied","exitCode":0}
+{"step":"local-worker-and-vite-started","workerPid":47204,"frontendPid":117048,"workerOrigin":"http://127.0.0.1:62816","viteOrigin":"http://127.0.0.1:62817"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"POST","path":"/api/library/papers","status":201}
+{"step":"mocked-existing-save-and-library-passed","existingId":"11111111-1111-4111-8111-111111111111","createdId":"22222222-2222-4222-8222-222222222222"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":503}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-library-errors-retain-records-passed"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-stale-library-response-ignored"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-empty-library-passed"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"POST","path":"/api/library/papers","status":200}
+{"step":"mocked-duplicate-preserves-id-and-timestamp","id":"33333333-3333-4333-8333-333333333333","savedAt":"2025-02-03T04:05:06.000Z"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":502}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mocked-search-empty-errors-and-unexpected-json-passed"}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"mocked-interrupted-save-reconciles-without-post-retry"}
+{"step":"mock-response","method":"POST","path":"/api/library/papers","status":201}
+{"step":"mock-response","method":"GET","path":"/api/library/papers","status":200}
+{"step":"malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed","id":"187b2d7f-6ae6-41ea-b3cd-9015f386845d","savedAt":"2026-11-08T22:43:43.630Z"}
+{"step":"mock-response","method":"GET","path":"/api/papers/search","status":200}
+{"step":"actual-browser-remove-and-resave-uses-new-application-id"}
+Error: Timed out waiting for mocked PDFs page.
+    at waitFor (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:514:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async main (file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:846:3)
+    at async file:///C:/Users/panap/PycharmProjects/babyScholar/scripts/frontend-search-browser-check.mjs:1258:1
+{"step":"stopped-owned-process","pid":47204}
+{"step":"stopped-owned-process","pid":117048}
+{"step":"stopped-owned-process","pid":115372}
+{"result":"failed","evidence":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\fe475d44-4e28-40ba-b145-83daef4af09d\\result.json"}

@@ -1,0 +1,4 @@
+src/worker/summary-validation.ts
+- const text = boundedText(output, MAX_SUMMARY_PROSE_BYTES, "text");
++ invalid("Seeded fault: a JSON envelope is required.");
+    const text = boundedText(output, MAX_SUMMARY_PROSE_BYTES, "text");

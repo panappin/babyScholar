@@ -1,0 +1,46 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/control
+
+ ✓ tests/baseline/document-workspace.test.tsx (35 tests) 7261ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 607ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 506ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 581ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 546ms
+   ✓ Upload, download and deletion intent (10)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 314ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 318ms
+ ✓ tests/baseline/app-workflows.test.tsx (21 tests) 6875ms
+   ✓ Search and library observable workflows (21)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 490ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 373ms
+     ✓ handles malformed success with useful feedback and no fabricated result 326ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 311ms
+     ✓ handles network failure with useful feedback and no fabricated result 323ms
+     ✓ retains the authoritative duplicate record when saved and reopened 494ms
+     ✓ recognizes a previously saved base ID when search returns another version 335ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 455ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 448ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 467ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 456ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 395ms
+     ✓ does not let an older library read erase a successful save 457ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 600ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 49ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 93ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 19ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 10ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 221ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 28ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 4ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 28ms
+
+ Test Files  10 passed (10)
+      Tests  256 passed (256)
+   Start at  17:32:27
+   Duration  19.95s (tests 78%, environment 14%, import 5%, transform 2%)
+
+    Isolate  10 workers spawned · ~384ms startup each (spawn + environment, per file)
+             at least ~3.46s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-32-26.875Z-first/control.tests.json

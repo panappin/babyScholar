@@ -29,7 +29,8 @@ const snapshot = resolve(destination, 'snapshot');
 await mkdir(snapshot);
 for (const name of ['tests/baseline', 'vitest.config.ts', 'package.json', 'package-lock.json',
   'scripts/baseline/run.mjs', 'scripts/baseline/profile.mjs', 'scripts/metadata-live-check.mjs',
-  'scripts/metadata-live-verifier-check.mjs', 'scripts/frontend-search-browser-check.mjs']) {
+  'scripts/metadata-live-verifier-check.mjs', 'scripts/frontend-search-browser-check.mjs',
+  ...(label === 'round-3' ? ['tsconfig.tests.json', 'scripts/baseline/browser-experiment.mjs', 'src/App.tsx'] : [])]) {
   const target = resolve(snapshot, name);
   await mkdir(resolve(target, '..'), { recursive: true });
   await cp(resolve(root, name), target, { recursive: true });

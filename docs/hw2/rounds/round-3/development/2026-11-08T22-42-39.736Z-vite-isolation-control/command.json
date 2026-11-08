@@ -1,0 +1,22 @@
+{
+  "label": "vite-isolation-control",
+  "startedAt": "2026-11-08T22:42:39.805Z",
+  "timeoutMs": 90000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "scripts/baseline/probe-vite.mjs",
+    "control"
+  ],
+  "baseCommit": "852eb2c0e0c1184c144f060ea0d290fe61f7f8bb",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "0ea6df465799f6defbb240b16b0e8abab7c906d8",
+  "workingTree": "M .gitignore\n M package-lock.json\n M package.json\n M scripts/baseline/archive-hw2.mjs\n M scripts/baseline/fault-probes.mjs\n M scripts/frontend-search-browser-check.mjs\n M vitest.config.ts\n?? babyScholar-phase-0b2-hosting-changes.zip\n?? babyScholar-phase-0b2-hosting-changes/\n?? docs/hw2/rounds/round-3-preflight/\n?? docs/hw2/rounds/round-3/development-notes.md\n?? docs/hw2/rounds/round-3/instructions.md\n?? docs/hw2/rounds/round-3/prior-report.md\n?? docs/hw2/rounds/round-3/session.json\n?? docs/hw2/rounds/round-3/user-request.txt\n?? scripts/baseline/archive-workflows.mjs\n?? scripts/baseline/browser-experiment.mjs\n?? scripts/baseline/capture.mjs\n?? scripts/baseline/probe-vite.mjs\n?? scripts/baseline/render-report.mjs\n?? scripts/baseline/workflow-fault-probes.mjs\n?? tests/baseline/app-workflows.test.tsx\n?? tests/baseline/arxiv-service.test.ts\n?? tests/baseline/document-workspace.test.tsx\n?? tests/baseline/helpers/\n?? tsconfig.tests.json",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-08T22-42-39.736Z-vite-isolation-control",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-11-08T22:42:41.662Z"
+}

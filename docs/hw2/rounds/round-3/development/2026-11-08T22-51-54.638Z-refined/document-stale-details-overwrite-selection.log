@@ -1,0 +1,71 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-51-54.638Z-refined/document-stale-details-overwrite-selection
+
+ ❯ tests/baseline/document-workspace.test.tsx (38 tests | 1 failed) 8976ms
+   ❯ PDF list and stored detail reads (11)
+     ✓ shows loading, then empty state without performing generation 136ms
+     ✓ retains listed documents after a malformed reload 116ms
+     ✓ retains listed documents after a application error reload 109ms
+     ✓ reopens saved text, metadata, summary and answer using read-only requests; quotes are optional 183ms
+     ✓ keeps unknown metadata explicit and older optional quotes readable 155ms
+     × ignores late detail responses from the previous selection even if transport ignores abort 178ms
+     ✓ rejects saved summary belonging to another document 111ms
+     ✓ rejects saved questions belonging to another document 110ms
+     ✓ reports malformed text and recovers through explicit detail reads 203ms
+     ✓ reports malformed metadata and recovers through explicit detail reads 173ms
+     ✓ bounds a stalled detail read and provides a read-only retry action 83ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ generates one summary after an explicit action without requiring metadata or citations 222ms
+     ✓ reconciles summary lost response without another POST 165ms
+     ✓ reconciles summary malformed success without another POST 188ms
+     ✓ reconciles summary wrong document without another POST 220ms
+     ✓ retains a saved summary if a reload fails, without generating again 206ms
+     ✓ handles summary already-in-progress by waiting for an explicit GET reload 305ms
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 706ms
+     ✓ rejects a blank question before transport 208ms
+     ✓ rejects a untrimmed question before transport 226ms
+     ✓ rejects a one byte over the Unicode limit question before transport 234ms
+     ✓ accepts an exact 2 KiB Unicode question and renders an explicit insufficient-source answer 170ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 533ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 668ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 653ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ rejects a missing upload before transport 106ms
+     ✓ rejects a empty upload before transport 187ms
+     ✓ rejects a too large upload before transport 168ms
+     ✓ uploads an exact-limit file, processes missing text and metadata once, and leaves summary/questions explicit 203ms
+     ✓ resumes only missing metadata without reuploading or re-extracting the document 157ms
+     ✓ leaves an interrupted upload uncertain and does not repeat it 197ms
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 356ms
+     ✓ expires a prepared download after one minute 167ms
+     ✓ rejects a non-PDF download while preserving a usable fallback 179ms
+     ✓ enforces the downloaded PDF byte boundary at 10 MiB plus 0 bytes 196ms
+     ✓ enforces the downloaded PDF byte boundary at 10 MiB plus 1 bytes 158ms
+     ✓ does not publish a download that finishes after selecting another document 299ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 340ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 passed (38)
+   Start at  17:52:32
+   Duration  10.75s (tests 85%, environment 10%, import 4%, transform 1%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T22-51-54.638Z-refined/document-stale-details-overwrite-selection.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/document-workspace.test.tsx > PDF list and stored detail reads > ignores late detail responses from the previous selection even if transport ignores abort
+Error: expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <dd>
+  Old selection metadata
+</dd> instead
+ ❯ tests/baseline/document-workspace.test.tsx:90:62
+     88|     expect(screen.getByText('Current selection metadata')).toBeVisible…
+     89|     await act(async () => oldText.resolve(json({ extraction: extractio…
+     90|     expect(screen.queryByText('Old selection metadata')).not.toBeInThe…
+       |                                                              ^
+     91|     expect(screen.getByRole('heading', { name: secondDocument.filename…
+     92|     await user.click(screen.getByText('Extracted page text (1 page)'));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

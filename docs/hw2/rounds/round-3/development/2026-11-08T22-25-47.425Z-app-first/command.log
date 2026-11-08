@@ -1,0 +1,548 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/app-workflows.test.tsx tests/baseline/arxiv-service.test.ts --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T22-25-47.425Z-app-first\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ❯ tests/baseline/app-workflows.test.tsx (21 tests | 5 failed) 6712ms
+   ❯ Search and library observable workflows (21)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 559ms
+     ✓ rejects invalid input "" without a search request 76ms
+     ✓ rejects invalid input "?!" without a search request 123ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 411ms
+     ✓ handles application failure with useful feedback and no fabricated result 340ms
+     ✓ handles malformed success with useful feedback and no fabricated result 356ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 339ms
+     ✓ handles network failure with useful feedback and no fabricated result 346ms
+     ✓ prevents duplicate searches while pending and releases the control after the real timeout 55ms
+     ✓ retains the authoritative duplicate record when saved and reopened 556ms
+     ✓ recognizes a previously saved base ID when search returns another version 347ms
+     × reconciles lost response with GET and shows a confirmed save without a contradictory error 418ms
+     × reconciles malformed success with GET and shows a confirmed save without a contradictory error 381ms
+     × reconciles wrong paper with GET and shows a confirmed save without a contradictory error 398ms
+     × reconciles non-application error with GET and shows a confirmed save without a contradictory error 410ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 461ms
+     ✓ does not let an older library read erase a successful save 461ms
+     ✓ retains saved records when a library reload returns malformed 172ms
+     ✓ retains saved records when a library reload returns application error 165ms
+     × retains an unconfirmed removal and only removes the record after explicit successful retry 258ms
+     ✓ opens PDFs through the actual tab and uses GET only on selection of the view 82ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 52ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > reconciles lost response with GET and shows a confirmed save without a contradictory error
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > reconciles malformed success with GET and shows a confirmed save without a contradictory error
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > reconciles wrong paper with GET and shows a confirmed save without a contradictory error
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > reconciles non-application error with GET and shows a confirmed save without a contradictory error
+Error: expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <p
+  class="save-feedback save-feedback--error"
+  role="alert"
+>
+  The save could not be confirmed after reloading the library. You can try again.
+</p> instead
+ ❯ tests/baseline/app-workflows.test.tsx:131:47
+    129|       expect(await screen.findByRole('button', { name: 'Saved', exact:…
+    130|       await waitFor(() => expect(screen.queryByText(/Checking the libr…
+    131|       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+       |                                               ^
+    132|       expect(requests(api, 'GET', path)).toHaveLength(2);
+    133|       expect(requests(api, 'POST', path)).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > retains an unconfirmed removal and only removes the record after explicit successful retry
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Remove"
+
+Here are the accessible roles:
+
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"app-shell"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "AI Research Assistant":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"app-title"[39m
+    [33mclass[39m=[32m"welcome"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"results-note"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "AI Research Assistant":
+  [36m<h1[39m
+    [33mid[39m=[32m"app-title"[39m
+  [36m/>[39m
+
+  Name "Saved papers":
+  [36m<h2 />[39m
+
+  Name "Authoritative saved title":
+  [36m<h3 />[39m
+
+  Name "Abstract":
+  [36m<h4 />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33maria-live[39m=[32m"polite"[39m
+    [33mclass[39m=[32m"statuses"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "Research workspace views":
+  [36m<div[39m
+    [33maria-label[39m=[32m"Research workspace views"[39m
+    [33mclass[39m=[32m"workspace-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "Search":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"search-view"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"search-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Library (1)":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"library-view"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"library-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "PDFs":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"pdfs-view"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"pdfs-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "Library (1)":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"library-tab"[39m
+    [33mclass[39m=[32m"results-panel"[39m
+    [33mid[39m=[32m"library-view"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Reload library":
+  [36m<button[39m
+    [33mclass[39m=[32m"reload-button"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Remove from library":
+  [36m<button[39m
+    [33mclass[39m=[32m"reload-button"[39m
+    [33mdata-remove-paper[39m=[32m"11111111-1111-4111-8111-111111111111"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"paper-list"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------
+  article:
+
+  Name "":
+  [36m<article[39m
+    [33mclass[39m=[32m"paper-card"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+  code:
+
+  Name "":
+  [36m<code />[39m
+
+  Name "":
+  [36m<code />[39m
+
+  --------------------------------------------------
+  time:
+
+  Name "":
+  [36m<time[39m
+    [33mdatetime[39m=[32m"2026-01-02T03:04:05.000Z"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  link:
+
+  Name "View paper on arXiv (opens in a new tab)":
+  [36m<a[39m
+    [33mclass[39m=[32m"paper-link"[39m
+    [33mhref[39m=[32m"https://arxiv.org/abs/2401.01234v3"[39m
+    [33mrel[39m=[32m"noopener noreferrer"[39m
+    [33mtarget[39m=[32m"_blank"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"app-title"[39m
+          [33mclass[39m=[32m"welcome"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mResearch workspace[0m
+          [36m</p>[39m
+          [36m<h1[39m
+            [33mid[39m=[32m"app-title"[39m
+          [36m>[39m
+            [0mAI Research Assistant[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"statuses"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--connected"[39m
+              [36m/>[39m
+              [0mBackend connected[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--connected"[39m
+              [36m/>[39m
+              [0mD1[0m
+              [0m [0m
+              [0mconnected[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--connected"[39m
+              [36m/>[39m
+              [0mR2[0m
+              [0m [0m
+              [0mconnected[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Research workspace views"[39m
+          [33mclass[39m=[32m"workspace-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"search-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"search-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mSearch[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"library-view"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"library-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mLibrary[0m
+            [0m (1)[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"pdfs-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"pdfs-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPDFs[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"library-tab"[39m
+          [33mclass[39m=[32m"results-panel"[39m
+          [33mid[39m=[32m"library-view"[39m
+          [33mrole[39m=[32m"tabpanel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"results-heading"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0mPersistent library[0m
+              [36m</p>[39m
+              [36m<h2>[39m
+                [0mSaved papers[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"reload-button"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mReload library[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"results-note"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m [0m
+            [0msaved paper[0m
+            [0m, newest first. Each has a distinct library record ID.[0m
+          [36m</p>[39m
+          [36m<ol[39m
+            [33mclass[39m=[32m"paper-list"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"paper-card"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0mAuthoritative saved title[0m
+                [36m</h3>[39m
+                [36m<dl[39m
+                  [33mclass[39m=[32m"paper-metadata"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0mAuthors[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mAda Author[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0mFirst submitted[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0m2024[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0marXiv ID[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [36m<code>[39m
+                        [0m2401.01234[0m
+                      [36m</code>[39m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0mSaved[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [36m<time[39m
+                        [33mdatetime[39m=[32m"2026-01-02T03:04:05.000Z"[39m
+                      [36m>[39m
+                        [0mSaved 1/1/2026, 10:04:05 PM[0m
+                      [36m</time>[39m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0mLibrary record ID[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [36m<code>[39m
+                        [0m11111111-1111-4111-8111-111111111111[0m
+                      [36m</code>[39m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                [36m</dl>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"paper-abstract"[39m
+                [36m>[39m
+                  [36m<h4>[39m
+                    [0mAbstract[0m
+                  [36m</h4>[39m
+                  [36m<p>[39m
+                    [0mA complete abstract about graph learning.[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"paper-link"[39m
+                  [33mhref[39m=[32m"https://arxiv.org/abs/2401.01234v3"[39m
+                  [33mrel[39m=[32m"noopener noreferrer"[39m
+                  [33mtarget[39m=[32m"_blank"[39m
+                [36m>[39m
+                  [0mView paper on arXiv [0m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"visually-hidden"[39m
+                  [36m>[39m
+                    [0m(opens in a new tab)[0m
+                  [36m</span>[39m
+                [36m</a>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"reload-button"[39m
+                  [33mdata-remove-paper[39m=[32m"11111111-1111-4111-8111-111111111111"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mRemove from library[0m
+                [36m</button>[39m
+              [36m</article>[39m
+            [36m</li>[39m
+          [36m</ol>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/baseline/app-workflows.test.tsx:183:29
+    181|     });
+    182|     await user.click(await screen.findByRole('tab', { name: 'Library (…
+    183|     await user.click(screen.getByRole('button', { name: 'Remove' }));
+       |                             ^
+    184|     expect(await screen.findByRole('alert')).toHaveTextContent('Remova…
+    185|     expect(screen.getByRole('heading', { name: saved.title })).toBeVis…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  5 failed | 53 passed (58)
+   Start at  17:25:48
+   Duration  8.78s (tests 80%, environment 13%, import 5%, transform 2%)
+
+    Isolate  2 workers spawned · ~680ms startup each (spawn + environment, per file)
+             at least ~680ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T22-25-47.425Z-app-first/test-results.json

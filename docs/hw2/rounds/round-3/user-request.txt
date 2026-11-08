@@ -1,0 +1,40 @@
+We have approximately five hours to make our BabyScholar HW2 submission substantially stronger, not just make minimal progress. Work in the existing BabyScholar checkout and continue the completed HW2 work. Use your judgment to execute the plan, but preserve the evidence and keep me informed at major milestones.
+
+Context:
+- HW2 requires an initial AI-generated test suite, at least two guided improvement rounds, evaluation of coverage/correctness/bugs, and a six-section PDF report. The final tests must be in the HW1 GitHub repository.
+- The HW2 branch is hw2/initial-baseline. Previous work reports commits dd27642 and d66051c pushed. Confirm the current branch, working tree, remote, and actual evidence before changing anything. Do not touch main or overwrite my work.
+- Previous results: 24 initial tests, 106 after round 1, 163 final; measured line coverage 3.51%, 12.31%, and 16.12%. Five selected seeded faults were detected by the final suite. No pre-existing product bug was confirmed. One browser/integration stage remains unresolved: a Vite-proxied library request timed out while the direct Worker request succeeded. The root cause is not established.
+- Prior coverage analysis reports DocumentWorkspace.tsx and App.tsx at 0% in the new Node unit coverage, together about one-third of measured lines, and the arXiv worker also at 0%. Verify these figures. The browser/integration runs are not included in that coverage, so do not claim these files were never exercised.
+- A report draft and PDF already exist. Treat those as a starting point, not proof that the assignment is finished. The existing reflection is agent-authored and needs my review.
+
+Goals and time budget (adjust based on what you find, but preserve the final 45 minutes for report and submission readiness):
+
+1. Baseline and priorities, about 30 minutes
+- Read the assignment/rubric and existing HW2 evidence, report, test configuration, and per-file coverage. Establish exactly what each metric covers and which commands are reproducible.
+- Identify the most consequential gaps, focusing on user-facing workflows and risk rather than raw line counts. Inspect existing tests to avoid duplicating them.
+- Reproduce or characterize the browser timeout with a bounded attempt. Record the baseline, commands, environment and outcomes.
+- Tell me your prioritized targets and any material changes to the plan, then continue without waiting unless you need a decision.
+
+2. Meaningful coverage expansion, about 2 hours
+- Add a guided improvement round targeting the highest-value gaps, likely including document workspace/app behavior and the arXiv worker, as supported by the code and rubric.
+- Cover realistic success, failure, boundary, and recovery behavior. Examples to consider where the actual implementation supports them: search results, empty/error states, request failures and malformed data, saving/reopening papers, document/summary loading and error states, and duplicate or stale interactions.
+- Make assertions about observable outcomes, not just rendering or execution. Keep tests deterministic, isolated, and maintainable; mock external services at appropriate boundaries. Do not alter application behavior solely to make tests pass.
+- Instrument frontend tests if needed. Report the coverage scope and denominator clearly. If frontend and backend need separate coverage reports, show them separately. Only present a combined figure if the tool configuration actually supports a valid, reproducible combined measurement; do not average percentages.
+- Record the actual prompts, feedback, changes, failures and results for the report. Do not invent interaction history.
+
+3. Browser/integration investigation, about 1 hour
+- Investigate the timeout systematically, using bounded diagnostics to distinguish application behavior, proxy/server setup, and test harness issues. Fix an identified test or environment problem when justified; preserve prior results and explain the evidence. If an actual product defect is found, document reproducible steps, expected vs. actual behavior and evidence. Do not call the timeout a product bug without establishing that.
+- If the cause is not narrowing down after about an hour, stop and document the unresolved issue rather than letting it consume the project. Do not conceal failing stages or weaken assertions just to turn the suite green.
+
+4. Test quality and fault detection, about 45 minutes
+- Use a small set of realistic, documented seeded faults across the newly tested workflows, in isolated copies or another reversible setup. Record which faults were caught and missed, and the selection method. These are artificial faults, not discovered product bugs; don't extrapolate a broad mutation score from a handful of examples.
+- Investigate unexpected failures and distinguish application bugs, flaky/environmental failures, and incorrect tests. Fix faulty tests and document significant corrections. Keep test development and any product-code fixes distinct. Ask me before changing product behavior if a fix would materially change scope.
+
+5. Finalize, at least 45 minutes
+- Run the appropriate full test and coverage commands. Preserve the original and each iteration’s results, configuration, commands, and scope. Clearly explain any configuration change that prevents a direct before/after comparison.
+- Update the six report sections: approach, initial evaluation, iterative improvement, final evaluation, reflection, and repository/reproduction instructions. Include concrete prompts and representative failures, meaningful before/after comparisons, coverage limitations, verified bugs or an explicit statement that none were confirmed, and unresolved issues. Separate seeded faults from real bugs. Do not fabricate my personal experiences; flag the reflection for my review.
+- Update the existing PDF from the revised report, check formatting and links, and give me both the editable source and PDF. If PDF generation cannot be verified, provide the source and exact remaining steps rather than claiming completion.
+- Commit and push the final test suite, evidence, and report changes to hw2/initial-baseline, after checking the diff for secrets, generated clutter, and unrelated changes. Do not merge into main or submit the assignment.
+- Give me a final summary of actual results, test counts, coverage scopes, bugs vs. seeded faults, remaining failures, commit/branch, PDF location, and what I need to review and submit.
+
+Do not spend time chasing an arbitrary percentage or invent bugs. Prioritize a defensible, reproducible improvement and leave enough time to finish the report. If the five-hour time window cannot be tracked reliably, tell me when we reach the last 45-minute phase and use milestones rather than silently running past it.

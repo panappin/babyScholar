@@ -1,0 +1,65 @@
+
+> ai-research-assistant@0.1.0 test:coverage
+> vitest run --coverage --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T22-23-24.278Z-configuration-bridge\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+      Coverage enabled with v8
+
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 243ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 105ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 31ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 23ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 20ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 18ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 6ms
+
+ Test Files  7 passed (7)
+      Tests  163 passed (163)
+   Start at  17:23:25
+   Duration  2.05s (tests 53%, transform 18%, worker 14%, import 14%)
+
+    Isolate  7 workers spawned · ~123ms startup each (spawn + environment, per file)
+             at least ~737ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T22-23-24.278Z-configuration-bridge/test-results.json
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   15.87 |    12.21 |   15.38 |   16.12 |                   
+ src               |    1.35 |     1.61 |    1.34 |    1.57 |                   
+  App.tsx          |       0 |        0 |       0 |       0 | 37-539            
+  ...Workspace.tsx |       0 |        0 |       0 |       0 | 23-1313           
+  main.tsx         |       0 |        0 |     100 |       0 | 6-12              
+  ...r-identity.ts |    87.5 |       90 |     100 |   92.85 | 22                
+ src/worker        |    23.7 |    20.17 |   25.48 |   23.53 |                   
+  ...v-identity.ts |      60 |     62.5 |   66.66 |   70.83 | 15-21,33          
+  arxiv.ts         |       0 |        0 |       0 |       0 | 18-438            
+  ...t-metadata.ts |       0 |        0 |       0 |       0 | 38-285            
+  ...-questions.ts |       0 |        0 |       0 |       0 | 46-345            
+  ...nt-summary.ts |       0 |        0 |       0 |       0 | 47-319            
+  ...validation.ts |   97.75 |    94.23 |     100 |   98.66 | 141               
+  documents.ts     |       0 |        0 |       0 |       0 | 20-207            
+  extractions.ts   |       0 |        0 |       0 |       0 | 28-197            
+  ...n-recovery.ts |   95.65 |      100 |     100 |   94.44 | 39                
+  index.ts         |       0 |        0 |       0 |       0 | 12-117            
+  ...ion-errors.ts |   28.57 |        0 |   33.33 |   36.36 | 25-43             
+  ...validation.ts |   85.71 |    66.07 |     100 |   87.69 | ...37-39,44,54,63 
+  library.ts       |       0 |        0 |       0 |       0 | 19-88             
+  ...ata-openai.ts |       0 |        0 |       0 |       0 | 5-213             
+  ...validation.ts |   96.87 |    95.23 |     100 |     100 | 26,40             
+  openai.ts        |       0 |        0 |       0 |       0 | 4-124             
+  pdf-text.ts      |       0 |        0 |       0 |       0 | 5-114             
+  ...ion-openai.ts |       0 |        0 |       0 |       0 | 5-225             
+  ...on-request.ts |   98.27 |    93.93 |     100 |     100 | 62,93             
+  storage.ts       |       0 |        0 |       0 |       0 | 28-93             
+  ...ary-openai.ts |       0 |        0 |       0 |       0 | 5-185             
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 15.87% ( 470/2960 )
+Branches     : 12.21% ( 317/2595 )
+Functions    : 15.38% ( 82/533 )
+Lines        : 16.12% ( 394/2444 )
+================================================================================

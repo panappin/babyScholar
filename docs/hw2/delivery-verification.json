@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-11-08T23:06:26.860777+00:00",
+  "branch": "hw2/initial-baseline",
+  "evaluatedTestCommit": "2c83268",
+  "checks": {
+    "archiveFilesAgainstFilesystemSha256": 2088,
+    "archiveAndPdfSourceFilesAgainstStagedGitBlobs": 2090,
+    "uniqueStagedBlobsVerified": 407,
+    "localMarkdownLinksVerified": 49,
+    "pdfPagesVisuallyReviewed": 6,
+    "portablePdfHyperlinkAnnotations": 18,
+    "newDevelopmentArchives": 33,
+    "changedFilesScanned": 2009,
+    "credentialPatternMatches": 0,
+    "generatedRuntimeClutterMatches": 0,
+    "originalThreeRoundsAndComparisonUnchanged": true
+  },
+  "notes": [
+    "Credential checks scan private-key headers and common GitHub, OpenAI and AWS token patterns without printing candidate values; they are not a universal secret detector.",
+    "The three report Markdown trailing-space pairs are intentional CommonMark hard line breaks. Raw archives retain original bytes.",
+    "The editable report is marked -text so its recorded SHA-256 remains stable across Git checkout newline settings.",
+    "Coverage comparison normalizes historical absolute source paths so a different checkout location produces the same per-file names.",
+    "Git publication is verified after the delivery commit; this record avoids a self-referential commit hash."
+  ]
+}
