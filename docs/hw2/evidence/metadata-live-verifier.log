@@ -1,0 +1,20 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Offline success verifier exit code.
+
+1 !== 0
+
+    at runScenario (file:///workspace/scratch/5b9e63e9f241/babyscholar-hw2/scripts/metadata-live-verifier-check.mjs:29:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///workspace/scratch/5b9e63e9f241/babyscholar-hw2/scripts/metadata-live-verifier-check.mjs:37:17 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

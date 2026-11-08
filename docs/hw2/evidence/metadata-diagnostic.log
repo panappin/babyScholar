@@ -1,0 +1,17 @@
+{"stage":"offline-provider-started","scenario":"success"}
+{"stage":"migration-started"}
+{"stage":"owned-process-stopped","label":"migration","pid":17}
+{"stage":"migrations-applied","exitCode":0}
+{"stage":"worker-starting","localProvider":true,"openAiKeyDisabled":false}
+{"stage":"worker-started","pid":133,"origin":"http://127.0.0.1:46605","openAiKeyDisabled":false}
+{"stage":"upload","path":"/api/documents","method":"POST"}
+{"stage":"extract","path":"/api/documents/8c52c954-2df9-4af2-b606-8f517599327c/extract","method":"POST"}
+{"stage":"metadata-post-attempt","providerMode":"loopback-mock"}
+{"stage":"metadata-post","path":"/api/documents/8c52c954-2df9-4af2-b606-8f517599327c/metadata","method":"POST"}
+{"stage":"metadata-get-after-post","path":"/api/documents/8c52c954-2df9-4af2-b606-8f517599327c/metadata","method":"GET"}
+{"stage":"fixture-field-comparison"}
+Metadata verifier stopped without retrying a provider request.
+{"stage":"cleanup-started","priorResult":"failed"}
+{"stage":"owned-process-stopped","label":"Worker","pid":133}
+{"stage":"offline-provider-stopped","requests":1}
+Metadata live-check evidence: /workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/metadata-live-check/029b92fd-fa06-4c26-9197-4d0f64e3eb90/result.json

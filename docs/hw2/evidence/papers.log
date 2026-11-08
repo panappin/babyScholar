@@ -1,0 +1,11 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 papers
+> npm run checks:prepare && node scripts/paper-search-check.mjs
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 checks:prepare
+> tsc --project tsconfig.worker.json --outDir .wrangler/check-worker --sourceMap false
+
+Paper search checks: metadata parsing, input validation, failures, bounded bodies, cache, deduplication, and arXiv spacing: PASS

@@ -1,0 +1,1 @@
+{"result":"passed","steps":["running-server-and-failed-backup-stop-before-migration","backup-preserves-record-and-fresh-isolated-migrations-pass"],"liveProviderRequests":0,"evidence":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/local-reset-check/405d7cbd-ff9a-46a3-949b-837bfa60577f/result.json"}

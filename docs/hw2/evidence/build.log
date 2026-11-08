@@ -1,0 +1,50 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 build
+> npm run typecheck && npm run build:frontend && npm run build:worker && npm run build:sites
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 typecheck
+> tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.worker.json && tsc --noEmit --project tsconfig.vite.json
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 build:frontend
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 31 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/frontend/index.html                   0.54 kB │ gzip:  0.32 kB
+dist/frontend/assets/index-CskUxwHG.css   10.48 kB │ gzip:  2.60 kB
+dist/frontend/assets/index-B2oQPqk9.js   286.35 kB │ gzip: 84.47 kB
+✓ built in 1.72s
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 build:worker
+> node scripts/build-worker.mjs
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+
+ ⛅️ wrangler 4.148.0 (update available 4.158.0)
+───────────────────────────────────────────────
+Total Upload: 2556.90 KiB / gzip: 596.80 KiB
+Your Worker has access to the following bindings:
+Binding                                                    Resource                  
+env.DB (ai-research-assistant-local)                       D1 Database               
+env.PAPER_BUCKET (ai-research-assistant-papers-local)      R2 Bucket                 
+env.OPENAI_MODEL ("gpt-6-luna")                            Environment Variable      
+
+--dry-run: exiting now.
+Bundled Worker artifact: PASS (dry run; no upload performed).
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-research-assistant@0.1.0 build:sites
+> node scripts/prepare-sites-build.mjs
+
+Prepared dist/client, full dist/server, and immutable migration metadata for Sites.

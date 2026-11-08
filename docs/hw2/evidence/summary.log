@@ -1,0 +1,20 @@
+{"step":"built-worker-summary-storage-and-configuration-failures-passed","missingStorage":503,"missingConfiguration":424}
+{"step":"stopped-owned-process","label":"migration","pid":1758}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":1875,"origin":"http://127.0.0.1:45953"}
+{"step":"actual-worker-summary-includes-opening-and-later-pages-evidence-cache-and-unchanged-metadata-text-pdf","documentId":"f527e158-a08d-4a0f-a799-9c709159c385","summaryProviderCalls":1,"metadataProviderCalls":1}
+{"step":"concurrent-summary-request-used-one-provider-call","documentId":"4c832642-26a0-4301-a757-061ad9c35906"}
+{"step":"stopped-owned-process","label":"Worker","pid":1875}
+{"step":"worker-started","pid":1932,"origin":"http://127.0.0.1:35867"}
+{"step":"restart-read-summary-before-another-provider-call-preserves-metadata-text-and-pdf","documentId":"f527e158-a08d-4a0f-a799-9c709159c385"}
+{"step":"stopped-owned-process","label":"Worker","pid":1932}
+{"step":"stopped-owned-process","label":"migration","pid":1990}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":2037,"origin":"http://127.0.0.1:37553"}
+{"step":"migration-reapply-preserves-summary-metadata-and-original-bytes","documentId":"f527e158-a08d-4a0f-a799-9c709159c385"}
+{"step":"summary-source-budget-truncates-at-a-page-aware-utf8-boundary","documentId":"b1f13bd5-385c-41b2-aa92-139c55da723f","byteBudget":98304,"includedPages":[1,2,3,4],"totalPages":4}
+{"step":"summary-ordinary-text-with-empty-evidence-and-prose-output-limits-passed","proseByteLimit":12000}
+{"step":"summary-malformed-refusal-incomplete-provider-timeout-failures-leave-no-summary","failureModes":5}
+{"step":"stopped-owned-process","label":"Worker","pid":2037}
+{"step":"removed-owned-test-state","state":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/summary-check/8493acc0-5a6b-4a27-8348-6e9c9f45b7e6/state"}
+Summary check passed. Evidence: /workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/summary-check/8493acc0-5a6b-4a27-8348-6e9c9f45b7e6/result.json

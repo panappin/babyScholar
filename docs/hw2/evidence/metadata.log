@@ -1,0 +1,22 @@
+{"step":"built-worker-missing-storage-and-configuration-failures-passed","missingStorage":503,"missingConfiguration":424}
+{"step":"stopped-owned-process","label":"migration","pid":1409}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":1525,"origin":"http://127.0.0.1:36937"}
+{"step":"actual-worker-four-fields-evidence-cache-and-original-bytes-passed","documentId":"778f7c51-704f-48c5-9a49-c4c5a3ceac12","providerCalls":1}
+{"step":"concurrent-metadata-request-used-one-provider-call","documentId":"9c5c998f-4885-4ac2-86d1-169079afd2a7"}
+{"step":"stopped-owned-process","label":"Worker","pid":1525}
+{"step":"worker-started","pid":1584,"origin":"http://127.0.0.1:39693"}
+{"step":"restart-read-metadata-before-another-provider-call-passed","documentId":"778f7c51-704f-48c5-9a49-c4c5a3ceac12"}
+{"step":"stopped-owned-process","label":"Worker","pid":1584}
+{"step":"stopped-owned-process","label":"migration","pid":1641}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":1687,"origin":"http://127.0.0.1:43631"}
+{"step":"migration-reapply-preserves-metadata-text-and-original-bytes","documentId":"778f7c51-704f-48c5-9a49-c4c5a3ceac12"}
+{"step":"metadata-years-accepted-without-source-evidence-and-null-keeps-other-fields-text-pdf-cache"}
+{"step":"wrapped-word-literal-and-joined-comparison-preserves-dashes-compounds-numbers-evidence-and-cache","documentId":"7736f440-d597-42a1-80d6-cc5f38c35b29"}
+{"step":"metadata-does-not-require-or-validate-evidence","ignoredQuoteBytes":[600,601]}
+{"step":"unknown-fields-and-clipped-page-selection-passed","unknownDocumentId":"12fe9f72-0e6d-4a0b-86ab-834bbc8b8e86","clippedDocumentId":"e05e252e-9f6e-4bc0-b056-9d0c09b8ebc6"}
+{"step":"malformed-refused-incomplete-provider-failures-and-claim-release-passed","failureModes":4}
+{"step":"stopped-owned-process","label":"Worker","pid":1687}
+{"step":"removed-owned-test-state","state":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/metadata-check/c7d89e25-9c5c-4b03-b74e-617b15932485/state"}
+Metadata check passed. Evidence: /workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/metadata-check/c7d89e25-9c5c-4b03-b74e-617b15932485/result.json

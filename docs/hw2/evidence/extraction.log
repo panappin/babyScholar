@@ -1,0 +1,19 @@
+Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+{"step":"built-worker-offline-storage-and-database-failures-passed","missingObject":404,"hashMismatch":409,"databaseFailure":503}
+{"step":"stopped-owned-process","label":"migration","pid":1059}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":1176,"origin":"http://127.0.0.1:37195"}
+{"step":"actual-worker-ordered-text-hash-get-repeat-and-original-bytes-passed","documentId":"084d0a80-9605-4bd5-abea-382971de4c27","pageCount":2}
+{"step":"concurrent-extract-retains-one-authoritative-record","documentId":"34060523-a10e-4e81-9154-94596c9d96b1","statuses":[200,201]}
+{"step":"stopped-owned-process","label":"Worker","pid":1176}
+{"step":"worker-started","pid":1234,"origin":"http://127.0.0.1:35717"}
+{"step":"restart-read-before-another-extract-passed","documentId":"084d0a80-9605-4bd5-abea-382971de4c27"}
+{"step":"stopped-owned-process","label":"Worker","pid":1234}
+{"step":"stopped-owned-process","label":"migration","pid":1292}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":1338,"origin":"http://127.0.0.1:34871"}
+{"step":"migration-reapply-preserves-extraction-and-original-bytes","documentId":"084d0a80-9605-4bd5-abea-382971de4c27"}
+{"step":"corrupt-signature-encrypted-image-only-and-page-text-limit-cases-preserve-originals","cases":6}
+{"step":"stopped-owned-process","label":"Worker","pid":1338}
+{"step":"removed-owned-test-state","state":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/extraction-check/ef972417-9d03-42fe-b078-2aa6736b84b7/state"}
+Extraction check passed. Evidence: /workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/extraction-check/ef972417-9d03-42fe-b078-2aa6736b84b7/result.json

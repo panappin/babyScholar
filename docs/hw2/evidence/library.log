@@ -1,0 +1,19 @@
+{"step":"built-worker-failures-passed","missingBinding":503,"databaseFailure":503,"dishonestLength":413,"stalledBody":408,"databaseTouched":false}
+{"step":"migrations-applied","state":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/library-check/db4126e8-73c7-44cf-b333-0f1d04c1796c/state","exitCode":0}
+{"step":"worker-started","pid":459,"origin":"http://127.0.0.1:35991"}
+{"step":"empty-library-passed"}
+{"step":"simultaneous-first-saves-passed","statuses":[201,200],"rowCount":1,"id":"6dff34a1-21ce-41c9-8aa3-9f36db032c65","arxivId":"2401.01234","savedAt":"2026-11-08T16:37:02.420Z"}
+{"step":"full-metadata-round-trip-passed","authors":3,"abstractCharacters":52500,"sha256":"7abe438ad5dc3bcd3cdfca92764ccc3dc19228c21769830bbc33da64d4524812"}
+{"step":"duplicates-nullable-legacy-and-order-passed","rowCount":3,"originalPreserved":true}
+{"step":"invalid-unsafe-oversized-inputs-rejected-without-writes","invalidPaperCases":26,"rowCount":3}
+{"step":"stopped-owned-process","pid":459}
+{"step":"worker-started","pid":516,"origin":"http://127.0.0.1:35801"}
+{"step":"restart-first-get-before-any-post-passed","rowCount":3,"originalId":"6dff34a1-21ce-41c9-8aa3-9f36db032c65","savedAt":"2026-11-08T16:37:02.420Z"}
+{"step":"stopped-owned-process","pid":516}
+{"step":"migrations-applied","state":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/library-check/db4126e8-73c7-44cf-b333-0f1d04c1796c/state","exitCode":0}
+{"step":"worker-started","pid":620,"origin":"http://127.0.0.1:40845"}
+{"step":"migration-reapply-preserves-all-records","rowCount":3,"originalId":"6dff34a1-21ce-41c9-8aa3-9f36db032c65","savedAt":"2026-11-08T16:37:02.420Z"}
+{"step":"remove-by-application-id-idempotence-resave-and-unrelated-records-passed"}
+{"step":"stopped-owned-process","pid":620}
+{"step":"removed-owned-test-state","state":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/library-check/db4126e8-73c7-44cf-b333-0f1d04c1796c/state"}
+Library check passed. Evidence: /workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/library-check/db4126e8-73c7-44cf-b333-0f1d04c1796c/result.json

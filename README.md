@@ -236,3 +236,10 @@ before using those artifacts; local binding labels are not hosted resource IDs.
 - Local fixture checks make no live requests. Live provider behavior, hosted
   frame/download behavior, and the known oversized chunked-upload transport
   limitation need separate verification where relevant.
+
+## HW2 baseline evaluation
+
+`npm run baseline` records existing offline-check outcomes, a separate initial
+unit suite with source coverage, and scoped local CPU/timing profiles without
+calling live providers. See [baseline instructions and limitations](docs/hw2/README.md)
+and [recorded initial assessment](docs/hw2/initial-assessment.md).

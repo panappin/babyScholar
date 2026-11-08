@@ -1,0 +1,7 @@
+AssertionError [ERR_ASSERTION]: A supported local Chrome or Edge executable is required for this browser check.
+    at main (file:///workspace/scratch/5b9e63e9f241/babyscholar-hw2/scripts/frontend-search-browser-check.mjs:361:10)
+    at file:///workspace/scratch/5b9e63e9f241/babyscholar-hw2/scripts/frontend-search-browser-check.mjs:1189:7
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+{"result":"failed","evidence":"/workspace/scratch/5b9e63e9f241/babyscholar-hw2/.wrangler/frontend-search-browser-check/667f3951-a5a3-48e1-8a79-5462831e2918/result.json"}

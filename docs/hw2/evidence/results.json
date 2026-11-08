@@ -1,0 +1,288 @@
+{
+  "timestamp": "2026-11-08T16:36:35.508Z",
+  "baseCommit": "e72a5f460ebcc8704002c9f24c90c2d14bf86f16",
+  "workingTreeAtStart": "M .gitignore\n M README.md\n M package-lock.json\n M package.json\n?? docs/hw2/\n?? scripts/baseline/\n?? tests/\n?? vitest.config.ts",
+  "sourceTree": "2b735d17bc59c5e714dee91c837f05ead0a5d30d",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "x64",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalCpus": 9,
+  "totalMemoryBytes": 10451427328,
+  "steps": [
+    {
+      "name": "build",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/lib/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 8026.140327,
+      "log": "build.log"
+    },
+    {
+      "name": "papers",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/lib/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "papers"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1403.6827990000002,
+      "log": "papers.log"
+    },
+    {
+      "name": "integrations",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/lib/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "integrations"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1460.807463000001,
+      "log": "integrations.log"
+    },
+    {
+      "name": "question-text",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/question-text-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 476.8607350000002,
+      "log": "question-text.log"
+    },
+    {
+      "name": "document-details-timeout",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/document-details-timeout-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 305.7073899999996,
+      "log": "document-details-timeout.log"
+    },
+    {
+      "name": "library",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/library-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 20593.363437,
+      "log": "library.log"
+    },
+    {
+      "name": "document",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/document-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 20591.390413999998,
+      "log": "document.log"
+    },
+    {
+      "name": "document-delete",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/document-delete-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1455.5998299999992,
+      "log": "document-delete.log"
+    },
+    {
+      "name": "extraction",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/extraction-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 10793.137989000003,
+      "log": "extraction.log"
+    },
+    {
+      "name": "metadata",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/metadata-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 11857.983246999996,
+      "log": "metadata.log"
+    },
+    {
+      "name": "summary",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/summary-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 37578.709898999994,
+      "log": "summary.log"
+    },
+    {
+      "name": "question",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/question-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 45596.370760000005,
+      "log": "question.log"
+    },
+    {
+      "name": "metadata-live-verifier",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/metadata-live-verifier-check.mjs"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "status": "failed",
+      "wallMs": 5070.408330000006,
+      "log": "metadata-live-verifier.log"
+    },
+    {
+      "name": "local-reset",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/local-reset-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 3028.3496609999856,
+      "log": "local-reset.log"
+    },
+    {
+      "name": "frontend-search-browser",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/frontend-search-browser-check.mjs"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "status": "failed",
+      "wallMs": 63.836596999986796,
+      "log": "frontend-search-browser.log"
+    },
+    {
+      "name": "sites-artifact",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/sites-artifact-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 118.30573700001696,
+      "log": "sites-artifact.log"
+    },
+    {
+      "name": "generated-suite-coverage",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/lib/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "test:coverage"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1098.443459000002,
+      "log": "generated-suite-coverage.log"
+    },
+    {
+      "name": "profile-prepare",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/lib/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "checks:prepare"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1103.8900839999842,
+      "log": "profile-prepare.log"
+    },
+    {
+      "name": "profile",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--cpu-prof",
+        "--cpu-prof-dir=/workspace/scratch/5b9e63e9f241/babyscholar-hw2/artifacts/baseline/final",
+        "--cpu-prof-name=baseline.cpuprofile",
+        "scripts/baseline/profile.mjs",
+        "/workspace/scratch/5b9e63e9f241/babyscholar-hw2/artifacts/baseline/final"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1867.7439610000001,
+      "log": "profile.log"
+    }
+  ],
+  "generatedSuiteCoverage": {
+    "lines": {
+      "total": 2444,
+      "covered": 86,
+      "skipped": 0,
+      "pct": 3.51
+    },
+    "statements": {
+      "total": 2960,
+      "covered": 91,
+      "skipped": 0,
+      "pct": 3.07
+    },
+    "functions": {
+      "total": 533,
+      "covered": 13,
+      "skipped": 0,
+      "pct": 2.43
+    },
+    "branches": {
+      "total": 2595,
+      "covered": 64,
+      "skipped": 0,
+      "pct": 2.46
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  }
+}
