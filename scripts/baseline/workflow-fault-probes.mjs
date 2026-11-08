@@ -55,7 +55,7 @@ await writeFile(resolve(output, 'results.json'), JSON.stringify(report, null, 2)
 for (const mutation of [null, ...mutations]) {
   const name = mutation?.name ?? 'control', sandbox = resolve(output, name);
   await mkdir(sandbox);
-  for (const path of ['src', 'tests', 'vitest.config.ts', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'tests', 'drizzle', 'vitest.config.ts', 'package.json', 'package-lock.json']) {
     await cp(resolve(root, path), resolve(sandbox, path), { recursive: true });
   }
   if (mutation) {

@@ -44,6 +44,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:workflows:types": "tsc --project tsconfig.tests.json",
+    "test:providers:types": "tsc --project tsconfig.provider-tests.json",
     "baseline": "node scripts/baseline/run.mjs",
     "profile": "npm run checks:prepare && node scripts/baseline/profile-run.mjs"
   },

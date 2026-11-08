@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 
 const root = resolve(import.meta.dirname, '../..');
 const label = process.argv[2];
-if (!['round-1', 'round-2', 'round-3'].includes(label)) throw new Error('Usage: node scripts/baseline/fault-probes.mjs round-1|round-2|round-3');
+if (!['round-1', 'round-2', 'round-3', 'round-4'].includes(label)) throw new Error('Usage: node scripts/baseline/fault-probes.mjs ROUND');
 execFileSync('git', ['diff', '--exit-code', 'HEAD', '--', 'src'], { cwd: root, stdio: 'pipe' });
 const output = resolve(root, 'artifacts/hw2-fault-probes', `${label}-${new Date().toISOString().replaceAll(':', '-')}`);
 await mkdir(output, { recursive: true });
@@ -35,7 +35,7 @@ for (const mutation of [null, ...mutations]) {
   const name = mutation?.name ?? 'control';
   const sandbox = resolve(output, name);
   await mkdir(sandbox);
-  for (const path of ['src', 'tests', 'vitest.config.ts', 'package.json']) {
+  for (const path of ['src', 'tests', 'drizzle', 'vitest.config.ts', 'package.json', 'package-lock.json']) {
     await cp(resolve(root, path), resolve(sandbox, path), { recursive: true });
   }
   if (mutation) {

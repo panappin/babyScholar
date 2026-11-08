@@ -5,7 +5,7 @@ import { isAbsolute, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '../..');
 const [label, input] = process.argv.slice(2);
-if (!['initial', 'round-1', 'round-2', 'round-3-preflight', 'round-3'].includes(label) || !input) {
+if (!['initial', 'round-1', 'round-2', 'round-3-preflight', 'round-3', 'round-4'].includes(label) || !input) {
   throw new Error('Usage: node scripts/baseline/archive-hw2.mjs ROUND artifacts/baseline/TIMESTAMP');
 }
 const source = resolve(root, input);
@@ -30,7 +30,8 @@ await mkdir(snapshot);
 for (const name of ['tests/baseline', 'vitest.config.ts', 'package.json', 'package-lock.json',
   'scripts/baseline/run.mjs', 'scripts/baseline/profile.mjs', 'scripts/metadata-live-check.mjs',
   'scripts/metadata-live-verifier-check.mjs', 'scripts/frontend-search-browser-check.mjs',
-  ...(label === 'round-3' ? ['tsconfig.tests.json', 'scripts/baseline/browser-experiment.mjs', 'src/App.tsx'] : [])]) {
+  ...(['round-3', 'round-4'].includes(label) ? ['tsconfig.tests.json', 'scripts/baseline/browser-experiment.mjs', 'src/App.tsx'] : []),
+  ...(label === 'round-4' ? ['src', 'drizzle', 'worker-configuration.d.ts', 'tsconfig.provider-tests.json'] : [])]) {
   const target = resolve(snapshot, name);
   await mkdir(resolve(target, '..'), { recursive: true });
   await cp(resolve(root, name), target, { recursive: true });

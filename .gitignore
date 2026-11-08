@@ -38,3 +38,5 @@ artifacts/
 !docs/hw2/rounds/*/evidence/coverage/**
 !docs/hw2/rounds/round-3/development/**/coverage/
 !docs/hw2/rounds/round-3/development/**/coverage/**
+!docs/hw2/rounds/round-4/development/**/coverage/
+!docs/hw2/rounds/round-4/development/**/coverage/**
