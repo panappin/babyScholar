@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { createServer as createHttpServer } from "node:http";
+import { createServer as createHttpServer, get as httpGet } from "node:http";
 import { createServer } from "node:net";
 import { relative, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -184,10 +184,13 @@ async function startMetadataProvider() {
     for await (const chunk of request) chunks.push(chunk);
     let body;
     try { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { body = undefined; }
-    const isSummary = body?.text?.format?.name === "document_summary";
-    const isQuestion = body?.text?.format?.name === "document_question";
+    // Loopback-only sentinel keys distinguish the three current adapters.
+    // Summary/Q&A now request ordinary text and no longer send schema names.
+    const isSummary = request.headers.authorization === "Bearer local-summary-test-key";
+    const isQuestion = request.headers.authorization === "Bearer local-question-test-key";
     const expectedAuthorization = isSummary ? "Bearer local-summary-test-key" : isQuestion ? "Bearer local-question-test-key" : "Bearer local-metadata-test-key";
-    if (request.method !== "POST" || request.url !== "/v1/responses" || request.headers.authorization !== expectedAuthorization) {
+    if (request.method !== "POST" || request.url !== "/v1/responses" || request.headers.authorization !== expectedAuthorization
+      || !Array.isArray(body?.input) || body?.store !== false) {
       response.writeHead(400, { "content-type": "application/json" });
       response.end(JSON.stringify({ error: { message: "unexpected local provider request" } }));
       return;
@@ -254,6 +257,17 @@ function launch(entry, args, extraEnv = {}) {
     stdio: ["pipe", "pipe", "pipe"],
     env: { ...process.env, WRANGLER_SEND_METRICS: "false", ...extraEnv },
   });
+  // Controlled HW2 diagnostic: test the unconsumed-output hypothesis without
+  // changing application requests, assertions, or readiness deadlines.
+  child.outputBytes = { stdout: 0, stderr: 0 };
+  if (process.env.HW2_DRAIN_CHILD_PIPES === '1') {
+    for (const channel of ['stdout', 'stderr']) child[channel].on('data', chunk => {
+      child.outputBytes[channel] += chunk.length;
+      if (args.includes(vite) && process.env.HW2_NETWORK_DIAGNOSTICS === '1') {
+        child.outputTail = ((child.outputTail ?? '') + chunk.toString('utf8')).slice(-12_000);
+      }
+    });
+  }
   child.done = new Promise((resolveDone) => {
     child.once("error", (error) => { child.launchError = error; resolveDone(); });
     child.once("close", resolveDone);
@@ -372,7 +386,9 @@ async function main() {
     "--var", "OPENAI_API_KEY:offline-metadata-test-key", "--var", `LOCAL_METADATA_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_SUMMARY_PROVIDER_URL:${metadataProviderOrigin}`, "--var", `LOCAL_QUESTION_PROVIDER_URL:${metadataProviderOrigin}`,
     "--ip", "127.0.0.1", "--port", String(workerPort), "--inspector-port", "0", "--show-interactive-dev-session=false"]);
   await waitForServer(worker, `${workerOrigin}/api/health`);
-  frontend = launch(process.execPath, [vite, "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], { LOCAL_WORKER_ORIGIN: workerOrigin });
+  const frontendMode = process.env.HW2_BROWSER_PREVIEW === '1' ? 'preview' : 'development';
+  evidence.frontendMode = frontendMode;
+  frontend = launch(process.execPath, [vite, ...(frontendMode === 'preview' ? ['preview'] : []), "--host", "127.0.0.1", "--port", String(vitePort), "--strictPort"], { LOCAL_WORKER_ORIGIN: workerOrigin });
   await waitForServer(frontend, viteOrigin);
   record("local-worker-and-vite-started", { workerPid: worker.pid, frontendPid: frontend.pid, workerOrigin, viteOrigin });
 
@@ -389,7 +405,7 @@ async function main() {
   cdp.on("Network.requestWillBeSent", (params, eventSessionId) => {
     if (eventSessionId !== sessionId) return;
     const path = new URL(params.request.url).pathname;
-    if (path.startsWith("/api/")) networkRequests.set(params.requestId, {
+    if (path.startsWith("/api/") || process.env.HW2_NETWORK_DIAGNOSTICS === '1') networkRequests.set(params.requestId, {
       path, method: params.request.method, startedAt: params.timestamp,
     });
   });
@@ -471,14 +487,32 @@ async function main() {
     evidence.failedWait.network = [...networkRequests.values()];
     evidence.failedWait.processPipes = [worker, frontend, browser].map((child) => ({
       pid: child.pid, stdoutBufferedBytes: child.stdout.readableLength, stderrBufferedBytes: child.stderr.readableLength,
+      drainedBytes: child.outputBytes,
     }));
-    evidence.failedWait.directProbes = await Promise.all([workerOrigin, viteOrigin].map(async (origin) => {
+    const probeTargets = [workerOrigin, viteOrigin].map(origin => ({ origin, path: '/api/library/papers' }));
+    if (process.env.HW2_NETWORK_DIAGNOSTICS === '1') probeTargets.push(...['/', '/@vite/client', '/src/main.tsx'].map(path => ({ origin: viteOrigin, path })));
+    evidence.failedWait.directProbes = await Promise.all(probeTargets.map(async ({ origin, path }) => {
       try {
-        const response = await fetch(`${origin}/api/library/papers`, { signal: AbortSignal.timeout(2_000) });
-        const body = await response.json();
-        return { origin, status: response.status, paperCount: Array.isArray(body.papers) ? body.papers.length : null };
-      } catch (error) { return { origin, error: error.name }; }
+        const response = await fetch(`${origin}${path}`, { signal: AbortSignal.timeout(2_000) });
+        if (path.startsWith('/api/')) {
+          const body = await response.json();
+          return { origin, path, status: response.status, paperCount: Array.isArray(body.papers) ? body.papers.length : null };
+        }
+        return { origin, path, status: response.status, bytes: (await response.arrayBuffer()).byteLength };
+      } catch (error) { return { origin, path, error: error.name }; }
     }));
+    if (process.env.HW2_NETWORK_DIAGNOSTICS === '1') {
+      evidence.failedWait.viteOutput = frontend.outputTail ?? '';
+      evidence.failedWait.freshHttpProbes = await Promise.all(probeTargets.map(({ origin, path }) => new Promise(resolveProbe => {
+        const request = httpGet(`${origin}${path}`, { agent: false }, response => {
+          let bytes = 0;
+          response.on('data', chunk => { bytes += chunk.length; });
+          response.on('end', () => { clearTimeout(timer); resolveProbe({ origin, path, status: response.statusCode, bytes }); });
+        });
+        const timer = setTimeout(() => request.destroy(new Error('fresh HTTP timeout')), 2_000);
+        request.on('error', error => { clearTimeout(timer); resolveProbe({ origin, path, error: error.message }); });
+      })));
+    }
     throw new Error(`Timed out waiting for ${description}.`);
   };
   const click = (selector) => evaluate(`(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!(element instanceof HTMLElement)) return false; element.click(); return true; })()`);
@@ -974,7 +1008,7 @@ async function main() {
   assert.equal(await click("[data-question-submit]"), true);
   const answeredQuestionPost = await nextPaused((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id), "answered question POST");
   assert.deepEqual(JSON.parse(answeredQuestionPost.request.postData), { question: mockAnsweredQuestion.question });
-  await waitFor("document.body.innerText.includes(\"Asking from this PDF's saved extracted text\")", "question asking feedback");
+  await waitFor("document.body.innerText.includes(\"Asking with this PDF's saved extracted text as context\")", "question asking feedback");
   assert.equal(await click("[data-question-submit]"), true);
   await delay(50);
   assert.equal(paused.filter((request) => isDocumentQuestionsPost(request, mockDocumentTwo.id)).length, 0, "busy question must not submit twice");
@@ -1122,10 +1156,14 @@ async function main() {
 
   // A separate actual Worker flow proves that an explicit summary works from
   // saved text even when this fixture's bibliographic metadata is unavailable.
+  // Make that precondition explicit. Current metadata accepts ordinary output
+  // without source-matching quotes, so a different PDF alone is not an error.
+  metadataProviderMode = "failure";
   const summaryFixtureBase64 = Buffer.from(summaryFixture.bytes).toString("base64");
   assert.equal(await choosePdf("summary-browser-fixture.pdf", summaryFixtureBase64), true);
   assert.equal(await click("#pdfs-view button[type=submit]"), true);
   await waitFor("document.querySelector('[role=alert]')?.textContent.includes('metadata') && document.body.innerText.includes('Extracted page text')", "summary fixture text retained after unavailable metadata");
+  metadataProviderMode = "success";
   await waitFor("document.body.innerText.includes('No summary has been generated')", "actual summary not-generated state");
   const summaryDocumentId = await evaluate("document.querySelector('.document-select')?.dataset.documentId");
   assert.match(summaryDocumentId, /^[0-9a-f-]{36}$/u);

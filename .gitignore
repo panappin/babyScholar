@@ -36,3 +36,5 @@ artifacts/
 # HW2's reviewed, immutable coverage evidence is part of the assignment record.
 !docs/hw2/rounds/*/evidence/coverage/
 !docs/hw2/rounds/*/evidence/coverage/**
+!docs/hw2/rounds/round-3/development/**/coverage/
+!docs/hw2/rounds/round-3/development/**/coverage/**

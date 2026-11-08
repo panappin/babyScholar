@@ -5,8 +5,8 @@ import { isAbsolute, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '../..');
 const [label, input] = process.argv.slice(2);
-if (!['initial', 'round-1', 'round-2'].includes(label) || !input) {
-  throw new Error('Usage: node scripts/baseline/archive-hw2.mjs initial|round-1|round-2 artifacts/baseline/TIMESTAMP');
+if (!['initial', 'round-1', 'round-2', 'round-3-preflight', 'round-3'].includes(label) || !input) {
+  throw new Error('Usage: node scripts/baseline/archive-hw2.mjs ROUND artifacts/baseline/TIMESTAMP');
 }
 const source = resolve(root, input);
 const withinArtifacts = relative(resolve(root, 'artifacts/baseline'), source);

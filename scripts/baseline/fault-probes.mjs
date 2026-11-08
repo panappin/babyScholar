@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 
 const root = resolve(import.meta.dirname, '../..');
 const label = process.argv[2];
-if (!['round-1', 'round-2'].includes(label)) throw new Error('Usage: node scripts/baseline/fault-probes.mjs round-1|round-2');
+if (!['round-1', 'round-2', 'round-3'].includes(label)) throw new Error('Usage: node scripts/baseline/fault-probes.mjs round-1|round-2|round-3');
 execFileSync('git', ['diff', '--exit-code', 'HEAD', '--', 'src'], { cwd: root, stdio: 'pipe' });
 const output = resolve(root, 'artifacts/hw2-fault-probes', `${label}-${new Date().toISOString().replaceAll(':', '-')}`);
 await mkdir(output, { recursive: true });
@@ -68,8 +68,13 @@ for (const mutation of [null, ...mutations]) {
 execFileSync('git', ['diff', '--exit-code', 'HEAD', '--', 'src'], { cwd: root, stdio: 'pipe' });
 report.testFiles = {};
 const { readdir } = await import('node:fs/promises');
-for (const file of await readdir(resolve(root, 'tests/baseline'))) {
-  report.testFiles[file] = createHash('sha256').update(await readFile(resolve(root, 'tests/baseline', file))).digest('hex');
+async function hashTests(directory, prefix = '') {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = resolve(directory, entry.name), name = prefix + entry.name;
+    if (entry.isDirectory()) await hashTests(path, name + '/');
+    else report.testFiles[name] = createHash('sha256').update(await readFile(path)).digest('hex');
+  }
 }
+await hashTests(resolve(root, 'tests/baseline'));
 await writeFile(resolve(output, 'results.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(`Fault-probe evidence: ${relative(root, output)}`);

@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  esbuild: { jsx: 'automatic' },
   test: {
-    include: ['tests/baseline/**/*.test.ts'],
+    include: ['tests/baseline/**/*.test.{ts,tsx}'],
     environment: 'node',
     maxWorkers: 1,
     coverage: {
