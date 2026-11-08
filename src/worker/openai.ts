@@ -19,9 +19,6 @@ function readString(value: unknown): string | undefined {
 
 function extractResponseText(payload: unknown) {
   if (typeof payload !== "object" || payload === null) return undefined;
-  if (typeof payload !== "object" || payload === null) {
-    throw new IntegrationError("malformed_response", "OpenAI returned an invalid JSON response.");
-  }
   const record = payload as Record<string, unknown>;
   const direct = readString(record.output_text);
   if (direct) return direct;
@@ -81,10 +78,9 @@ export async function probeOpenAi(
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
-  let response: Response;
   try {
     // One deliberate Responses request. There is no automatic retry.
-    response = await fetchImplementation(OPENAI_ENDPOINT, {
+    const response = await fetchImplementation(OPENAI_ENDPOINT, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -93,33 +89,37 @@ export async function probeOpenAi(
       body: JSON.stringify(request),
       signal: controller.signal,
     });
-  } catch {
+
+    // The deadline covers the body as well as the response headers.
+    let payload: unknown;
+    try {
+      payload = await response.json();
+    } catch {
+      throw new IntegrationError("malformed_response", "OpenAI returned a non-JSON response.", response.status);
+    }
+    if (!response.ok) {
+      const kind = classifyOpenAiFailure(response.status, payload);
+      throw new IntegrationError(kind, `OpenAI returned HTTP ${response.status}.`, response.status);
+    }
+    if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+      throw new IntegrationError("malformed_response", "OpenAI returned an invalid JSON response.");
+    }
+    const record = payload as Record<string, unknown>;
+    if (record.status !== "completed") {
+      throw new IntegrationError("malformed_response", "OpenAI did not return a completed response.");
+    }
+    const text = extractResponseText(payload);
+    if (!text) {
+      throw new IntegrationError("malformed_response", "OpenAI completed without usable text.");
+    }
+    return { provider: "openai", model, text };
+  } catch (error) {
     if (controller.signal.aborted) {
       throw new IntegrationError("timeout", `OpenAI did not respond within ${timeoutMs}ms.`);
     }
+    if (error instanceof IntegrationError) throw error;
     throw new IntegrationError("network_failure", "Could not reach the OpenAI API.");
   } finally {
     clearTimeout(timeout);
   }
-
-  let payload: unknown;
-  try {
-    payload = await response.json();
-  } catch {
-    throw new IntegrationError("malformed_response", "OpenAI returned a non-JSON response.", response.status);
-  }
-  if (!response.ok) {
-    const kind = classifyOpenAiFailure(response.status, payload);
-    throw new IntegrationError(kind, `OpenAI returned HTTP ${response.status}.`, response.status);
-  }
-
-  const record = payload as Record<string, unknown>;
-  if (record.status !== "completed") {
-    throw new IntegrationError("malformed_response", "OpenAI did not return a completed response.");
-  }
-  const text = extractResponseText(payload);
-  if (!text) {
-    throw new IntegrationError("malformed_response", "OpenAI completed without usable text.");
-  }
-  return { provider: "openai", model, text };
 }
