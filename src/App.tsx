@@ -360,7 +360,7 @@ function App() {
       updateSaveState(identity, { status: "uncertain", message: "The save outcome is still unknown. Reload the library to reconcile it before saving again." });
       return;
     }
-    const confirmed = savedPaperFor(papers, identity);
+    const confirmed = papers.find((paper) => arxivSourceIdentity(paper.arxivId) === identity);
     updateSaveState(identity, confirmed
       ? { status: "saved", paper: confirmed, created: false }
       : { status: "error", message: "The save could not be confirmed after reloading the library. You can try again." });
