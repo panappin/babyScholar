@@ -1,0 +1,73 @@
+{
+  "previous": {
+    "lines": {
+      "total": 2445,
+      "covered": 2053,
+      "skipped": 0,
+      "pct": 83.96
+    },
+    "statements": {
+      "total": 2963,
+      "covered": 2380,
+      "skipped": 0,
+      "pct": 80.32
+    },
+    "functions": {
+      "total": 534,
+      "covered": 427,
+      "skipped": 0,
+      "pct": 79.96
+    },
+    "branches": {
+      "total": 2598,
+      "covered": 2032,
+      "skipped": 0,
+      "pct": 78.21
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "startup": {
+    "lines": {
+      "total": 2453,
+      "covered": 2064,
+      "skipped": 0,
+      "pct": 84.14
+    },
+    "statements": {
+      "total": 2975,
+      "covered": 2400,
+      "skipped": 0,
+      "pct": 80.67
+    },
+    "functions": {
+      "total": 540,
+      "covered": 434,
+      "skipped": 0,
+      "pct": 80.37
+    },
+    "branches": {
+      "total": 2607,
+      "covered": 2051,
+      "skipped": 0,
+      "pct": 78.67
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "productCommit": "fcc245456888efea067c7821ff936433561c692f",
+  "tests": 469,
+  "files": 14,
+  "baselinePassed": 19,
+  "scopeUnchanged": true,
+  "productChanged": true,
+  "note": "Launcher JavaScript excluded by unchanged src-only scope; App denominator changes disclosed. No new mutation experiment."
+}

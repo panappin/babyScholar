@@ -1,0 +1,285 @@
+{
+  "result": "passed",
+  "pdf": "docs\\hw2\\report.pdf",
+  "sha256": "165c28358201c9ab7b5777ea7a3598a31cc38762bba91f9ecc9dc2efe0c60b3f",
+  "pages": [
+    {
+      "page": 1,
+      "characters": 3159,
+      "image": "page-01.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 2,
+      "characters": 3097,
+      "image": "page-02.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 3,
+      "characters": 3937,
+      "image": "page-03.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 4,
+      "characters": 3046,
+      "image": "page-04.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 5,
+      "characters": 2793,
+      "image": "page-05.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 6,
+      "characters": 4299,
+      "image": "page-06.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 7,
+      "characters": 3811,
+      "image": "page-07.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 8,
+      "characters": 1748,
+      "image": "page-08.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    }
+  ],
+  "links": [
+    {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar"
+    },
+    {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/initial-prompt.md"
+    },
+    {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/initial-prompt.md"
+    },
+    {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/improvement-request.md"
+    },
+    {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/user-request.txt"
+    },
+    {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/user-request.txt"
+    },
+    {
+      "page": 2,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/initial/assessment.md"
+    },
+    {
+      "page": 2,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-1/instructions.md"
+    },
+    {
+      "page": 2,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-2/instructions.md"
+    },
+    {
+      "page": 3,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/utf8-integrity.test.ts"
+    },
+    {
+      "page": 3,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/instructions.md"
+    },
+    {
+      "page": 3,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md"
+    },
+    {
+      "page": 3,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md"
+    },
+    {
+      "page": 4,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/development-notes.md"
+    },
+    {
+      "page": 4,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/quality-review.md"
+    },
+    {
+      "page": 4,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/evidence/results.json"
+    },
+    {
+      "page": 4,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/comparison.json"
+    },
+    {
+      "page": 4,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-per-file-comparison.csv"
+    },
+    {
+      "page": 4,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-comparison.json"
+    },
+    {
+      "page": 5,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/app-workflows.test.tsx"
+    },
+    {
+      "page": 5,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/product-bug.md"
+    },
+    {
+      "page": 5,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/product-bug.md"
+    },
+    {
+      "page": 5,
+      "uri": "https://github.com/panappin/babyScholar/commit/852eb2c"
+    },
+    {
+      "page": 5,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/openai-probe.test.ts"
+    },
+    {
+      "page": 6,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/probe-bugs.md"
+    },
+    {
+      "page": 6,
+      "uri": "https://github.com/panappin/babyScholar/commit/5285152"
+    },
+    {
+      "page": 6,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/evidence/dependency-audit.json"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/tests/baseline"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/assessment.md"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/quality-review.md"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/independent-rerun/results.json"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/independent-rerun/results.json"
+    },
+    {
+      "page": 8,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/pdf-verification.json"
+    }
+  ],
+  "outsidePageWords": [],
+  "pypdf": "6.7.3",
+  "pymupdf": "2.1",
+  "note": "Text extraction, 36 portable HTTPS link annotations, section presence and page bounds passed. Every page visually inspected. Repository link existence is also checked against staged files before publication.",
+  "source": "docs/hw2/report.md",
+  "sourceSha256": "075cec962f23aba6303ff2c8c0d37100244d720a2480bca1865994580c952878",
+  "render": {
+    "startedAt": "2026-11-09T01:07:51.293Z",
+    "finishedAt": "2026-11-09T01:07:51.974Z",
+    "input": "docs\\hw2\\report.md",
+    "output": "docs\\hw2\\report.pdf",
+    "browser": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "command": [
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "--headless=new",
+      "--disable-background-networking",
+      "--disable-extensions",
+      "--disable-sync",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--user-data-dir=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-report\\2026-11-09T01-07-51.267Z\\browser-3f4d4cdd-c22d-484e-88aa-26807fb6b3b2",
+      "--no-pdf-header-footer",
+      "--print-to-pdf=C:\\Users\\panap\\PycharmProjects\\babyScholar\\docs\\hw2\\report.pdf",
+      "file:///C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-report/2026-11-09T01-07-51.267Z/report.html"
+    ],
+    "exitCode": 0,
+    "bytes": 195590,
+    "links": [
+      "https://github.com/panappin/babyScholar",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/initial-prompt.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/improvement-request.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/user-request.txt",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/user-request.txt",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/initial/assessment.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-1/instructions.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-2/instructions.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/utf8-integrity.test.ts",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/instructions.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/development-notes.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/quality-review.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/evidence/results.json",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/comparison.json",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-per-file-comparison.csv",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-comparison.json",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/app-workflows.test.tsx",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/product-bug.md",
+      "https://github.com/panappin/babyScholar/commit/852eb2c",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/openai-probe.test.ts",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/probe-bugs.md",
+      "https://github.com/panappin/babyScholar/commit/5285152",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/evidence/dependency-audit.json",
+      "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline",
+      "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/tests/baseline",
+      "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/assessment.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/independent-rerun/results.json",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/pdf-verification.json"
+    ],
+    "note": "Rendering succeeded; text, links and visual layout require verification."
+  },
+  "visualReview": {
+    "reviewer": "coding agent",
+    "reviewedAt": "2026-11-09T01:08:46.664615+00:00",
+    "pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "notes": "All eight rendered page PNGs inspected individually. Text, Unicode, test titles, tables, code blocks and page numbers are legible; no clipping or overlap. All six required sections present. Tables and code blocks remain intact."
+  }
+}

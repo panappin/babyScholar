@@ -1,0 +1,731 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/app-workflows.test.tsx -t initial read-only|stalled startup --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-09T02-47-04.564Z-startup-ui-before\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ❯ tests/baseline/app-workflows.test.tsx (24 tests | 2 failed | 22 skipped) 1086ms
+   ❯ Search and library observable workflows (24)
+     × recovers initial read-only failures after the Worker becomes ready through an explicit retry 1025ms
+     × bounds stalled startup reads and leaves a visible retry without automatic writes 59ms
+     ↓ loads status and library without starting a search, then normalizes an explicit query
+     ↓ rejects invalid input "" without a search request
+     ↓ rejects invalid input "?!" without a search request
+     ↓ shows empty results distinctly from errors and permits a new explicit search
+     ↓ handles application failure with useful feedback and no fabricated result
+     ↓ handles malformed success with useful feedback and no fabricated result
+     ↓ handles gateway HTML with useful feedback and no fabricated result
+     ↓ handles network failure with useful feedback and no fabricated result
+     ↓ prevents duplicate searches while pending and releases the control after the real timeout
+     ↓ retains the authoritative duplicate record when saved and reopened
+     ↓ recognizes a previously saved base ID when search returns another version
+     ↓ reconciles lost response with GET and shows a confirmed save without a contradictory error
+     ↓ reconciles malformed success with GET and shows a confirmed save without a contradictory error
+     ↓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error
+     ↓ reconciles non-application error with GET and shows a confirmed save without a contradictory error
+     ↓ leaves an unknown save disabled until an explicit library reload confirms it
+     ↓ does not confirm an uncertain save when GET contains only a different paper
+     ↓ does not let an older library read erase a successful save
+     ↓ retains saved records when a library reload returns malformed
+     ↓ retains saved records when a library reload returns application error
+     ↓ retains an unconfirmed removal and only removes the record after explicit successful retry
+     ↓ opens PDFs through the actual tab and uses GET only on selection of the view
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > recovers initial read-only failures after the Worker becomes ready through an explicit retry
+TestingLibraryElementError: Unable to find role="button" and name "Retry connection"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"app-title"[39m
+          [33mclass[39m=[32m"welcome"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mResearch workspace[0m
+          [36m</p>[39m
+          [36m<h1[39m
+            [33mid[39m=[32m"app-title"[39m
+          [36m>[39m
+            [0mAI Research Assistant[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"statuses"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--failed"[39m
+              [36m/>[39m
+              [0mBackend unavailable[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--failed"[39m
+              [36m/>[39m
+              [0mD1[0m
+              [0m [0m
+              [0munavailable[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--failed"[39m
+              [36m/>[39m
+              [0mR2[0m
+              [0m [0m
+              [0munavailable[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Research workspace views"[39m
+          [33mclass[39m=[32m"workspace-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"search-view"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"search-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mSearch[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"library-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"library-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mLibrary[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"pdfs-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"pdfs-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPDFs[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"search-tab paper-search-title"[39m
+          [33mclass[39m=[32m"search-panel"[39m
+          [33mid[39m=[32m"search-view"[39m
+          [33mrole[39m=[32m"tabpanel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"search-introduction"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0marXiv paper search[0m
+              [36m</p>[39m
+              [36m<h2[39m
+                [33mid[39m=[32m"paper-search-title"[39m
+              [36m>[39m
+                [0mSearch research papers[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0mFind arXiv metadata by research topic or keywords.[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"search-form"[39m
+            [33mnovalidate[39m=[32m""[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"paper-search-query"[39m
+            [36m>[39m
+              [0mResearch topic or keywords[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"search-controls"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-describedby[39m=[32m"paper-search-help"[39m
+                [33mautocomplete[39m=[32m"off"[39m
+                [33mid[39m=[32m"paper-search-query"[39m
+                [33mmaxlength[39m=[32m"200"[39m
+                [33mname[39m=[32m"q"[39m
+                [33mplaceholder[39m=[32m"e.g. graph neural networks"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mSearch[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"search-help"[39m
+              [33mid[39m=[32m"paper-search-help"[39m
+            [36m>[39m
+              [0mPlain-text topics or keywords only, up to 200 characters.[0m
+            [36m</p>[39m
+          [36m</form>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"search-feedback"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0mSearch only runs when you submit a topic or keywords.[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"app-title"[39m
+          [33mclass[39m=[32m"welcome"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mResearch workspace[0m
+          [36m</p>[39m
+          [36m<h1[39m
+            [33mid[39m=[32m"app-title"[39m
+          [36m>[39m
+            [0mAI Research Assistant[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"statuses"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--failed"[39m
+              [36m/>[39m
+              [0mBackend unavailable[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--failed"[39m
+              [36m/>[39m
+              [0mD1[0m
+              [0m [0m
+              [0munavailable[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--failed"[39m
+              [36m/>[39m
+              [0mR2[0m
+              [0m [0m
+              [0munavailable[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Research workspace views"[39m
+          [33mclass[39m=[32m"workspace-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"search-view"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"search-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mSearch[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"library-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"library-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mLibrary[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"pdfs-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"pdfs-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPDFs[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"search-tab paper-search-title"[39m
+          [33mclass[39m=[32m"search-panel"[39m
+          [33mid[39m=[32m"search-view"[39m
+          [33mrole[39m=[32m"tabpanel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"search-introduction"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0marXiv paper search[0m
+              [36m</p>[39m
+              [36m<h2[39m
+                [33mid[39m=[32m"paper-search-title"[39m
+              [36m>[39m
+                [0mSearch research papers[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0mFind arXiv metadata by research topic or keywords.[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"search-form"[39m
+            [33mnovalidate[39m=[32m""[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"paper-search-query"[39m
+            [36m>[39m
+              [0mResearch topic or keywords[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"search-controls"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-describedby[39m=[32m"paper-search-help"[39m
+                [33mautocomplete[39m=[32m"off"[39m
+                [33mid[39m=[32m"paper-search-query"[39m
+                [33mmaxlength[39m=[32m"200"[39m
+                [33mname[39m=[32m"q"[39m
+                [33mplaceholder[39m=[32m"e.g. graph neural networks"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mSearch[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"search-help"[39m
+              [33mid[39m=[32m"paper-search-help"[39m
+            [36m>[39m
+              [0mPlain-text topics or keywords only, up to 200 characters.[0m
+            [36m</p>[39m
+          [36m</form>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"search-feedback"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0mSearch only runs when you submit a topic or keywords.[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/baseline/app-workflows.test.tsx:40:32
+     38|       [`GET ${path}`]: () => ready ? json({ papers: [saved] }) : failu…
+     39|     });
+     40|     const retry = await screen.findByRole('button', { name: 'Retry con…
+       |                                ^
+     41|     await waitFor(() => expect(retry).toBeEnabled());
+     42|     expect(api).toHaveBeenCalledTimes(3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > bounds stalled startup reads and leaves a visible retry without automatic writes
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Retry connection"
+
+Here are the accessible roles:
+
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"app-shell"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "AI Research Assistant":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"app-title"[39m
+    [33mclass[39m=[32m"welcome"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"search-help"[39m
+    [33mid[39m=[32m"paper-search-help"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "AI Research Assistant":
+  [36m<h1[39m
+    [33mid[39m=[32m"app-title"[39m
+  [36m/>[39m
+
+  Name "Search research papers":
+  [36m<h2[39m
+    [33mid[39m=[32m"paper-search-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33maria-live[39m=[32m"polite"[39m
+    [33mclass[39m=[32m"statuses"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"search-feedback"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "Research workspace views":
+  [36m<div[39m
+    [33maria-label[39m=[32m"Research workspace views"[39m
+    [33mclass[39m=[32m"workspace-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "Search":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"search-view"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"search-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Library":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"library-view"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"library-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "PDFs":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"pdfs-view"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"pdfs-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "Search Search research papers":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"search-tab paper-search-title"[39m
+    [33mclass[39m=[32m"search-panel"[39m
+    [33mid[39m=[32m"search-view"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "Research topic or keywords":
+  [36m<input[39m
+    [33maria-describedby[39m=[32m"paper-search-help"[39m
+    [33mautocomplete[39m=[32m"off"[39m
+    [33mid[39m=[32m"paper-search-query"[39m
+    [33mmaxlength[39m=[32m"200"[39m
+    [33mname[39m=[32m"q"[39m
+    [33mplaceholder[39m=[32m"e.g. graph neural networks"[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Search":
+  [36m<button[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"app-title"[39m
+          [33mclass[39m=[32m"welcome"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mResearch workspace[0m
+          [36m</p>[39m
+          [36m<h1[39m
+            [33mid[39m=[32m"app-title"[39m
+          [36m>[39m
+            [0mAI Research Assistant[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"statuses"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--loading"[39m
+              [36m/>[39m
+              [0mChecking backend connection...[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--loading"[39m
+              [36m/>[39m
+              [0mD1[0m
+              [0m [0m
+              [0mchecking...[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--loading"[39m
+              [36m/>[39m
+              [0mR2[0m
+              [0m [0m
+              [0mchecking...[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Research workspace views"[39m
+          [33mclass[39m=[32m"workspace-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"search-view"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"search-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mSearch[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"library-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"library-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mLibrary[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"pdfs-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"pdfs-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPDFs[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"search-tab paper-search-title"[39m
+          [33mclass[39m=[32m"search-panel"[39m
+          [33mid[39m=[32m"search-view"[39m
+          [33mrole[39m=[32m"tabpanel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"search-introduction"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0marXiv paper search[0m
+              [36m</p>[39m
+              [36m<h2[39m
+                [33mid[39m=[32m"paper-search-title"[39m
+              [36m>[39m
+                [0mSearch research papers[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0mFind arXiv metadata by research topic or keywords.[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"search-form"[39m
+            [33mnovalidate[39m=[32m""[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"paper-search-query"[39m
+            [36m>[39m
+              [0mResearch topic or keywords[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"search-controls"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-describedby[39m=[32m"paper-search-help"[39m
+                [33mautocomplete[39m=[32m"off"[39m
+                [33mid[39m=[32m"paper-search-query"[39m
+                [33mmaxlength[39m=[32m"200"[39m
+                [33mname[39m=[32m"q"[39m
+                [33mplaceholder[39m=[32m"e.g. graph neural networks"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mSearch[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"search-help"[39m
+              [33mid[39m=[32m"paper-search-help"[39m
+            [36m>[39m
+              [0mPlain-text topics or keywords only, up to 200 characters.[0m
+            [36m</p>[39m
+          [36m</form>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"search-feedback"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0mSearch only runs when you submit a topic or keywords.[0m
+          [36m</p>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/baseline/app-workflows.test.tsx:59:19
+     57|       'GET /api/storage/status': init => abortedRequest(init.signal), …
+     58|     await act(async () => { await vi.advanceTimersByTimeAsync(10_000);…
+     59|     expect(screen.getByRole('button', { name: 'Retry connection' })).t…
+       |                   ^
+     60|     await act(async () => { await vi.advanceTimersByTimeAsync(30_000);…
+     61|     expect(api).toHaveBeenCalledTimes(3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 22 skipped (24)
+   Start at  21:47:05
+   Duration  3.00s (environment 43%, tests 38%, import 14%, transform 4%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-09T02-47-04.564Z-startup-ui-before/test-results.json

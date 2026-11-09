@@ -1,0 +1,4 @@
+
+> ai-research-assistant@0.1.0 test:providers:types
+> tsc --project tsconfig.provider-tests.json
+

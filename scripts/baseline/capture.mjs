@@ -20,7 +20,7 @@ for (const path of ['package.json', 'package-lock.json', 'vitest.config.ts', 'te
   await mkdir(dirname(resolve(snapshot, path)), { recursive: true });
   await cp(resolve(root, path), resolve(snapshot, path), { recursive: true });
 }
-for (const path of ['tsconfig.tests.json', 'tsconfig.provider-tests.json', 'tsconfig.worker.json', 'tsconfig.app.json',
+for (const path of ['scripts/local-dev.mjs', 'scripts/startup-readiness.mjs', 'tsconfig.tests.json', 'tsconfig.provider-tests.json', 'tsconfig.worker.json', 'tsconfig.app.json',
   'worker-configuration.d.ts', 'drizzle', 'scripts/baseline',
   'scripts/baseline/browser-experiment.mjs', 'scripts/baseline/workflow-fault-probes.mjs', 'scripts/baseline/probe-vite.mjs']) {
   if (existsSync(resolve(root, path))) {

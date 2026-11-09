@@ -1,0 +1,19 @@
+User request (verbatim):
+
+BabyScholar initially fails or hangs for the first few requests after npm run dev, then works normally a few seconds later. Both direct Worker and Vite-proxied /api/health returned 200 after startup. AI authentication was a separate key issue and is now resolved.
+
+Investigate and fix the startup experience on hw2/initial-baseline. Preserve existing data, .dev.vars, dependencies and HW2 evidence; do not make live AI calls.
+
+The managed launcher currently starts Wrangler and Vite concurrently, and the UI makes initial requests without retrying. Reproduce the issue deterministically, for example by delaying Worker readiness; don’t assume this explains every earlier Vite stall.
+
+Implement a bounded readiness/recovery solution. Before announcing the app ready, check Worker health and the relevant read-only storage/startup endpoints, and confirm the Vite proxy can reach them. Use finite deadlines and actionable errors, not an arbitrary sleep. For an already-open page, allow bounded recovery or a visible retry if initial read-only requests fail. Never automatically retry writes or generation requests. Preserve Ctrl+C and process cleanup; do not reset or silently migrate user data.
+
+Add focused deterministic tests for delayed readiness, permanent failure, and UI recovery, using disposable state. Run relevant tests and baseline checks. Report what was reproduced, changed, and verified, and distinguish this issue from unexplained intermittent proxy stalls.
+
+Time-box the investigation so I retain at least 30 minutes before my 10 PM submission target. If the fix is not ready and verified in time, stop and tell me. If it is ready, commit it separately and update the report with the product change and actual verification before generating the final PDF. Do not submit or merge into main.
+
+The agent checked 9:43 PM EST and stopped because the original buffer had passed.
+User extension (verbatim):
+You can extend the deadline to 10:30pm
+
+Agent accepted a 10 PM EST hard stop to preserve the final 30 minutes.

@@ -1,0 +1,29 @@
+{
+  "label": "startup-final-focused",
+  "startedAt": "2026-11-09T02:52:18.148Z",
+  "timeoutMs": 60000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "test",
+    "--",
+    "tests/baseline/startup-readiness.test.ts",
+    "tests/baseline/app-workflows.test.tsx",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-extension\\2026-11-09T02-52-18.041Z-startup-final-focused\\test-results.json"
+  ],
+  "baseCommit": "d2d29a316541470ced3105c4959eaf6de326ff96",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "workingTree": "M scripts/baseline/archive-hw2.mjs\n M scripts/baseline/archive-workflows.mjs\n M scripts/baseline/capture.mjs\n M scripts/local-dev.mjs\n M src/App.tsx\n M tests/baseline/app-workflows.test.tsx\n?? docs/hw2/rounds/startup/\n?? scripts/startup-readiness.mjs\n?? tests/baseline/startup-readiness.test.ts",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-09T02-52-18.041Z-startup-final-focused",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-11-09T02:52:28.379Z"
+}

@@ -1,0 +1,13 @@
+
+> ai-research-assistant@0.1.0 integrations
+> npm run integrations:offline
+
+
+> ai-research-assistant@0.1.0 integrations:offline
+> npm run checks:prepare && node scripts/integration-offline-check.mjs
+
+
+> ai-research-assistant@0.1.0 checks:prepare
+> tsc --project tsconfig.worker.json --outDir .wrangler/check-worker --sourceMap false
+
+Offline integration checks: missing key, arXiv error feed, timeout, and Responses request shapes: PASS

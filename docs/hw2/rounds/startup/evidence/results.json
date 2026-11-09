@@ -1,0 +1,288 @@
+{
+  "timestamp": "2026-11-09T02:49:50.083Z",
+  "baseCommit": "d2d29a316541470ced3105c4959eaf6de326ff96",
+  "workingTreeAtStart": "M scripts/local-dev.mjs\n M src/App.tsx\n M tests/baseline/app-workflows.test.tsx\n?? scripts/startup-readiness.mjs\n?? tests/baseline/startup-readiness.test.ts",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "arch": "x64",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "logicalCpus": 32,
+  "totalMemoryBytes": 16886128640,
+  "steps": [
+    {
+      "name": "build",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 7892.4254,
+      "log": "build.log"
+    },
+    {
+      "name": "papers",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "papers"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1554.9167000000007,
+      "log": "papers.log"
+    },
+    {
+      "name": "integrations",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "integrations"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1926.9691999999995,
+      "log": "integrations.log"
+    },
+    {
+      "name": "question-text",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/question-text-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 474.8104000000003,
+      "log": "question-text.log"
+    },
+    {
+      "name": "document-details-timeout",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/document-details-timeout-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 342.4310000000005,
+      "log": "document-details-timeout.log"
+    },
+    {
+      "name": "library",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/library-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 23021.2995,
+      "log": "library.log"
+    },
+    {
+      "name": "document",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/document-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 23033.5012,
+      "log": "document.log"
+    },
+    {
+      "name": "document-delete",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/document-delete-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1716.5383999999976,
+      "log": "document-delete.log"
+    },
+    {
+      "name": "extraction",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/extraction-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 14054.128899999996,
+      "log": "extraction.log"
+    },
+    {
+      "name": "metadata",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/metadata-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 14689.812600000005,
+      "log": "metadata.log"
+    },
+    {
+      "name": "summary",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/summary-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 39910.372,
+      "log": "summary.log"
+    },
+    {
+      "name": "question",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/question-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 48101.72020000001,
+      "log": "question.log"
+    },
+    {
+      "name": "metadata-live-verifier",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/metadata-live-verifier-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 22647.1054,
+      "log": "metadata-live-verifier.log"
+    },
+    {
+      "name": "local-reset",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/local-reset-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 15275.121700000018,
+      "log": "local-reset.log"
+    },
+    {
+      "name": "frontend-search-browser",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/frontend-search-browser-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 106610.79130000001,
+      "log": "frontend-search-browser.log"
+    },
+    {
+      "name": "sites-artifact",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/sites-artifact-check.mjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 437.4736999999732,
+      "log": "sites-artifact.log"
+    },
+    {
+      "name": "generated-suite-coverage",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "test:coverage"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 24835.387199999997,
+      "log": "generated-suite-coverage.log"
+    },
+    {
+      "name": "profile-prepare",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "checks:prepare"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1076.6253000000142,
+      "log": "profile-prepare.log"
+    },
+    {
+      "name": "profile",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--cpu-prof",
+        "--cpu-prof-dir=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\baseline\\2026-11-09T02-49-50.082Z",
+        "--cpu-prof-name=baseline.cpuprofile",
+        "scripts/baseline/profile.mjs",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\baseline\\2026-11-09T02-49-50.082Z"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "status": "passed",
+      "wallMs": 1713.8556000000099,
+      "log": "profile.log"
+    }
+  ],
+  "generatedSuiteCoverage": {
+    "lines": {
+      "total": 2453,
+      "covered": 2064,
+      "skipped": 0,
+      "pct": 84.14
+    },
+    "statements": {
+      "total": 2975,
+      "covered": 2400,
+      "skipped": 0,
+      "pct": 80.67
+    },
+    "functions": {
+      "total": 540,
+      "covered": 434,
+      "skipped": 0,
+      "pct": 80.37
+    },
+    "branches": {
+      "total": 2607,
+      "covered": 2051,
+      "skipped": 0,
+      "pct": 78.67
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  }
+}

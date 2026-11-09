@@ -1,0 +1,42 @@
+
+> ai-research-assistant@0.1.0 build
+> npm run typecheck && npm run build:frontend && npm run build:worker && npm run build:sites
+
+
+> ai-research-assistant@0.1.0 typecheck
+> tsc --noEmit --project tsconfig.app.json && tsc --noEmit --project tsconfig.worker.json && tsc --noEmit --project tsconfig.vite.json
+
+
+> ai-research-assistant@0.1.0 build:frontend
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 31 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/frontend/index.html                   0.54 kB │ gzip:  0.31 kB
+dist/frontend/assets/index-CskUxwHG.css   10.48 kB │ gzip:  2.60 kB
+dist/frontend/assets/index-BiBdGiaW.js   286.94 kB │ gzip: 84.65 kB
+✓ built in 1.13s
+
+> ai-research-assistant@0.1.0 build:worker
+> node scripts/build-worker.mjs
+
+
+ ⛅️ wrangler 4.148.0 (update available 4.158.0)
+───────────────────────────────────────────────
+Total Upload: 2557.02 KiB / gzip: 596.82 KiB
+Your Worker has access to the following bindings:
+Binding                                                    Resource                  
+env.DB (ai-research-assistant-local)                       D1 Database               
+env.PAPER_BUCKET (ai-research-assistant-papers-local)      R2 Bucket                 
+env.OPENAI_MODEL ("gpt-6-luna")                            Environment Variable      
+
+--dry-run: exiting now.
+Bundled Worker artifact: PASS (dry run; no upload performed).
+
+> ai-research-assistant@0.1.0 build:sites
+> node scripts/prepare-sites-build.mjs
+
+Prepared dist/client, full dist/server, and immutable migration metadata for Sites.

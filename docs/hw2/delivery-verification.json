@@ -1,148 +1,28 @@
 {
-  "checkedAt": "2026-11-09T01:09:32.597988+00:00",
+  "checkedAt": "2026-11-09T02:57:03.314028+00:00",
   "branch": "hw2/initial-baseline",
-  "startCommit": "57d2e1e4face0ac85792804f5c105611309ba299",
+  "startCommit": "d2d29a3",
+  "productCommit": "fcc245456888efea067c7821ff936433561c692f",
   "checks": {
-    "stagedArchiveAndPdfEntriesVerified": 4866,
-    "uniqueBlobsVerified": 640,
-    "archiveManifests": 66,
-    "secretPatternMatches": 0,
+    "archiveManifests": 76,
+    "stagedArchiveAndPdfEntriesVerified": 6637,
+    "uniqueBlobsVerified": 714,
+    "filesScanned": 909,
+    "secretMatches": 0,
     "generatedClutter": 0,
-    "pdfPagesVisuallyReviewed": 8,
-    "pdfHyperlinkAnnotations": 36,
-    "uniquePdfTargetsChecked": 30,
-    "stagedFilesScannedBeforeVerificationRecord": 637
+    "pdfPagesVisuallyReviewed": 9,
+    "pdfLinkAnnotations": 38,
+    "uniquePdfTargetsChecked": 32,
+    "testsPassed": 469,
+    "baselineStagesPassed": 19
   },
-  "links": [
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-comparison.json",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/initial-prompt.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/tests/baseline",
-      "kind": "branch-directory"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar",
-      "kind": "repository"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/user-request.txt",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/evidence/results.json",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/quality-review.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/commit/852eb2c",
-      "kind": "existing-commit"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/improvement-request.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline",
-      "kind": "branch-directory"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/comparison.json",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/final-review/independent-rerun/results.json",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/assessment.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/evidence/dependency-audit.json",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/probe-bugs.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-1/instructions.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/openai-probe.test.ts",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds",
-      "kind": "branch-directory"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/instructions.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/pdf-verification.json",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-per-file-comparison.csv",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/commit/5285152",
-      "kind": "existing-commit"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/app-workflows.test.tsx",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-2/instructions.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/user-request.txt",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/development-notes.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/initial/assessment.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/product-bug.md",
-      "kind": "tracked-file"
-    },
-    {
-      "url": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/utf8-integrity.test.ts",
-      "kind": "tracked-file"
-    }
-  ],
   "notes": [
-    "All earlier round archives and comparison files remain unchanged. Source, package manifests/lock and Vitest configuration are unchanged in this bounded pass.",
-    "The 15-case sample found two bounded weaknesses, affecting four existing cases; no new product defect or new coverage round. Fresh baseline: 462/462 tests, 19/19 stages, unchanged per-file coverage, both focused typechecks passed.",
-    "Author-provided report(1).md is preserved exactly as final-review/author-revision.md. Section 5 is unchanged apart from newline normalization. Verified name/course came from the author in this conversation.",
-    "The author identified the independent run; existing baseline artifacts support its counts. Separate installation/typecheck transcript is described by the author but not supplied as a separate file.",
-    "Local staged file/directory and historical commit targets for every PDF hyperlink are verified. Remote publication is verified after commit/push.",
-    "Credential-pattern scan is a targeted check, not a universal secret detector. User ZIPs/hosting files and original report transfer files are not staged.",
-    "No live account-usage meter is available; no remaining allowance estimate is claimed.",
-    "The original full assignment was not supplied in this pass; report review used the preserved user-provided six-section rubric."
+    "Old round archives, dependency files, coverage configuration and local .dev.vars are unchanged. Local key fingerprint was checked without publishing its value or hash.",
+    "Actual managed Worker/Vite and shutdown tested with disposable D1/R2; native console Ctrl+C was not separately simulated. No user data reset/migration or live provider request.",
+    "Initial UI reproduction fails two selected tests; first helper draft passes 28/29, corrected focused runs pass 29/29. An early baseline was deliberately interrupted and restarted against stable product files.",
+    "Coverage is 84.14% lines (2064/2453), 80.67% statements, 78.67% branches, 80.37% functions. App denominator changed; launcher JavaScript is outside unchanged src-only scope.",
+    "Earlier intermittent proxy stalls remain unexplained. No claim that startup gating fixes every such stall.",
+    "Author reflection preserved unchanged; startup additions are agent-authored and identified. Final source/PDF hashes match staged bytes.",
+    "Remote publication is verified after the evidence commit. Work stops before 10 PM EST for the 10:30 PM submission target."
   ]
 }

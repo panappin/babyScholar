@@ -19,7 +19,7 @@ Before submitting:
   selected artificial faults, and the separate dependency audit. Eight affected
   development-package entries are not eight new bugs found by the HW2 tests.
 - Confirm the final branch and report are visible on GitHub. Submit the PDF
-  yourself before **10 PM EST, November 8, 2026**. The agent neither submits
+  yourself before **10:30 PM EST, November 8, 2026**. The agent neither submits
   the assignment nor merges to main.
 
 The final PDF uses the repository renderer, with locked Marked and installed

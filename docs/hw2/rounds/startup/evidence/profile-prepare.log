@@ -1,0 +1,4 @@
+
+> ai-research-assistant@0.1.0 checks:prepare
+> tsc --project tsconfig.worker.json --outDir .wrangler/check-worker --sourceMap false
+

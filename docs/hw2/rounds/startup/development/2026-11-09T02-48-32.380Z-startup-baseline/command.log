@@ -1,0 +1,23 @@
+
+> ai-research-assistant@0.1.0 baseline
+> node scripts/baseline/run.mjs
+
+BASELINE build
+build: passed (7491 ms)
+BASELINE papers
+papers: passed (1458 ms)
+BASELINE integrations
+integrations: passed (1726 ms)
+BASELINE question-text
+question-text: passed (443 ms)
+BASELINE document-details-timeout
+document-details-timeout: passed (338 ms)
+BASELINE library
+library: passed (22961 ms)
+BASELINE document
+document: passed (23641 ms)
+BASELINE document-delete
+document-delete: passed (1760 ms)
+BASELINE extraction
+extraction: passed (13680 ms)
+BASELINE metadata

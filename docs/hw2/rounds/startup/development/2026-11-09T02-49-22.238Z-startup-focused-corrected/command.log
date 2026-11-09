@@ -1,0 +1,36 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/startup-readiness.test.ts tests/baseline/app-workflows.test.tsx --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-09T02-49-22.238Z-startup-focused-corrected\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ✓ tests/baseline/startup-readiness.test.ts (5 tests) 33ms
+ ✓ tests/baseline/app-workflows.test.tsx (24 tests) 7764ms
+   ✓ Search and library observable workflows (24)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 465ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 388ms
+     ✓ handles application failure with useful feedback and no fabricated result 332ms
+     ✓ handles malformed success with useful feedback and no fabricated result 339ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 340ms
+     ✓ handles network failure with useful feedback and no fabricated result 345ms
+     ✓ retains the authoritative duplicate record when saved and reopened 528ms
+     ✓ recognizes a previously saved base ID when search returns another version 343ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 480ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 494ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 450ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 463ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 456ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 395ms
+     ✓ does not let an older library read erase a successful save 469ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 587ms
+
+ Test Files  2 passed (2)
+      Tests  29 passed (29)
+   Start at  21:49:23
+   Duration  9.80s (tests 82%, environment 13%, import 5%)
+
+    Isolate  2 workers spawned · ~749ms startup each (spawn + environment, per file)
+             at least ~749ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-09T02-49-22.238Z-startup-focused-corrected/test-results.json

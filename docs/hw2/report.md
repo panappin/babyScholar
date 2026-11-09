@@ -41,7 +41,7 @@ attribution without rewriting archived records. The final
 [backend request](rounds/round-4/user-request.txt) asked for deterministic
 provider/handler tests and investigation of two source-derived hypotheses.
 
-The final suite has **462 tests in 13 files**: 402 Node tests and 60 React tests
+The final suite has **469 tests in 14 files**: 407 Node tests and 62 React tests
 in jsdom. Tests use explicit expected values, real Request/Response/stream
 objects, injected fetch, fake timers and controlled response ordering. React
 cases assert visible outcomes through Testing Library. Backend handler cases
@@ -202,6 +202,38 @@ or genuinely redundant test was found in this sample. Exact-limit acceptance
 and one-byte-over rejection are necessary pairs. This is not an audit of every
 test. Product source, dependencies and coverage configuration were unchanged.
 
+**Startup reliability follow-up.** The author reported transient failures after
+`npm run dev` and explicitly extended the deadline to allow a bounded fix.
+The [preserved request and evidence](rounds/startup/assessment.md) distinguish
+startup timing from the earlier unexplained Vite stalls and the separate,
+author-resolved API-key issue. Two deterministic UI tests failed on the old
+App because no `Retry connection` control existed after failed/stalled initial
+reads. The corrected tests recover health, storage and library data when the
+fake Worker becomes ready, or retain a visible retry after a ten-second timeout.
+They assert that recovery performs only GETs.
+
+Five launcher tests exercise delayed health/schema readiness, all four proxy
+checks, permanent HTTP and malformed-response failures, a stalled response
+body, and shutdown cancellation. The launcher now waits for Worker health,
+storage, library and document reads before starting Vite; it checks those same
+endpoints through Vite before announcing the app URL. Each phase has a
+30-second deadline and each request a two-second bound including its body.
+Failures identify the endpoint and suggest explicit diagnostics. There are no
+automatic migrations, resets, writes or generation retries. Existing signal
+and owned-child cleanup paths also cancel startup waits.
+
+The first focused run passed 28/29: a redundant zero-delay timer at the deadline
+left the stalled-body fake-clock test pending. Exiting immediately at the
+deadline fixed that development error; unchanged assertions then passed 29/29.
+An early baseline was interrupted and restarted after the correction. The
+actual managed Worker/Vite and process-tree cleanup were also checked with
+disposable storage by the full baseline. Native console Ctrl+C was not
+separately simulated. Product change:
+[`fcc2454`](https://github.com/panappin/babyScholar/commit/fcc2454).
+The new tests are in `startup-readiness.test.ts` and `app-workflows.test.tsx`.
+This operational follow-up is reported separately from the three earlier
+confirmed HW2 defects; it does not diagnose all historical proxy stalls.
+
 **Browser investigation and limits.** Earlier round-3 diagnostics showed Vite
 API/static requests stalling while direct Worker requests succeeded. Draining
 child output did not fix it; an isolated Vite/module/proxy check passed all 21
@@ -214,30 +246,36 @@ passes do not prove the intermittency resolved.
 
 ## 4. Final Evaluation
 
-The final suite passes **462/462 tests**. The final full baseline result is
+The final startup-fix suite passes **469/469 tests**. The final full baseline result is
 **19/19 stages passed (aggregate exit 0)**. Both focused test typechecks pass. The baseline
 separately typechecks/builds production browser and Worker code.
-The [final review rerun](rounds/final-review/evidence/results.json), started
-November 8 at 7:59 PM EST, confirms these results after the two bounded test
-corrections. Its [comparison](rounds/final-review/comparison.json) verifies
-identical per-file coverage counts, product source tree, dependency lock and
-Vitest configuration against round 4. Stage commands differ only in timestamped
-profile output paths. No failures remain
-in this run; the earlier intermittent browser limitation still applies.
+The [startup-fix baseline](rounds/startup/evidence/results.json) verifies the
+new product revision. The preceding final-review run had 462 tests and unchanged
+round-4 coverage; it is preserved separately. Both focused test typechecks pass.
+The normal browser verifier and disposable managed-launcher check pass. The
+earlier browser intermittency remains unexplained.
 
-| Measure | Initial | Round 1 | Round 2 | Round 3 | Round 4 / final review |
-|---|---:|---:|---:|---:|---:|
-| Passing tests | 24 | 106 | 163 | 260 | 462 |
-| Statements | 3.07% | 12.29% | 15.87% | 53.09% | 80.32% |
-| Branches | 2.46% | 10.13% | 12.21% | 51.44% | 78.21% |
-| Functions | 2.43% | 12.57% | 15.38% | 57.11% | 79.96% |
-| Lines | 3.51% | 12.31% | 16.12% | 55.64% | 83.96% |
-| Cumulative confirmed bugs | 0 | 0 | 0 | 1, fixed | 3, fixed |
+| Measure | Initial | Round 1 | Round 2 | Round 3 | Round 4 / final review | Startup fix |
+|---|---:|---:|---:|---:|---:| ---: |
+| Passing tests | 24 | 106 | 163 | 260 | 462 | 469 |
+| Statements | 3.07% | 12.29% | 15.87% | 53.09% | 80.32% | 80.67% |
+| Branches | 2.46% | 10.13% | 12.21% | 51.44% | 78.21% | 78.67% |
+| Functions | 2.43% | 12.57% | 15.38% | 57.11% | 79.96% | 80.37% |
+| Lines | 3.51% | 12.31% | 16.12% | 55.64% | 83.96% | 84.14% |
+| Cumulative confirmed bugs | 0 | 0 | 0 | 1, fixed | 3, fixed | 3; startup separately |
 
-Final counts are 2380/2963 statements, 2032/2598 branches, 427/534 functions
-and 2053/2445 lines. The [all-file CSV](backend-per-file-comparison.csv) and
-[machine-readable comparison](backend-comparison.json) preserve every phase,
-including the unchanged preflight and pre/post-oracle-correction runs.
+Final counts are 2400/2975 statements, 2051/2607 branches, 434/540 functions, 2064/2453 lines.
+The [startup per-file CSV](rounds/startup/evidence/per-file-coverage.csv) and
+[raw coverage](rounds/startup/evidence/coverage/coverage-summary.json) provide
+the final measurement. Earlier phase comparisons remain in the unchanged
+[backend comparison](backend-comparison.json). Dependencies and Vitest scope
+are unchanged; launcher JavaScript remains outside the established application
+source denominator. The App change increases denominators by
+8 lines,
+12 statements,
+9 branches and
+6 functions versus the preceding
+final review. Coverage is not a fixed-product before/after comparison.
 
 | Backend target | Round-3 covered lines | Final covered lines |
 |---|---:|---:|
@@ -423,7 +461,7 @@ untested workflows and time for a focused investigation remained.
 Repository: [panappin/babyScholar](https://github.com/panappin/babyScholar).
 Branch: [hw2/initial-baseline](https://github.com/panappin/babyScholar/tree/hw2/initial-baseline).
 Final suite: [tests/baseline](https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/tests/baseline)
-(13 test files, three helpers). Instructions, results, per-file coverage,
+(14 test files, three helpers). Instructions, results, per-file coverage,
 snapshots and SHA-256 manifests remain in
 [docs/hw2/rounds](https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds).
 The [round-4 assessment](rounds/round-4/assessment.md) indexes the backend evidence;

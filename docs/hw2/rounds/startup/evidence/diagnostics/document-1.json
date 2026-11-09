@@ -1,0 +1,97 @@
+{
+  "id": "112cf498-805a-4c4b-b3cc-3f434fc911c5",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\document-check\\112cf498-805a-4c4b-b3cc-3f434fc911c5\\state",
+  "startedAt": "2026-11-09T02:50:25.468Z",
+  "fixture": {
+    "source": "Repository-authored minimal one-page PDF test vector in scripts/document-check.mjs",
+    "license": "CC0-1.0"
+  },
+  "steps": [
+    {
+      "step": "built-worker-validation-and-storage-failures-passed",
+      "missingStorage": 503,
+      "bucketFailure": 503,
+      "databaseCleanup": 1,
+      "dishonestLength": 413,
+      "stalledBody": 408,
+      "missingObject": 404
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 125524,
+      "origin": "http://127.0.0.1:60005"
+    },
+    {
+      "step": "empty-list-passed"
+    },
+    {
+      "step": "first-upload-metadata-hash-and-exact-download-passed",
+      "id": "75a1331e-63f2-4f4f-a6df-963ac17a2baa",
+      "bytes": 512,
+      "sha256": "277b943327ca968c69c561692ecaf74ee84a266f2d96d5dd1b2be5623424d8d0"
+    },
+    {
+      "step": "second-distinct-upload-and-newest-first-list-passed",
+      "firstId": "75a1331e-63f2-4f4f-a6df-963ac17a2baa",
+      "secondId": "7d656802-fca4-47fa-8371-b300fa6a5b12",
+      "rowCount": 2
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 125524
+    },
+    {
+      "step": "worker-started",
+      "pid": 120452,
+      "origin": "http://127.0.0.1:60032"
+    },
+    {
+      "step": "restart-read-before-any-new-upload-passed",
+      "rowCount": 2,
+      "firstId": "75a1331e-63f2-4f4f-a6df-963ac17a2baa",
+      "secondId": "7d656802-fca4-47fa-8371-b300fa6a5b12"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 120452
+    },
+    {
+      "step": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 110164,
+      "origin": "http://127.0.0.1:60066"
+    },
+    {
+      "step": "migration-reapply-preserves-document-rows-and-bytes",
+      "rowCount": 2,
+      "firstSha256": "277b943327ca968c69c561692ecaf74ee84a266f2d96d5dd1b2be5623424d8d0",
+      "secondSha256": "30683a097fb5929fa61185a032775aac180ebd5d7623a41ee977d7a3c58ebd51"
+    },
+    {
+      "step": "missing-multiple-nonpdf-empty-filename-and-file-limit-rejected-without-records",
+      "rowCount": 2
+    },
+    {
+      "step": "actual-local-body-limit-rejected-without-records",
+      "maxBodyBytes": 10551296,
+      "rowCount": 2
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 110164
+    },
+    {
+      "step": "removed-owned-test-state",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\document-check\\112cf498-805a-4c4b-b3cc-3f434fc911c5\\state"
+    }
+  ],
+  "result": "passed",
+  "finishedAt": "2026-11-09T02:50:48.414Z"
+}

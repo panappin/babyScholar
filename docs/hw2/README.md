@@ -178,3 +178,9 @@ reflection and independent terminal-baseline evidence are preserved in
 dependency audit and exact regression-test/fix references. PDF generation and
 verification details are in the review checklist. The author reviews and
 submits the assignment; no merge to `main` is performed.
+
+## Startup reliability follow-up
+
+[Startup evidence](rounds/startup/assessment.md) records the additional product
+change and final 469-test, 19-stage baseline. Coverage scope is unchanged;
+the App source denominator changed. Earlier reports and evidence remain intact.

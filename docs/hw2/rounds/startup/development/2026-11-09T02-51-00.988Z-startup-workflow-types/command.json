@@ -1,0 +1,23 @@
+{
+  "label": "startup-workflow-types",
+  "startedAt": "2026-11-09T02:51:01.118Z",
+  "timeoutMs": 60000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "test:workflows:types"
+  ],
+  "baseCommit": "d2d29a316541470ced3105c4959eaf6de326ff96",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "workingTree": "M scripts/local-dev.mjs\n M src/App.tsx\n M tests/baseline/app-workflows.test.tsx\n?? scripts/startup-readiness.mjs\n?? tests/baseline/startup-readiness.test.ts",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-09T02-51-00.988Z-startup-workflow-types",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-11-09T02:51:03.433Z"
+}
