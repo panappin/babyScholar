@@ -61,6 +61,11 @@ npm run dev
 Open [http://localhost:5173](http://localhost:5173). The Worker listens locally
 at `http://127.0.0.1:8787`; Vite proxies the frontend's `/api` requests to it.
 `npm run dev`/`npm.cmd run dev` starts and manages both processes.
+The launcher waits for Worker health, storage and library/document reads, then
+checks them through the Vite proxy before printing `BabyScholar ready`. Each
+phase has a 30-second deadline; failures stop the owned session with diagnostic
+guidance. Startup does not apply migrations or reset data. An already-open page
+can use **Retry connection** after failed initial reads; this repeats only GETs.
 
 To stop the app, press `Ctrl+C` in its terminal. If that terminal was lost, run
 `npm.cmd run dev:stop` on Windows (or `npm run dev:stop` on macOS/Linux) from

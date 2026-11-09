@@ -5,6 +5,7 @@ import { resolve, dirname, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { setTimeout as delay } from "node:timers/promises";
+import { waitForReadiness } from "./startup-readiness.mjs";
 
 const exec = promisify(execFile);
 export const root = resolve(import.meta.dirname, "..");
@@ -113,15 +114,13 @@ async function main() {
     const frontendArgs = testRegistry ? ["--host", "127.0.0.1", "--port", checkPort("check-vite-port")] : [];
     await mkdir(dirname(sessionPath), { recursive: true });
     await writeFile(sessionPath, JSON.stringify({ root, token, pid: process.pid }));
-    const children = [
-      launch([resolve(root, "node_modules/wrangler/bin/wrangler.js"), "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", testRegistry ? relative(root, resolve(dirname(sessionPath), "state")) : ".wrangler/state", "--port", workerPort,
-        ...(testRegistry ? ["--ip", "127.0.0.1", "--var", "OPENAI_API_KEY:", "--inspector-port", "0", "--show-interactive-dev-session=false"] : [])]),
-      launch([resolve(root, "node_modules/vite/bin/vite.js"), "--strictPort", ...frontendArgs], testRegistry ? { env: { ...process.env, LOCAL_WORKER_ORIGIN: `http://127.0.0.1:${workerPort}` } } : {}),
-    ];
+    const children = [];
+    const startup = new AbortController();
     let stopping = false;
     const stop = async () => {
       if (stopping) return;
       stopping = true;
+      startup.abort();
       for (const child of children) {
         if (child.exitCode !== null) continue;
         if (process.platform === "win32") await exec("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true }).catch(() => {});
@@ -131,7 +130,35 @@ async function main() {
     };
     process.on("SIGINT", () => { void stop(); });
     process.on("SIGTERM", () => { void stop(); });
-    for (const child of children) { child.once("exit", () => { void stop(); }); child.once("error", () => { process.exitCode = 1; void stop(); }); }
+    const own = (child) => {
+      children.push(child);
+      child.once("exit", () => { if (!stopping) process.exitCode = 1; void stop(); });
+      child.once("error", () => { process.exitCode = 1; void stop(); });
+      return child;
+    };
+    try {
+      console.log("Waiting for Worker health, storage, library and document reads...");
+      own(launch([resolve(root, "node_modules/wrangler/bin/wrangler.js"), "dev", "--config", "wrangler.jsonc", "--local", "--persist-to", testRegistry ? relative(root, resolve(dirname(sessionPath), "state")) : ".wrangler/state", "--port", workerPort,
+        ...(testRegistry ? ["--ip", "127.0.0.1", "--var", "OPENAI_API_KEY:", "--inspector-port", "0", "--show-interactive-dev-session=false"] : [])]));
+      await waitForReadiness(`http://127.0.0.1:${workerPort}`, { label: "Worker", signal: startup.signal });
+      if (stopping) return;
+      let announced = false, output = "";
+      const frontend = own(launch([resolve(root, "node_modules/vite/bin/vite.js"), "--strictPort", ...frontendArgs], {
+        stdio: ["inherit", "pipe", "inherit"],
+        ...(testRegistry ? { env: { ...process.env, LOCAL_WORKER_ORIGIN: `http://127.0.0.1:${workerPort}` } } : {}),
+      }));
+      // Drain Vite output immediately, but publish its ready URL only after proxy checks.
+      frontend.stdout.on("data", chunk => { if (announced) process.stdout.write(chunk); else output = (output + chunk).slice(-65_536); });
+      const frontendOrigin = testRegistry ? `http://127.0.0.1:${checkPort("check-vite-port")}` : "http://localhost:5173";
+      await waitForReadiness(frontendOrigin, { label: "Vite proxy", signal: startup.signal });
+      if (stopping) return;
+      announced = true;
+      process.stdout.write(output);
+      console.log(`BabyScholar ready: ${frontendOrigin}`);
+    } catch (error) {
+      if (!stopping) { console.error(error.message); process.exitCode = 1; }
+      await stop();
+    }
     return;
   }
   if (command === "stop") return stopSession();

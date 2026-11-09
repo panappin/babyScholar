@@ -198,6 +198,7 @@ function PaperDetails({ paper, saved }: { paper: PaperSearchResult | SavedPaper;
 
 function App() {
   const [healthState, setHealthState] = useState<HealthState>("loading");
+  const [startupAttempt, setStartupAttempt] = useState(0);
   const [storageState, setStorageState] = useState<{ d1: HealthState; r2: HealthState }>({ d1: "loading", r2: "loading" });
   const [view, setView] = useState<View>("search");
   const [input, setInput] = useState("");
@@ -272,8 +273,23 @@ function App() {
 
   useEffect(() => {
     mounted.current = true;
+    void loadLibrary();
+    return () => {
+      mounted.current = false;
+      activeSearch.current?.abort();
+      activeLibrary.current?.abort();
+      for (const save of activeSaves.current.values()) save.abort();
+      activeSaves.current.clear();
+    };
+  }, []);
+
+  useEffect(() => {
     const controller = new AbortController();
-    const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]);
+    const deadline = new AbortController();
+    const timeout = window.setTimeout(() => deadline.abort(), 10_000);
+    const signal = AbortSignal.any([controller.signal, deadline.signal]);
+    setHealthState("loading");
+    setStorageState({ d1: "loading", r2: "loading" });
     async function checkHealth() {
       try {
         const response = await fetch("/api/health", { signal });
@@ -298,18 +314,12 @@ function App() {
         if (!controller.signal.aborted) setStorageState({ d1: "failed", r2: "failed" });
       }
     }
-    void checkHealth();
-    void checkStorage();
-    void loadLibrary();
+    void Promise.all([checkHealth(), checkStorage()]).finally(() => window.clearTimeout(timeout));
     return () => {
-      mounted.current = false;
       controller.abort();
-      activeSearch.current?.abort();
-      activeLibrary.current?.abort();
-      for (const save of activeSaves.current.values()) save.abort();
-      activeSaves.current.clear();
+      window.clearTimeout(timeout);
     };
-  }, []);
+  }, [startupAttempt]);
 
   async function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -456,6 +466,12 @@ function App() {
               </p>
             ))}
           </div>
+          {(healthState === "failed" || storageState.d1 === "failed" || storageState.r2 === "failed" || libraryState.status === "error") && (
+            <p>Some startup reads failed. Check that the local server is running, then{' '}
+              <button type="button" disabled={healthState === "loading" || storageState.d1 === "loading" || storageState.r2 === "loading" || libraryState.status === "loading"}
+                onClick={() => { setStartupAttempt(attempt => attempt + 1); void loadLibrary(); }}>Retry connection</button>
+            </p>
+          )}
         </section>
 
         <div className="workspace-tabs" role="tablist" aria-label="Research workspace views">

@@ -30,6 +30,38 @@ async function search(user: ReturnType<typeof userEvent.setup>, query = 'graph l
 }
 
 describe('Search and library observable workflows', () => {
+  it('recovers initial read-only failures after the Worker becomes ready through an explicit retry', async () => {
+    let ready = false;
+    const { api, user } = setup({
+      'GET /api/health': () => ready ? json({ status: 'ok' }) : failure('starting'),
+      'GET /api/storage/status': () => ready ? json({ d1: { status: 'ok' }, r2: { status: 'ok' } }) : failure('starting'),
+      [`GET ${path}`]: () => ready ? json({ papers: [saved] }) : failure('starting'),
+    });
+    const retry = await screen.findByRole('button', { name: 'Retry connection' });
+    await waitFor(() => expect(retry).toBeEnabled());
+    expect(api).toHaveBeenCalledTimes(3);
+    ready = true;
+    await user.click(retry);
+    expect(await screen.findByText('Backend connected')).toBeVisible();
+    expect(await screen.findByRole('tab', { name: 'Library (1)' })).toBeVisible();
+    expect(screen.getByText('D1 connected')).toBeVisible();
+    expect(screen.getByText('R2 connected')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Retry connection' })).not.toBeInTheDocument();
+    expect(api).toHaveBeenCalledTimes(6);
+    expect(api.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true);
+  });
+
+  it('bounds stalled startup reads and leaves a visible retry without automatic writes', async () => {
+    vi.useFakeTimers();
+    const { api } = setup({ 'GET /api/health': init => abortedRequest(init.signal),
+      'GET /api/storage/status': init => abortedRequest(init.signal), [`GET ${path}`]: init => abortedRequest(init.signal) });
+    await act(async () => { await vi.advanceTimersByTimeAsync(10_000); });
+    expect(screen.getByRole('button', { name: 'Retry connection' })).toBeEnabled();
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(api).toHaveBeenCalledTimes(3);
+    expect(api.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true);
+  });
+
   it('loads status and library without starting a search, then normalizes an explicit query', async () => {
     const { api, user } = setup();
     expect(await screen.findByText('Backend connected')).toBeVisible();
