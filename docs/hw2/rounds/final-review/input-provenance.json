@@ -1,0 +1,10 @@
+{
+  "baseCommit": "57d2e1e4face0ac85792804f5c105611309ba299",
+  "branch": "hw2/initial-baseline",
+  "source": "docs/hw2/report(1).md",
+  "sourceSha256": "4e92e0ab889d1d08519174992aca813f62399fc4a0b9f82f5985b3161bc36555",
+  "userConfirmation": "it is in report(1) I just added it",
+  "verifiedIdentity": "Pranav Anappindi CS593 ASE",
+  "originalAssignmentAvailability": "The repository contains the user-supplied six-section rubric in improvement-request.md; no separate original assignment document was supplied in this pass.",
+  "inputPreservation": "User-provided report(1).md, report (1).pdf and both ZIP files remain untouched."
+}

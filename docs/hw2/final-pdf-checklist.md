@@ -1,52 +1,46 @@
-# Final PDF handoff
+# Final review and submission
 
-The [editable report](report.md) and [verified PDF](report.pdf) use the six sections supplied by the user:
+Use [report.pdf](report.pdf) for submission and [report.md](report.md) as the
+editable source. The report includes the six supplied rubric sections, the
+verified name **Pranav Anappindi**, course **CS593 ASE**, and the author's
+revised reflection. The original supplied revision remains unchanged in
+[author-revision.md](rounds/final-review/author-revision.md).
 
-1. Test Generation Approach
-2. Initial Test Evaluation
-3. Iterative Test Improvement
-4. Final Evaluation
-5. Reflection
-6. GitHub Repository
+Before submitting:
 
-Before submitting the PDF:
+- Read the PDF, particularly the first-person reflection, independent terminal
+  rerun account and AI disclosure. Confirm these represent your experience.
+- Confirm the report identity/course and any submission-portal requirements.
+  The available assignment record is the six-section rubric in
+  [improvement-request.md](improvement-request.md); no separate original
+  assignment document was supplied for this final pass.
+- Retain the distinction between three confirmed, fixed product defects,
+  corrected test weaknesses, unresolved earlier browser intermittency,
+  selected artificial faults, and the separate dependency audit. Eight affected
+  development-package entries are not eight new bugs found by the HW2 tests.
+- Confirm the final branch and report are visible on GitHub. Submit the PDF
+  yourself before **10 PM EST, November 8, 2026**. The agent neither submits
+  the assignment nor merges to main.
 
-- Review the findings and supply your own personal reflection, especially why
-  you chose to continue beyond the initial low-coverage result. The analysis
-  is agent-authored; it does not invent your experience or motives.
-- Keep the initial/round-1/final comparison, the strong versus weak UTF-8
-  examples, representative prompts, and the distinction between product bugs,
-  stale tests, test syntax/fixture errors, selected artificial faults, the two
-  confirmed local-probe defects, and the unresolved earlier browser stalls.
-- Review the browser qualification: a successful normal baseline and the
-  earlier preview pass do not explain intermittent development-server stalls.
-- Add your verified name and course identifiers. Git author metadata alone
-  does not establish the required formal report identity or course section.
-  The supplied rubric specifies no page count, template or extra formatting.
-- After editing the reflection or other text, regenerate the PDF with
-  `node scripts/baseline/render-report.mjs` and inspect the updated pages.
-- Confirm the HW2 branch and final test suite are visible in the Homework 1
-  GitHub repository, and submit the reviewed PDF yourself by **10 PM EST on
-  November 8, 2026**, the cutoff you supplied. Confirm any portal requirements.
+The final PDF uses the repository renderer, with locked Marked and installed
+Chromium. [pdf-verification.json](pdf-verification.json) records the exact
+source/PDF hashes, render command, page count, portable links, automated bounds
+checks and visual inspection of every page. Relative repository links are
+validated before rendering and resolve to the HW2 branch on GitHub.
 
-The current PDF has 7 pages. Every page was visually inspected; the tables,
-code blocks, Unicode text and page numbers are legible, with no clipping or
-overlap. Automated checks confirmed all six rubric sections, extracted text,
-23 portable hyperlink annotations and no text outside page bounds. The
-[verification record](pdf-verification.json) contains the PDF/source hashes,
-renderer command, library versions, link targets and visual-review record.
-Relative repository targets exist locally and are converted to branch URLs.
-
-Optional repeatable PDF verification (Python 3.13 was used; these are separate
-from app/test dependencies):
+If you change the editable source, regenerate and reinspect the PDF:
 
 ```powershell
-py -m pip install --target artifacts/hw2-pdf-tools pypdf==6.7.3 PyMuPDF==2.1
+node scripts/baseline/render-report.mjs
 py scripts/baseline/verify-report.py docs/hw2/report.pdf artifacts/hw2-report-verification/my-review artifacts/hw2-pdf-tools
 ```
 
-Use a fresh verification output directory; the script refuses to overwrite
-one. Inspect its page PNGs after regeneration. No assignment submission or
-merge to `main` is performed. Committed evidence includes per-file CSV/JSON,
-LCOV, raw coverage, logs, profiles, snapshots and integrity manifests; complete
-HTML coverage and transient runtime fixtures remain in ignored local artifacts.
+Use a fresh verification output directory. This checkout already has the
+verification-only Python packages under ignored `artifacts/hw2-pdf-tools`;
+on another machine, install `pypdf==6.7.3` and `PyMuPDF==2.1` separately from
+application dependencies. Inspect all generated page PNGs after regeneration.
+
+Historical prompts, failed runs, per-file coverage, selected faults and bug
+reproductions remain unchanged. New review/evaluation records are under
+`rounds/final-review/`. Raw runtime directories, generated HTML coverage,
+user-supplied ZIPs and original transfer files are not part of the final commit.

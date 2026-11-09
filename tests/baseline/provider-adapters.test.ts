@@ -197,12 +197,23 @@ describe('provider-specific contracts', () => {
   });
 
   it('question prompts describe only available truncated page ranges', async () => {
-    const excerpt = { ...source, truncated: true, totalPageCount: 8, pageRanges: [{ startPage: 1, endPage: 2 }, { startPage: 4, endPage: 4 }] };
+    // Keep every representation of this sparse excerpt consistent. The adapter
+    // formats a supplied excerpt; source selection is tested separately.
+    const includedPages = [pages[0], { pageNumber: 2, text: 'Second included finding.' },
+      { pageNumber: 4, text: 'Fourth included finding.' }];
+    const excerpt = { ...source, pages: includedPages, pageNumbers: [1, 2, 4],
+      byteCount: includedPages.reduce((total, page) => total + encoder.encode(page.text).length, 0),
+      truncated: true, totalPageCount: 8, coverageWarning: 'Only pages 1-2, 4 included.',
+      pageRanges: [{ startPage: 1, endPage: 2 }, { startPage: 4, endPage: 4 }] };
     const fetcher = vi.fn<typeof fetch>(async () => Response.json(envelope(text)));
     await requestDocumentQuestion(env, 'What is known?', excerpt, fetcher);
     const request = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
     expect(request.input[1].content).toContain('pages 1-2, 4');
     expect(request.input[1].content).toContain('later or omitted text cannot support an answer');
+    expect(request.input[1].content).toContain('[Page 1]\n' + pages[0].text);
+    expect(request.input[1].content).toContain('[Page 2]\nSecond included finding.');
+    expect(request.input[1].content).toContain('[Page 4]\nFourth included finding.');
+    expect(request.input[1].content.match(/\[Page \d+\]/g)).toEqual(['[Page 1]', '[Page 2]', '[Page 4]']);
   });
 
   it.each([

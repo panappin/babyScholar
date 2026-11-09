@@ -1,0 +1,19 @@
+Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+{"step":"built-worker-offline-storage-and-database-failures-passed","missingObject":404,"hashMismatch":409,"databaseFailure":503}
+{"step":"stopped-owned-process","label":"migration","pid":124220}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":43436,"origin":"http://127.0.0.1:61539"}
+{"step":"actual-worker-ordered-text-hash-get-repeat-and-original-bytes-passed","documentId":"1a8b17ca-4f39-4743-9261-0fd8de638c43","pageCount":2}
+{"step":"concurrent-extract-retains-one-authoritative-record","documentId":"33c7eb00-31c4-4b1f-85ba-b5221b3b3922","statuses":[200,201]}
+{"step":"stopped-owned-process","label":"Worker","pid":43436}
+{"step":"worker-started","pid":115796,"origin":"http://127.0.0.1:61570"}
+{"step":"restart-read-before-another-extract-passed","documentId":"1a8b17ca-4f39-4743-9261-0fd8de638c43"}
+{"step":"stopped-owned-process","label":"Worker","pid":115796}
+{"step":"stopped-owned-process","label":"migration","pid":125188}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":124728,"origin":"http://127.0.0.1:61604"}
+{"step":"migration-reapply-preserves-extraction-and-original-bytes","documentId":"1a8b17ca-4f39-4743-9261-0fd8de638c43"}
+{"step":"corrupt-signature-encrypted-image-only-and-page-text-limit-cases-preserve-originals","cases":6}
+{"step":"stopped-owned-process","label":"Worker","pid":124728}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\extraction-check\\cb39fbea-db8e-4862-b90a-173ef4a7bcb5\\state"}
+Extraction check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\extraction-check\cb39fbea-db8e-4862-b90a-173ef4a7bcb5\result.json

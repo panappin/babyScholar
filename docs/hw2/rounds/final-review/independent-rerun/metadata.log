@@ -1,0 +1,22 @@
+{"step":"built-worker-missing-storage-and-configuration-failures-passed","missingStorage":503,"missingConfiguration":424}
+{"step":"stopped-owned-process","label":"migration","pid":128360}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":125060,"origin":"http://127.0.0.1:55504"}
+{"step":"actual-worker-four-fields-evidence-cache-and-original-bytes-passed","documentId":"5a38cac7-2905-44b3-bbe4-d3705a2dcf4c","providerCalls":1}
+{"step":"concurrent-metadata-request-used-one-provider-call","documentId":"2c8a9f1a-ad12-4d0d-a41a-0518bbce9039"}
+{"step":"stopped-owned-process","label":"Worker","pid":125060}
+{"step":"worker-started","pid":37964,"origin":"http://127.0.0.1:55532"}
+{"step":"restart-read-metadata-before-another-provider-call-passed","documentId":"5a38cac7-2905-44b3-bbe4-d3705a2dcf4c"}
+{"step":"stopped-owned-process","label":"Worker","pid":37964}
+{"step":"stopped-owned-process","label":"migration","pid":91352}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":123184,"origin":"http://127.0.0.1:55567"}
+{"step":"migration-reapply-preserves-metadata-text-and-original-bytes","documentId":"5a38cac7-2905-44b3-bbe4-d3705a2dcf4c"}
+{"step":"metadata-years-accepted-without-source-evidence-and-null-keeps-other-fields-text-pdf-cache"}
+{"step":"wrapped-word-literal-and-joined-comparison-preserves-dashes-compounds-numbers-evidence-and-cache","documentId":"b829be34-27c8-4e20-84b9-40f6a09c5bb4"}
+{"step":"metadata-does-not-require-or-validate-evidence","ignoredQuoteBytes":[600,601]}
+{"step":"unknown-fields-and-clipped-page-selection-passed","unknownDocumentId":"a499085f-00ab-425b-8876-9228e6c4806f","clippedDocumentId":"bf102d53-81ac-45de-859f-63a51bd900ac"}
+{"step":"malformed-refused-incomplete-provider-failures-and-claim-release-passed","failureModes":4}
+{"step":"stopped-owned-process","label":"Worker","pid":123184}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\metadata-check\\f020745b-a2f2-46e5-8dd8-5855b973dfd9\\state"}
+Metadata check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\metadata-check\f020745b-a2f2-46e5-8dd8-5855b973dfd9\result.json

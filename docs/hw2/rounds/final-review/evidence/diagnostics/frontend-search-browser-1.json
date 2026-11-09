@@ -1,0 +1,651 @@
+{
+  "startedAt": "2026-11-09T01:03:34.807Z",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\8152a9ae-274a-438f-a7f6-d7ef0dde4d76",
+  "steps": [
+    {
+      "step": "migration-applied",
+      "exitCode": 0
+    },
+    {
+      "step": "local-worker-and-vite-started",
+      "workerPid": 128020,
+      "frontendPid": 104248,
+      "workerOrigin": "http://127.0.0.1:62038",
+      "viteOrigin": "http://127.0.0.1:62039"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mocked-existing-save-and-library-passed",
+      "existingId": "11111111-1111-4111-8111-111111111111",
+      "createdId": "22222222-2222-4222-8222-222222222222"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-library-errors-retain-records-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-stale-library-response-ignored"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-empty-library-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-duplicate-preserves-id-and-timestamp",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "savedAt": "2025-02-03T04:05:06.000Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mocked-search-empty-errors-and-unexpected-json-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "mocked-interrupted-save-reconciles-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/library/papers",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/library/papers",
+      "status": 200
+    },
+    {
+      "step": "malformed-save-stalled-get-finite-state-and-explicit-reconciliation-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-vite-proxy-d1-save-refresh-and-duplicate-passed",
+      "id": "47293975-c976-40c2-84f8-f641374de4ee",
+      "savedAt": "2026-11-09T01:04:42.081Z"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/papers/search",
+      "status": 200
+    },
+    {
+      "step": "actual-browser-remove-and-resave-uses-new-application-id"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/pdf",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 502
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mocked-pdfs-summary-loading-partial-evidence-get-only-stale-and-inprogress-passed"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/metadata",
+      "status": 404
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/summary",
+      "status": 404
+    },
+    {
+      "step": "mocked-metadata-timeout-reconciles-with-fresh-read-signal-without-post-retry"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 403,
+      "body": "redacted non-JSON"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 401,
+      "body": "redacted non-JSON"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mocked-question-non-application-401-403-preserve-input-and-recover-with-get-only-passed",
+      "deniedPostStatus": 403,
+      "deniedGetStatus": 401
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 503
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 201
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 409
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "POST",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/55555555-5555-4555-8555-555555555555/questions",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/questions",
+      "status": 200,
+      "automatic": "questions"
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/text",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/metadata",
+      "status": 200
+    },
+    {
+      "step": "mock-response",
+      "method": "GET",
+      "path": "/api/documents/44444444-4444-4444-8444-444444444444/summary",
+      "status": 200
+    },
+    {
+      "step": "mocked-pdfs-questions-loading-empty-errors-partial-cache-insufficient-reconciliation-stale-and-narrow-passed",
+      "answeredId": "66666666-6666-4666-8666-666666666666",
+      "insufficientId": "77777777-7777-4777-8777-777777777777"
+    },
+    {
+      "step": "actual-browser-vite-proxy-pdf-upload-extract-metadata-refresh-prepared-download-passed",
+      "documentId": "eaec8a39-cfce-472c-a2d8-b09dbcab8f2c",
+      "providerCalls": 1,
+      "downloadBytes": 1752,
+      "chromeDownloadPermissionForcedForHarness": true,
+      "defaultBrowserSavingUnverified": true
+    },
+    {
+      "step": "actual-browser-metadata-failure-retains-upload-and-text-passed",
+      "providerCalls": 2
+    },
+    {
+      "step": "actual-browser-metadata-only-retry-without-upload-or-extraction-post"
+    },
+    {
+      "step": "actual-browser-vite-proxy-question-explicit-generation-metadata-summary-optional-refresh-and-cache-passed",
+      "documentId": "fdbdefc4-27a2-46e5-862a-7fa1e8fc1c39",
+      "questionId": "2eb91839-ca19-4fbc-ac53-48a67dd71a28",
+      "questionProviderCalls": 1
+    },
+    {
+      "step": "actual-browser-vite-proxy-summary-explicit-generation-refresh-and-evidence-passed",
+      "documentId": "fdbdefc4-27a2-46e5-862a-7fa1e8fc1c39",
+      "summaryProviderCalls": 1,
+      "metadataProviderCalls": 4
+    },
+    {
+      "step": "actual-browser-confirmed-pdf-delete-clears-selection-url-children-and-preserves-other-data"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 128020
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 104248
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 89684
+    }
+  ],
+  "result": "passed",
+  "frontendMode": "development",
+  "browser": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "workerOrigin": "http://127.0.0.1:62038",
+  "viteOrigin": "http://127.0.0.1:62039",
+  "metadataProviderCalls": 4,
+  "summaryProviderCalls": 1,
+  "questionProviderCalls": 1,
+  "desktopScreenshotPath": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\8152a9ae-274a-438f-a7f6-d7ef0dde4d76\\library-desktop.png",
+  "mobileScreenshotPath": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\frontend-search-browser-check\\8152a9ae-274a-438f-a7f6-d7ef0dde4d76\\library-mobile.png",
+  "liveProviderRequests": 0,
+  "finishedAt": "2026-11-09T01:05:40.843Z"
+}

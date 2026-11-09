@@ -13,6 +13,7 @@ integration/browser checks remain separate from combined Node/jsdom coverage.
 - [Round 2: recovery, source budgets, and UTF-8 fault feedback](rounds/round-2/assessment.md)
 - [Round 3: React workflows, deterministic arXiv service, and browser diagnosis](rounds/round-3/assessment.md)
 - [Round 4: provider contracts and document-generation orchestration](rounds/round-4/assessment.md)
+- [Final bounded quality review: 15 cases and two oracle/fixture corrections](rounds/final-review/quality-review.md)
 - [Final backend comparison](backend-comparison.json) and [all-file CSV](backend-per-file-comparison.csv)
 - [Workflow comparison including the configuration bridge](workflow-comparison.json) and [all-file CSV](workflow-per-file-comparison.csv)
 - [Machine-readable comparison](comparison.json) and [all-file coverage comparison](per-file-comparison.csv)
@@ -169,7 +170,11 @@ Future `npm run baseline` invocations still create new timestamped raw runs;
 keep the historical archives intact. Their snapshots preserve the earlier
 suites if a reviewer wants to replay a prior round separately.
 
-The editable report and PDF require the student's review, especially the
-agent-authored reflection. PDF generation and verification details are in the
-handoff checklist. The assignment is not submitted and this work is not merged
-into `main`.
+The final quality pass reviewed 15 representative cases and corrected two
+bounded weaknesses in four existing cases; it did not add a coverage round or
+change product code or dependencies. The author's revised report, personal
+reflection and independent terminal-baseline evidence are preserved in
+`rounds/final-review/`. The editable report includes the verified name/course,
+dependency audit and exact regression-test/fix references. PDF generation and
+verification details are in the review checklist. The author reviews and
+submits the assignment; no merge to `main` is performed.

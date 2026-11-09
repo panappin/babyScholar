@@ -1,0 +1,108 @@
+{
+  "originalRun": "artifacts/baseline/2026-11-09T00-30-17.544Z",
+  "provenance": "The author identifies this as an independent terminal rerun in supplied report(1).md. Agent inspected these existing artifacts; it did not execute this run.",
+  "baseCommit": "57d2e1e4face0ac85792804f5c105611309ba299",
+  "snapshotNote": "No current-source snapshot is attached to this earlier run. Its recorded commit identifies the tested revision. Separate npm ci and focused-typecheck terminal output was described by the author but not supplied as a standalone transcript in this checkout.",
+  "files": [
+    {
+      "path": "baseline.cpuprofile",
+      "sha256": "75019d7b2bb217712a02b41e0b522baeb15a406f078f81898a77cd56c782f728"
+    },
+    {
+      "path": "build.log",
+      "sha256": "3bd9bcf8eb009fcb7bf45faf6d3080bf58b322e2273caa2520e44e53a01edae3"
+    },
+    {
+      "path": "coverage-final.json",
+      "sha256": "7a569bd1009beb338d2b01510adcbc1731dd6b554078f82d7c1992cdc55d1c5b"
+    },
+    {
+      "path": "coverage-summary.json",
+      "sha256": "a1ca510c1a3d1c37421fa9be2260b7f5671f07f6bb29b5ded1f1138e5ef60bf6"
+    },
+    {
+      "path": "document-delete.log",
+      "sha256": "04ca02ec1b677fe106a56b910d753762730d545b4f8fce17365589237cf226ff"
+    },
+    {
+      "path": "document-details-timeout.log",
+      "sha256": "d0145d23a44ed30ff8789894bb26fad843a6933d519cbf077b2297f3fcb3f249"
+    },
+    {
+      "path": "document.log",
+      "sha256": "081900781968c24be99dad9e1edab25eb266c4a7ef9f8fba7b0d925617492455"
+    },
+    {
+      "path": "extraction.log",
+      "sha256": "165ad0979fca91d058f43c11840d5a86618a2fbcc61772048a1c17262f70130a"
+    },
+    {
+      "path": "frontend-search-browser.log",
+      "sha256": "ec79c17d702cb2d964c2764930c807ac624545bd3e0b5d6d74958d8becba9b82"
+    },
+    {
+      "path": "generated-suite-coverage.log",
+      "sha256": "24caad5a8683998cbb937a34be8af0ef4fd5a88d429545622af34a45398e2969"
+    },
+    {
+      "path": "integrations.log",
+      "sha256": "9e5c20b5c55ae7a96d31866ea826c7c5d13fd3b4a7cb9a9374edb4f2be94ba4d"
+    },
+    {
+      "path": "lcov.info",
+      "sha256": "2d6866991b213ef4abc6359a8b2003b57faadb5ec29ff58ed689e5f485ed82cc"
+    },
+    {
+      "path": "library.log",
+      "sha256": "7d1c2b56d7712355fffc78ae56c811fedc086f47a45dc97100a91ab1d5c03c4f"
+    },
+    {
+      "path": "local-reset.log",
+      "sha256": "0ac9088a71fd838daad3b3a5191be32d2357416bbfae72d121c2b41952f92fe5"
+    },
+    {
+      "path": "metadata-live-verifier.log",
+      "sha256": "45162c949d1aee7f68c15901147e22810ffdb13a1bb27777b107b3ab0f2a3798"
+    },
+    {
+      "path": "metadata.log",
+      "sha256": "4003b7000abef3cc81e8e99ee71f24fcc8c0e3c156e0f3a1a1615b23d13f6d05"
+    },
+    {
+      "path": "papers.log",
+      "sha256": "a0df83c83b827d22895e1d5ab41692f3f5580c355c922a2bf02dd65b3eefbb87"
+    },
+    {
+      "path": "profile-prepare.log",
+      "sha256": "7a9050e44ec5add97a5446f67885a2894e7e94c68568081ef7a215b4bd394d45"
+    },
+    {
+      "path": "profile.json",
+      "sha256": "b732155b5db3a1f6e1a462329354fa0fdc82c1805226fbfd5e8e866e82bf37bf"
+    },
+    {
+      "path": "profile.log",
+      "sha256": "b732155b5db3a1f6e1a462329354fa0fdc82c1805226fbfd5e8e866e82bf37bf"
+    },
+    {
+      "path": "question-text.log",
+      "sha256": "1ead49f7bceece0545d47a006ef234f7a94572bd50f35e827f2eb4e7af3e5b4f"
+    },
+    {
+      "path": "question.log",
+      "sha256": "b359fcc0926fe1963a6cd272ae882ce9705dfb5cdc24e0fe5f4628990ce92f50"
+    },
+    {
+      "path": "results.json",
+      "sha256": "e643a27144a906e8ac621f07f59e27d571fd3a87fb16a1661428020ca0eeffe3"
+    },
+    {
+      "path": "sites-artifact.log",
+      "sha256": "a890a76ca97c0955af03dd8b6b0220d03f998784f229169f26924a5dce37fa05"
+    },
+    {
+      "path": "summary.log",
+      "sha256": "e977f9d9b2c1a9ffa1ff52ad73e08f9219704fe36ac1cc02ddb0bbbefbd13eae"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "id": "cfe931e5-6002-4fb9-901b-d75952676bf5",
+  "mode": "offline:application-error",
+  "startedAt": "2026-11-09T01:03:11.027Z",
+  "fixture": {
+    "source": "scripts/fixtures/pdf-fixtures.mjs",
+    "license": "CC0-1.0"
+  },
+  "liveProviderRequests": 0,
+  "offlineProviderRequests": 1,
+  "stage": "offline-provider-stopped",
+  "steps": [
+    {
+      "stage": "offline-provider-started",
+      "scenario": "application-error"
+    },
+    {
+      "stage": "migration-started"
+    },
+    {
+      "stage": "owned-process-stopped",
+      "label": "migration",
+      "pid": 127388
+    },
+    {
+      "stage": "migrations-applied",
+      "exitCode": 0
+    },
+    {
+      "stage": "worker-starting",
+      "localProvider": true,
+      "openAiKeyDisabled": false
+    },
+    {
+      "stage": "worker-started",
+      "pid": 18148,
+      "origin": "http://127.0.0.1:61737",
+      "openAiKeyDisabled": false
+    },
+    {
+      "stage": "upload",
+      "path": "/api/documents",
+      "method": "POST"
+    },
+    {
+      "stage": "extract",
+      "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/extract",
+      "method": "POST"
+    },
+    {
+      "stage": "metadata-post-attempt",
+      "providerMode": "loopback-mock"
+    },
+    {
+      "stage": "metadata-post",
+      "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/metadata",
+      "method": "POST"
+    },
+    {
+      "stage": "metadata-get-after-post",
+      "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/metadata",
+      "method": "GET"
+    },
+    {
+      "stage": "offline-application-error-verified",
+      "postStatus": 502,
+      "getStatus": 404
+    },
+    {
+      "stage": "cleanup-started",
+      "priorResult": "passed"
+    },
+    {
+      "stage": "owned-process-stopped",
+      "label": "Worker",
+      "pid": 18148
+    },
+    {
+      "stage": "offline-provider-stopped",
+      "requests": 1
+    }
+  ],
+  "diagnostics": {
+    "responses": [
+      {
+        "stage": "upload",
+        "path": "/api/documents",
+        "status": 201,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": null,
+        "created": null,
+        "metadata": null
+      },
+      {
+        "stage": "extract",
+        "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/extract",
+        "status": 201,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": null,
+        "created": true,
+        "metadata": null
+      },
+      {
+        "stage": "metadata-post",
+        "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/metadata",
+        "status": 502,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": "metadata_provider_failure",
+        "created": null,
+        "metadata": null
+      },
+      {
+        "stage": "metadata-get-after-post",
+        "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/metadata",
+        "status": 404,
+        "cacheControl": "no-store",
+        "jsonContentType": true,
+        "bodyIsJson": true,
+        "errorKind": "metadata_not_found",
+        "created": null,
+        "metadata": null
+      }
+    ],
+    "fixtureFields": [],
+    "cache": null,
+    "persistence": {
+      "postStatus": 502,
+      "postErrorKind": "metadata_provider_failure",
+      "getStatus": 404,
+      "getErrorKind": "metadata_not_found",
+      "getMatchesPostMetadata": false
+    },
+    "lastAssertion": {
+      "stage": "metadata-get-after-post",
+      "name": "application-error-provider-requests",
+      "actual": 1,
+      "expected": 1
+    },
+    "lastResponse": {
+      "stage": "metadata-get-after-post",
+      "path": "/api/documents/0fac521a-04a8-466e-a21b-b93b3668dcdb/metadata",
+      "status": 404,
+      "cacheControl": "no-store",
+      "jsonContentType": true,
+      "bodyIsJson": true,
+      "errorKind": "metadata_not_found",
+      "created": null,
+      "metadata": null
+    },
+    "runtimeState": "removed"
+  },
+  "result": "passed",
+  "completedAt": "2026-11-09T01:03:17.658Z"
+}

@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-11-09T00:01:59.473134+00:00",
+  "branch": "hw2/initial-baseline",
+  "startCommit": "69c2eff430e259958ae378a238ad28760e10b99a",
+  "evaluatedTestCommit": "89afbd3715867b2b2a875d23e78202a9793462dc",
+  "productFixCommit": "5285152",
+  "checks": {
+    "stagedArchiveAndPdfFilesVerified": 3630,
+    "uniqueBlobsVerified": 561,
+    "archiveManifests": 58,
+    "changedFilesReviewed": 1594,
+    "localMarkdownLinks": 53,
+    "secretPatternMatches": 0,
+    "generatedClutter": 0,
+    "pdfPagesVisuallyReviewed": 7,
+    "pdfHyperlinkAnnotations": 23
+  },
+  "notes": [
+    "All original rounds, round-3 archives and prior comparisons remain byte-identical. The prior report/PDF and verification records are preserved under round-4/prior-*.",
+    "The report source uses preserved CRLF bytes. Git whitespace review treats CR as an end-of-line marker; the exact staged source hash matches the PDF verification record.",
+    "Credential checks scan private-key headers and common GitHub/OpenAI/AWS token patterns without printing candidates; this is not a universal secret detector.",
+    "No node_modules, runtime artifacts, local environment files or unrelated ZIPs are included. Reviewed timestamped evidence is intentionally committed.",
+    "The final 462-test coverage and 19-stage baseline use evaluated test commit 89afbd3. Both test typechecks passed. All 13 earlier selected faults remain detected; one additional provider oracle probe is separately documented.",
+    "Local Markdown link targets and staged PDF blob targets are verified; Git publication is verified after this delivery record is committed.",
+    "Exact live account usage is not visible to the agent. No remaining quota or token-consumption estimate is claimed."
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791478697681,
+      "tag": "0000_storage_probe",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791499237186,
+      "tag": "0001_paper_library",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791505731279,
+      "tag": "0002_uploaded_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1791507153230,
+      "tag": "0003_document_extractions",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791508390548,
+      "tag": "0004_document_metadata",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1791525598152,
+      "tag": "0005_document_summaries",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1791559900888,
+      "tag": "0006_document_questions",
+      "breakpoints": true
+    }
+  ]
+}

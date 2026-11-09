@@ -6,7 +6,7 @@ import { isAbsolute, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '../..');
 const round = process.argv[3] ?? 'round-3';
-if (!['round-3', 'round-4'].includes(round)) throw new Error('Unsupported archive round.');
+if (!['round-3', 'round-4', 'final-review'].includes(round)) throw new Error('Unsupported archive round.');
 const destinationRoot = resolve(root, 'docs/hw2/rounds', round, 'development');
 const input = resolve(root, process.argv[2] ?? '');
 const allowed = ['artifacts/hw2-extension', 'artifacts/hw2-workflow-faults', 'artifacts/hw2-fault-probes'];

@@ -1,0 +1,29 @@
+User instruction, November 8, 2026 (verbatim):
+
+Please do a final, bounded quality and report pass for BabyScholar HW2. We have a 10 PM EST working cutoff, so reserve at least 30–45 minutes for my review and submission. Check the current time and tell me when you reach that buffer. Do not start a new broad coverage round, run paid API calls, or change dependencies.
+
+First read the original HW2 assignment and the latest report and evidence. Check the current branch and working tree, and preserve my changes. Note: dot revised a report locally to add the npm audit, my independent terminal rerun, and my reflection on repeatedly pushing for more work. That revised report may not yet be in this checkout. Ask me for the revised Markdown if it is missing; do not silently overwrite it with an older version.
+
+1. Test-quality review (time-box to 45 minutes): inspect a representative 10–15 tests across UI, providers, handlers and boundary cases. For each, consider the intended behavior, strength of the assertion, whether mocks bypass what is supposedly being tested, and overlap with neighboring tests. Identify genuinely redundant, incorrect or missing cases, and distinguish necessary boundary pairs from duplication. Fix only clear, bounded weaknesses and rerun affected tests. Record what you examined and actual findings. If none are found, say that; do not imply the entire suite was manually audited.
+
+2. Strengthen the report against the assignment:
+- Summarize the actual initial test-generation instruction from the preserved prompt, not just the profiling request. Do not invent instructions.
+- For each confirmed product defect, identify the exact regression test file and test title, the demonstrated pre-fix failure, and the fix commit, using the evidence. Distinguish the two probe defects from the earlier save-feedback bug.
+- Briefly explain which guidance worked and which did not, grounded in the actual record. Preserve my reflection about repeatedly needing to push for further work and the assistant being too ready to stop. Preserve accurate AI attribution.
+- Include the documented dependency audit as a separate finding, not a bug discovered by the HW2 tests, and preserve the independently supplied terminal rerun.
+- Correct “16% unmeasured” to “uncovered in the measured suite,” if still present. Preserve denominator and product-version caveats, seeded-fault limits, and the earlier intermittent browser-stall limitation.
+- Remove handoff/placeholder language from the final report. Add my name and course details only if verified; otherwise ask me for them. Do not invent personal details or experiences.
+
+3. Finalize: run the appropriate tests and baseline checks within the time available; report failures honestly. Update the report with actual results. Generate the PDF using the repository renderer if possible, or explicitly distinguish another generation method from the repo’s reproduction instructions. Visually inspect every page and check links. Review the diff; commit and push the final relevant test/evidence/report changes to hw2/initial-baseline. Do not merge into main or submit for me.
+
+Give me the final PDF and editable source, exact branch and commit, results, any unresolved issues, and what I still need to review before submitting. If time runs short, stop exploration first and protect the submission buffer.
+
+Agent clarification:
+Please paste dot’s revised Markdown or give its local file path. Neither the checked-in report nor report (2).zip contains the additions you described; I’ll hold report edits until I have the revision.
+User reply:
+it is in report(1) I just added it
+
+Agent clarification:
+What name and course details should appear on the report? Also, if you have the original assignment beyond the preserved six-section rubric, please give its local path or paste its text.
+User reply:
+Pranav Anappindi CS593 ASE

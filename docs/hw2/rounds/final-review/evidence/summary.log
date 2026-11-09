@@ -1,0 +1,20 @@
+{"step":"built-worker-summary-storage-and-configuration-failures-passed","missingStorage":503,"missingConfiguration":424}
+{"step":"stopped-owned-process","label":"migration","pid":109112}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":114152,"origin":"http://127.0.0.1:61806"}
+{"step":"actual-worker-summary-includes-opening-and-later-pages-evidence-cache-and-unchanged-metadata-text-pdf","documentId":"1baca76c-2c3d-4220-b150-d1c19503d6a6","summaryProviderCalls":1,"metadataProviderCalls":1}
+{"step":"concurrent-summary-request-used-one-provider-call","documentId":"57573175-2e32-4685-93fb-58fc13d9535f"}
+{"step":"stopped-owned-process","label":"Worker","pid":114152}
+{"step":"worker-started","pid":114812,"origin":"http://127.0.0.1:61834"}
+{"step":"restart-read-summary-before-another-provider-call-preserves-metadata-text-and-pdf","documentId":"1baca76c-2c3d-4220-b150-d1c19503d6a6"}
+{"step":"stopped-owned-process","label":"Worker","pid":114812}
+{"step":"stopped-owned-process","label":"migration","pid":124028}
+{"step":"migrations-applied","exitCode":0}
+{"step":"worker-started","pid":118960,"origin":"http://127.0.0.1:61868"}
+{"step":"migration-reapply-preserves-summary-metadata-and-original-bytes","documentId":"1baca76c-2c3d-4220-b150-d1c19503d6a6"}
+{"step":"summary-source-budget-truncates-at-a-page-aware-utf8-boundary","documentId":"e14a961c-3891-45ef-a6c0-aecf9e3cafe3","byteBudget":98304,"includedPages":[1,2,3,4],"totalPages":4}
+{"step":"summary-ordinary-text-with-empty-evidence-and-prose-output-limits-passed","proseByteLimit":12000}
+{"step":"summary-malformed-refusal-incomplete-provider-timeout-failures-leave-no-summary","failureModes":5}
+{"step":"stopped-owned-process","label":"Worker","pid":118960}
+{"step":"removed-owned-test-state","state":"C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\summary-check\\f8ea065f-ae04-46b6-8f02-8d63bb727bba\\state"}
+Summary check passed. Evidence: C:\Users\panap\PycharmProjects\babyScholar\.wrangler\summary-check\f8ea065f-ae04-46b6-8f02-8d63bb727bba\result.json

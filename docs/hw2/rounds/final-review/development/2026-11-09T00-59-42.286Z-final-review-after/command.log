@@ -1,0 +1,18 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/provider-adapters.test.ts tests/baseline/document-generation.test.ts --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-09T00-59-42.286Z-final-review-after\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+(node:127244) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/baseline/document-generation.test.ts (80 tests) 648ms
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 89ms
+
+ Test Files  2 passed (2)
+      Tests  178 passed (178)
+   Start at  19:59:43
+   Duration  1.23s (tests 80%, transform 11%, import 7%, worker 1%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-09T00-59-42.286Z-final-review-after/test-results.json

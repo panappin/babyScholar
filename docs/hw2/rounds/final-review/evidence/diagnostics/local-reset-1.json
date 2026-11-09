@@ -1,0 +1,10 @@
+{
+  "result": "passed",
+  "steps": [
+    "running-server-and-failed-backup-stop-before-migration",
+    "backup-preserves-record-and-fresh-isolated-migrations-pass",
+    "windows-actual-worker-vite-storage-startup-and-owned-tree-cleanup-verified",
+    "state-rename-and-migrations-after-owned-runtime-shutdown-passed"
+  ],
+  "liveProviderRequests": 0
+}

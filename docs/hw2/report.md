@@ -2,10 +2,11 @@
 
 November 8, 2026 · Branch: `hw2/initial-baseline`
 
+Pranav Anappindi · CS593 ASE
+
 **AI disclosure:** The coding agent drafted this report and implemented the
-tests and documented fixes under the author's direction. Personal reflection
-items requiring the author's own account are identified in Section 5.
-Author name and course identifiers are not verified in the supplied sources.
+tests and documented fixes under the author's direction. The reflection in Section 5 was revised with AI assistance from the author's
+explicit feedback and recorded interventions.
 
 ## 1. Test Generation Approach
 
@@ -19,13 +20,22 @@ The inherited initial suite had 24 deterministic Node/Vitest tests in two
 files: 13 identity/link cases and 11 question-request cases. These covered
 modern and legacy arXiv identifiers, version normalization, unsafe links,
 cross-paper mismatch, question shape, normalized identity and UTF-8 limits.
-The [initial interaction](initial-prompt.md) includes: “We also want profiling
-and code coverage analysis. Everything to know where we are at right now.”
+The [preserved initial instruction](initial-prompt.md) asked the agent to
+“make the initial assessments and commit and changes to the repo. I.e the
+baseline eval code,” including profiling and coverage. The recorded assigned
+implementation task was to inspect BabyScholar, preserve existing work,
+implement the initial HW2 baseline evaluation, assess and test it, commit the
+changes, avoid fabricated results, and report specifics and limitations.
+The accompanying generation context called for a separate deterministic Node
+Vitest suite with explicit oracles, all-source coverage including untested
+files, separate legacy-check outcomes and offline operation. The agent chose
+identity and question-request validation for the first 24 cases; the preserved
+request did not prescribe that count or those particular test titles.
 The [subsequent request and rubric](improvement-request.md) required two
 separate guided improvements, preserved evidence and failure diagnosis.
 
 A [workflow extension](rounds/round-3/user-request.txt) targeted the previously
-unmeasured UI and arXiv service. **dot suggested the arXiv testing seams**;
+uncovered UI and arXiv service. **dot suggested the arXiv testing seams**;
 the author relayed that suggestion. This corrects the prior report's
 attribution without rewriting archived records. The final
 [backend request](rounds/round-4/user-request.txt) asked for deterministic
@@ -178,6 +188,20 @@ The [development record](rounds/round-4/development-notes.md) preserves these
 errors, corrections and exact snapshots. The two probe hypotheses became
 confirmed defects through focused before/after tests, described below.
 
+**Bounded final quality review.** A final instruction asked for a representative
+10–15-case review rather than another coverage round. The agent examined
+[15 concrete cases](rounds/final-review/quality-review.md) across component UI,
+providers, generation handlers and boundaries. Two weaknesses were corrected:
+a truncated-source fixture listed pages absent from its actual source, and a
+rollback test injected failure before any row was written. The first now
+checks consistent page metadata and actual transmitted text; the second
+injects failure after INSERT and verifies the row is rolled back. These
+strengthen four existing parameterized cases without increasing the test count.
+The affected 178 tests passed both before and after. No additional product bug
+or genuinely redundant test was found in this sample. Exact-limit acceptance
+and one-byte-over rejection are necessary pairs. This is not an audit of every
+test. Product source, dependencies and coverage configuration were unchanged.
+
 **Browser investigation and limits.** Earlier round-3 diagnostics showed Vite
 API/static requests stalling while direct Worker requests succeeded. Draining
 child output did not fix it; an isolated Vite/module/proxy check passed all 21
@@ -193,8 +217,15 @@ passes do not prove the intermittency resolved.
 The final suite passes **462/462 tests**. The final full baseline result is
 **19/19 stages passed (aggregate exit 0)**. Both focused test typechecks pass. The baseline
 separately typechecks/builds production browser and Worker code.
+The [final review rerun](rounds/final-review/evidence/results.json), started
+November 8 at 7:59 PM EST, confirms these results after the two bounded test
+corrections. Its [comparison](rounds/final-review/comparison.json) verifies
+identical per-file coverage counts, product source tree, dependency lock and
+Vitest configuration against round 4. Stage commands differ only in timestamped
+profile output paths. No failures remain
+in this run; the earlier intermittent browser limitation still applies.
 
-| Measure | Initial | Round 1 | Round 2 | Round 3 | Final round 4 |
+| Measure | Initial | Round 1 | Round 2 | Round 3 | Round 4 / final review |
 |---|---:|---:|---:|---:|---:|
 | Passing tests | 24 | 106 | 163 | 260 | 462 |
 | Statements | 3.07% | 12.29% | 15.87% | 53.09% | 80.32% |
@@ -253,37 +284,55 @@ It normalized an already-prefixed identity twice. The separate fix is:
 const confirmed = papers.find((paper) => arxivSourceIdentity(paper.arxivId) === identity);
 ```
 
+The regression is in
+[app-workflows.test.tsx](../../tests/baseline/app-workflows.test.tsx), titled
+`reconciles %s with GET and shows a confirmed save without a contradictory error`
+for `lost response`, `malformed success`, `wrong paper` and `non-application error`.
 The [bug evidence](rounds/round-3/product-bug.md) records the oracle and failing
-run. A negative counterpart rejects a different paper as confirmation, and
+run `2026-11-08T22-25-47.425Z-app-first`: all four variants failed the absent-alert
+assertion above. A fifth failure was a wrong button selector in another test,
+not a fifth product failure. A negative counterpart rejects a different paper as confirmation, and
 regression cases require only one POST. This is a feedback/state bug; no data
-loss or duplicate persistence is claimed. Fix: `852eb2c`; workflow tests:
+loss or duplicate persistence is claimed. Fix:
+[`852eb2c`](https://github.com/panappin/babyScholar/commit/852eb2c); workflow tests:
 `2c83268`.
 
-**Confirmed bugs 2 and 3: local probe deadline and error classification.**
+**Confirmed bug 2: local probe body deadline.** The regression in
+[openai-probe.test.ts](../../tests/baseline/openai-probe.test.ts) is titled
+`keeps the deadline active while consuming a stalled response body`.
 The probe cleared its timer after receiving headers, before reading JSON.
 With a real abort-aware stalled response stream, advancing a 20 ms fake
-budget left `signal.aborted` false; the same stalled-before-headers case
+budget failed `expect(signal.aborted).toBe(true)` with “expected false to be
+true”; the same stalled-before-headers case
 already passed. Retaining the timer through body consumption fixes this.
 It assumes an AbortSignal-aware fetch; arbitrary non-cooperating injected
 promises are not claimed to be forcibly interrupted.
 
-Separately, HTTP 200 JSON `null` reached a status access and threw a TypeError.
-The route's public error helper classified it as `network_failure`. A guard
+**Confirmed bug 3: local probe null-response classification.** In the same
+file, `propagates null JSON to the caller as malformed response, not network failure`
+failed with actual `network_failure` rather than expected `malformed_response`.
+The companion `rejects unusable successful payload 0 as a classified error`
+received a TypeError instead of IntegrationError. HTTP 200 JSON `null` had
+reached a status access without a guard. A guard
 now returns `malformed_response`. The route already caught the exception;
 this was not a Worker-process crash. The same 24 tests passed 21 before and
 24 after the fix, with three failing assertions identifying the two defects.
 [Before/after evidence](rounds/round-4/probe-bugs.md) is preserved. The generation
 adapters already had body deadlines/null guards; these findings concern the
-local connectivity probe. Fix: `5285152`; backend tests: `89afbd3`.
+local connectivity probe. Both probe fixes are in
+[`5285152`](https://github.com/panappin/babyScholar/commit/5285152);
+backend tests: `89afbd3`. The preserved pre-fix run is
+`2026-11-08T23-38-14.457Z-r4-probe-before`; the same assertions pass in
+`2026-11-08T23-38-38.111Z-r4-probe-after`.
 
 **Artificial faults and remaining limits.** The original five selected faults
 progressed from 2/5 to 5/5 detections. The eight workflow faults progressed
-from 7/8 to 8/8. Final reruns: **5/5 original and 8/8 workflow faults detected, each with a 462-test passing control**. The additional selected
+from 7/8 to 8/8. Round-4 reruns: **5/5 original and 8/8 workflow faults detected, each with a 462-test passing control**. The additional selected
 provider UTF-8 fault progressed from surviving to four failing assertions.
 These deliberate examples are not discovered product bugs, an exhaustive
 mutation score, or an estimate of detection against arbitrary defects.
 
-About 16% of source lines remain unmeasured, including much routing, storage
+About 16% of source lines remain uncovered in the measured suite, including much routing, storage
 and PDF parsing. Even fully covered lines may have weak or missing assertions.
 SQLite tests do not prove distributed D1 behavior, R2, hosted authentication
 or deployment. jsdom does not prove layout or real browser downloads; the
@@ -293,16 +342,55 @@ impose or claim a new shared policy. No live model quality, production load,
 OCR or performance improvement was established. CPU profiles/timings are
 retained, but changing workloads and local load preclude a speedup claim.
 
+**Dependency audit findings (separate from test-discovered bugs).** The preserved
+November 8 read-only `npm audit` reports eight affected package
+entries: four moderate and four high. The moderate entries are `drizzle-kit`
+0.31.11, `@esbuild-kit/esm-loader` 2.6.5, `@esbuild-kit/core-utils` 3.3.2 and
+nested `esbuild` 0.18.20. The high entries are `wrangler` 4.148.0,
+`miniflare` 5.20261006.0-alpha, `sharp` 0.35.4 and `undici` 7.29.1.
+The count includes dependency-chain propagation, so it is not eight independent
+application defects. The esbuild finding concerns its development server;
+sharp and undici have image-processing dependency and HTTP/TLS-related
+advisories respectively.
+
+All eight entries are classified as development dependencies; a separate
+`npm audit --omit=dev` reports zero vulnerabilities. This does not establish
+that the deployed application or development environment is safe, and no
+exploitability test was performed. These are known dependency-audit findings,
+not additional bugs discovered by the HW2 test suite. The
+[committed dependency audit](evidence/dependency-audit.json) records the
+package details. The tested lockfile was preserved rather than applying a
+forced upgrade immediately before submission; dependency remediation requires
+separate compatibility testing.
+
 ## 5. Reflection
 
-**AI-authored analysis; personal account pending author review.** The session
-record establishes that the author requested continued improvement beyond
-the initial low-coverage result, supplied contract cautions and the rubric,
-relayed dot's arXiv suggestion, and requested the backend hypothesis checks.
-The author's reasons for pushing beyond the initial result, personal
-assessment of the agent, and lessons from reviewing the work require the
-author's own account. No personal motives, independent audit or manual test
-edits are inferred from the conversation.
+I had to repeatedly push for more work rather than accept the first passing
+result as sufficient. After the first two improvement rounds, dot was ready
+to call the test work done even though line coverage was only 16.12% and no
+existing product bug had been confirmed. I challenged that conclusion and
+asked how we could use the remaining five hours to do a good job rather than
+make minimal progress. That led to the UI and arXiv round, which reached
+55.64% coverage and found the save-confirmation feedback bug.
+
+I had to push again after that round. With roughly three hours left, I
+explicitly reminded dot that it had been willing to stop before the previous
+revision and asked what else was worth doing. The resulting backend pass
+reached 83.96% line coverage and reproduced two more defects in the local
+connectivity probe. This repeated motivation on my part mattered: the
+assistant was too eager to call it a day, and substantial gaps remained each
+time it initially treated the work as ready. The extra rounds were not just
+cosmetic increases in test count; they exercised important missing behavior
+and found real defects.
+
+My role was to challenge the stopping point and demand stronger evidence;
+dot helped identify targets and draft guidance, and Codex implemented and ran
+the tests. The test implementations described here were produced by Codex. I also supplied a terminal
+transcript of a fresh local verification: dependency installation, 462 passing
+tests, 83.96% line coverage, both focused test typechecks and all 19 baseline
+stages passing. This is a user-supplied execution record, not a claim that dot
+independently reran the suite. Its baseline output is
+`artifacts/baseline/2026-11-09T00-30-17.544Z`.
 
 The agent handled explicit contracts well: byte boundaries, ownership,
 read-only reconciliation, failure classification and observable UI outcomes
@@ -325,8 +413,10 @@ limits separately from upload, and verify ownership before persistence.
 The narrow product fixes were separated from test changes. Failed runs and
 snapshots remain reviewable. Human guidance set scope, corrected attribution
 and established the deadline; implementation, fixture repairs, execution and
-this analysis were agent-produced. The marked personal-account items and
-unverified author/course identifiers remain the author's final review tasks.
+the initial analysis were agent-produced. The reflection above incorporates
+my explicit criticism of the assistant's stopping decisions. Passing tests
+and a polished report were not enough grounds to stop while important
+untested workflows and time for a focused investigation remained.
 
 ## 6. GitHub Repository
 
@@ -336,7 +426,13 @@ Final suite: [tests/baseline](https://github.com/panappin/babyScholar/tree/hw2/i
 (13 test files, three helpers). Instructions, results, per-file coverage,
 snapshots and SHA-256 manifests remain in
 [docs/hw2/rounds](https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds).
-The [round-4 assessment](rounds/round-4/assessment.md) indexes the new evidence.
+The [round-4 assessment](rounds/round-4/assessment.md) indexes the backend evidence;
+the [final quality review](rounds/final-review/quality-review.md) records the
+bounded sample and corrections. The author's independent baseline rerun is
+preserved in [its own archive](rounds/final-review/independent-rerun/results.json).
+Its existing artifacts confirm 19 passing stages and the reported coverage at
+`57d2e1e`; the separate installation and typecheck transcript is described by
+the author, not claimed as an agent-executed run.
 
 Tested environment: Node 24.11.1, npm 11.6.2, Windows x64, Intel i9-13900HX.
 Use the locked dependencies. Node supplies the in-memory SQLite implementation;
@@ -380,8 +476,7 @@ fixtures; it is separate from the normal development-server baseline. No
 credentials or paid requests are required. The PDF renderer converts this
 editable report to `docs/hw2/report.pdf` using locked Marked and local Chromium,
 validates local link targets and emits portable GitHub URLs. The
-[handoff checklist](final-pdf-checklist.md) records PDF verification and review.
+[PDF verification record](pdf-verification.json) records rendering and page checks.
 
-Code, evidence and report are published only to the HW2 branch. No merge to
-main or assignment submission is performed. Final submission remains with
-the author after review of the identified personal and course details.
+The code, evidence and revised report are published only on the HW2 branch.
+The author retains responsibility for the final review and assignment submission.

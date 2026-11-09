@@ -1,0 +1,56 @@
+{
+  "checkedAt": "2026-11-09T01:07:42.551212+00:00",
+  "prior": "docs/hw2/rounds/round-4/evidence",
+  "final": "docs/hw2/rounds/final-review/evidence",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "identicalConfigurationHashes": {
+    "package.json": "acc7a95347553cc9864edcbc96a2d158099a2da86d25ba1d0cda5c155f482a1a",
+    "package-lock.json": "278001180dcbd2c95d3f8c157c93bc653aaa4c4ddb7a434fa05ecb34daa5f930",
+    "vitest.config.ts": "0165de869dff48a940d0c576bd413c42412e3fa327a568d102ba47389e6152d9"
+  },
+  "stageCommandsIdenticalExceptTimestampedProfileOutputPaths": true,
+  "allPerFileCoverageCountsIdentical": true,
+  "coverageFileEntries": 29,
+  "coverage": {
+    "lines": {
+      "total": 2445,
+      "covered": 2053,
+      "skipped": 0,
+      "pct": 83.96
+    },
+    "statements": {
+      "total": 2963,
+      "covered": 2380,
+      "skipped": 0,
+      "pct": 80.32
+    },
+    "functions": {
+      "total": 534,
+      "covered": 427,
+      "skipped": 0,
+      "pct": 79.96
+    },
+    "branches": {
+      "total": 2598,
+      "covered": 2032,
+      "skipped": 0,
+      "pct": 78.21
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "testCounts": {
+    "prior": 462,
+    "final": 462
+  },
+  "baselineStages": {
+    "priorPassed": 19,
+    "finalPassed": 19,
+    "total": 19
+  },
+  "note": "Final bounded review strengthens four existing test cases. No product/dependency/instrumentation change and no new fault-detection experiment. Earlier round comparison files are unchanged."
+}

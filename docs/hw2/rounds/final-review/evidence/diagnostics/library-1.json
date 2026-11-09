@@ -1,0 +1,104 @@
+{
+  "id": "82740d1d-3c86-43c8-a3eb-47d4c3bde3a1",
+  "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\82740d1d-3c86-43c8-a3eb-47d4c3bde3a1\\state",
+  "startedAt": "2026-11-09T01:00:10.886Z",
+  "steps": [
+    {
+      "step": "built-worker-failures-passed",
+      "missingBinding": 503,
+      "databaseFailure": 503,
+      "dishonestLength": 413,
+      "stalledBody": 408,
+      "databaseTouched": false
+    },
+    {
+      "step": "migrations-applied",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\82740d1d-3c86-43c8-a3eb-47d4c3bde3a1\\state",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 127644,
+      "origin": "http://127.0.0.1:61596"
+    },
+    {
+      "step": "empty-library-passed"
+    },
+    {
+      "step": "simultaneous-first-saves-passed",
+      "statuses": [
+        201,
+        200
+      ],
+      "rowCount": 1,
+      "id": "575cff7d-da2c-4c7c-809f-61f78f27e0cd",
+      "arxivId": "2401.01234",
+      "savedAt": "2026-11-09T01:00:27.273Z"
+    },
+    {
+      "step": "full-metadata-round-trip-passed",
+      "authors": 3,
+      "abstractCharacters": 52500,
+      "sha256": "98d71c94a78cd0c658d92c1ba6eb394077ccd4683bcd801ba21f32e72e84dbfe"
+    },
+    {
+      "step": "duplicates-nullable-legacy-and-order-passed",
+      "rowCount": 3,
+      "originalPreserved": true
+    },
+    {
+      "step": "invalid-unsafe-oversized-inputs-rejected-without-writes",
+      "invalidPaperCases": 26,
+      "rowCount": 3
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 127644
+    },
+    {
+      "step": "worker-started",
+      "pid": 56360,
+      "origin": "http://127.0.0.1:54936"
+    },
+    {
+      "step": "restart-first-get-before-any-post-passed",
+      "rowCount": 3,
+      "originalId": "575cff7d-da2c-4c7c-809f-61f78f27e0cd",
+      "savedAt": "2026-11-09T01:00:27.273Z"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 56360
+    },
+    {
+      "step": "migrations-applied",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\82740d1d-3c86-43c8-a3eb-47d4c3bde3a1\\state",
+      "exitCode": 0
+    },
+    {
+      "step": "worker-started",
+      "pid": 121804,
+      "origin": "http://127.0.0.1:62899"
+    },
+    {
+      "step": "migration-reapply-preserves-all-records",
+      "rowCount": 3,
+      "originalId": "575cff7d-da2c-4c7c-809f-61f78f27e0cd",
+      "savedAt": "2026-11-09T01:00:27.273Z"
+    },
+    {
+      "step": "remove-by-application-id-idempotence-resave-and-unrelated-records-passed"
+    },
+    {
+      "step": "stopped-owned-process",
+      "pid": 121804
+    },
+    {
+      "step": "removed-owned-test-state",
+      "state": "C:\\Users\\panap\\PycharmProjects\\babyScholar\\.wrangler\\library-check\\82740d1d-3c86-43c8-a3eb-47d4c3bde3a1\\state"
+    }
+  ],
+  "transportStress": false,
+  "result": "passed",
+  "finishedAt": "2026-11-09T01:00:34.269Z"
+}

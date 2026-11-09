@@ -245,13 +245,23 @@ describe.each(stages)('$name generation orchestration with SQLite storage', stag
     expect(rows(stage.claims)).toEqual([]);
   });
 
-  it('rolls back failed persistence, returns a safe error and releases its claim', async () => {
+  it('rolls back an inserted result when claim release fails, returns a safe error and releases its claim', async () => {
     fetcher.mockImplementation(async () => validResponse(stage.output));
-    db.beforeExecute = sql => { if (sql.startsWith(`INSERT INTO ${stage.table} (`)) throw new Error('PRIVATE_FIXTURE_DETAIL'); };
+    let insertedRowsAtFailure = 0;
+    db.beforeExecute = sql => {
+      // Fail after INSERT has actually changed the database. Throwing before
+      // INSERT cannot distinguish rollback from simply never writing a row.
+      if (sql.startsWith(`DELETE FROM ${stage.claims} WHERE document_id`) && rows(stage.table).length === 1) {
+        insertedRowsAtFailure = rows(stage.table).length;
+        throw new Error('PRIVATE_FIXTURE_DETAIL');
+      }
+    };
     await expectError(await invoke(stage), 503, 'database_failure');
+    expect(insertedRowsAtFailure).toBe(1);
     expect(rows(stage.table)).toEqual([]);
     expect(rows(stage.claims)).toEqual([]);
     expect(rows('document_extractions')).toHaveLength(1);
+    expect(fetcher).toHaveBeenCalledOnce();
   });
 });
 
