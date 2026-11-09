@@ -1,0 +1,19 @@
+{
+  "startUtc": "2026-11-08T23:35:37Z",
+  "timezone": "America/Indianapolis",
+  "confirmedDeadlineLocal": "2026-11-08 22:00 EST",
+  "confirmedDeadlineUtc": "2026-11-09T03:00:00Z",
+  "deliveryByUtc": "2026-11-09T02:15:00Z",
+  "targetExplorationEndUtc": "2026-11-09T00:55:00Z",
+  "startCommit": "69c2eff430e259958ae378a238ad28760e10b99a",
+  "branch": "hw2/initial-baseline",
+  "preservedUntracked": [
+    "babyScholar-phase-0b2-hosting-changes.zip",
+    "babyScholar-phase-0b2-hosting-changes/",
+    "docs/hw2/report.zip"
+  ],
+  "explorationEndedUtc": "2026-11-08T23:46:16Z",
+  "finalizationStartedUtc": "2026-11-08T23:46:16Z",
+  "note": "Targeted additions and corrected coverage passed; began final baseline and reporting early to preserve submission and usage buffers.",
+  "reportVerifiedUtc": "2026-11-09T00:00:04.188844+00:00"
+}

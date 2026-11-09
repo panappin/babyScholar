@@ -1,0 +1,53 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/control
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 7625ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 621ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 473ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 569ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 575ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 319ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 314ms
+ ✓ tests/baseline/document-generation.test.ts (80 tests) 550ms
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 94ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 7263ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 508ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 403ms
+     ✓ handles application failure with useful feedback and no fabricated result 317ms
+     ✓ handles malformed success with useful feedback and no fabricated result 311ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 343ms
+     ✓ handles network failure with useful feedback and no fabricated result 325ms
+     ✓ retains the authoritative duplicate record when saved and reopened 499ms
+     ✓ recognizes a previously saved base ID when search returns another version 329ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 457ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 448ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 470ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 476ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 429ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 378ms
+     ✓ does not let an older library read erase a successful save 421ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 584ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 39ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 92ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 17ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 10ms
+ ✓ tests/baseline/openai-probe.test.ts (24 tests) 31ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 206ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 25ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 24ms
+
+ Test Files  13 passed (13)
+      Tests  462 passed (462)
+   Start at  18:53:10
+   Duration  21.48s (tests 81%, environment 12%, import 5%, transform 2%)
+
+    Isolate  13 workers spawned · ~301ms startup each (spawn + environment, per file)
+             at least ~3.62s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/control.tests.json
+(node:122100) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

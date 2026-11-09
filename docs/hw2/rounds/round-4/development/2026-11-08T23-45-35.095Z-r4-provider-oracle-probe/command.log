@@ -1,0 +1,5 @@
+first-control: passed, 0 failing tests
+first-mutant: survived, 0 failing tests
+corrected-control: passed, 0 failing tests
+corrected-mutant: detected, 4 failing tests
+Provider UTF-8 evidence: artifacts\hw2-workflow-faults\2026-11-08T23-45-35.339Z-provider-utf8

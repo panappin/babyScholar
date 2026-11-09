@@ -1,0 +1,6 @@
+src/DocumentWorkspace.tsx
+- revokeDownloadObjectUrl();
+    setDownloadState({ status: "idle" });
+    setSelectedId(id);
++ setDownloadState({ status: "idle" });
+    setSelectedId(id);

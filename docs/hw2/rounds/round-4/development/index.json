@@ -1,0 +1,329 @@
+[
+  {
+    "directory": "2026-11-08T23-36-34.519Z-r4-install",
+    "label": "r4-install",
+    "startedAt": "2026-11-08T23:36:34.615Z",
+    "finishedAt": "2026-11-08T23:36:48.092Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-37-07.048Z-r4-preflight-coverage",
+    "label": "r4-preflight-coverage",
+    "startedAt": "2026-11-08T23:37:07.114Z",
+    "finishedAt": "2026-11-08T23:37:30.639Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 260,
+      "numPassedTests": 260,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-38-14.457Z-r4-probe-before",
+    "label": "r4-probe-before",
+    "startedAt": "2026-11-08T23:38:14.525Z",
+    "finishedAt": "2026-11-08T23:38:15.566Z",
+    "exitCode": 1,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 24,
+      "numPassedTests": 21,
+      "numFailedTests": 3,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-38-38.111Z-r4-probe-after",
+    "label": "r4-probe-after",
+    "startedAt": "2026-11-08T23:38:38.196Z",
+    "finishedAt": "2026-11-08T23:38:39.179Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 24,
+      "numPassedTests": 24,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-39-50.905Z-r4-provider-first",
+    "label": "r4-provider-first",
+    "startedAt": "2026-11-08T23:39:50.971Z",
+    "finishedAt": "2026-11-08T23:39:52.038Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 98,
+      "numPassedTests": 98,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-42-04.443Z-r4-orchestration-first",
+    "label": "r4-orchestration-first",
+    "startedAt": "2026-11-08T23:42:04.515Z",
+    "finishedAt": "2026-11-08T23:42:10.905Z",
+    "exitCode": 1,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 71,
+      "numPassedTests": 69,
+      "numFailedTests": 2,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-42-44.189Z-r4-orchestration-corrected",
+    "label": "r4-orchestration-corrected",
+    "startedAt": "2026-11-08T23:42:44.255Z",
+    "finishedAt": "2026-11-08T23:42:45.542Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 80,
+      "numPassedTests": 80,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-43-16.101Z-r4-expanded-coverage",
+    "label": "r4-expanded-coverage",
+    "startedAt": "2026-11-08T23:43:16.200Z",
+    "finishedAt": "2026-11-08T23:43:40.043Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 462,
+      "numPassedTests": 462,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-43-16.101Z-r4-provider-types",
+    "label": "r4-provider-types",
+    "startedAt": "2026-11-08T23:43:16.200Z",
+    "finishedAt": "2026-11-08T23:43:17.991Z",
+    "exitCode": 2,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-43-51.581Z-r4-provider-types-corrected",
+    "label": "r4-provider-types-corrected",
+    "startedAt": "2026-11-08T23:43:51.671Z",
+    "finishedAt": "2026-11-08T23:43:53.216Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-44-32.859Z-r4-corrected-coverage",
+    "label": "r4-corrected-coverage",
+    "startedAt": "2026-11-08T23:44:32.944Z",
+    "finishedAt": "2026-11-08T23:44:56.919Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command",
+    "tests": {
+      "numTotalTests": 462,
+      "numPassedTests": 462,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  {
+    "directory": "2026-11-08T23-45-35.095Z-r4-provider-oracle-probe",
+    "label": "r4-provider-oracle-probe",
+    "startedAt": "2026-11-08T23:45:35.179Z",
+    "finishedAt": "2026-11-08T23:45:38.582Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-45-35.339Z-provider-utf8",
+    "type": "selected-faults",
+    "scope": "One selected artificial lossy-decoding fault, before/after correcting the four provider UTF-8 fixtures. Not an existing defect or broad mutation score.",
+    "runs": [
+      {
+        "name": "first-control",
+        "outcome": "passed",
+        "tests": 98,
+        "failedTests": 0
+      },
+      {
+        "name": "first-mutant",
+        "outcome": "survived",
+        "tests": 98,
+        "failedTests": 0
+      },
+      {
+        "name": "corrected-control",
+        "outcome": "passed",
+        "tests": 98,
+        "failedTests": 0
+      },
+      {
+        "name": "corrected-mutant",
+        "outcome": "detected",
+        "tests": 98,
+        "failedTests": 4
+      }
+    ]
+  },
+  {
+    "directory": "2026-11-08T23-46-13.888Z-r4-workflow-types",
+    "label": "r4-workflow-types",
+    "startedAt": "2026-11-08T23:46:13.995Z",
+    "finishedAt": "2026-11-08T23:46:15.992Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-46-16.664Z-r4-final-baseline",
+    "label": "r4-final-baseline",
+    "startedAt": "2026-11-08T23:46:16.776Z",
+    "finishedAt": "2026-11-08T23:52:22.695Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-53-09.258Z-r4-original-faults",
+    "label": "r4-original-faults",
+    "startedAt": "2026-11-08T23:53:09.403Z",
+    "finishedAt": "2026-11-08T23:55:20.904Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-56-03.226Z-r4-workflow-faults",
+    "label": "r4-workflow-faults",
+    "startedAt": "2026-11-08T23:56:03.348Z",
+    "finishedAt": "2026-11-08T23:57:17.996Z",
+    "exitCode": 0,
+    "timedOut": false,
+    "type": "command"
+  },
+  {
+    "directory": "2026-11-08T23-56-03.532Z-refined",
+    "type": "selected-faults",
+    "scope": "Eight selected workflow regressions, not existing bugs or a repository-wide mutation score. Control runs all tests; each mutant runs its affected workflow file.",
+    "runs": [
+      {
+        "name": "control",
+        "outcome": "passed",
+        "tests": 462,
+        "failedTests": 0
+      },
+      {
+        "name": "arxiv-expiry-off-by-one",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 2
+      },
+      {
+        "name": "arxiv-shared-author-array",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 1
+      },
+      {
+        "name": "arxiv-poisoned-request-queue",
+        "outcome": "detected",
+        "tests": 37,
+        "failedTests": 3
+      },
+      {
+        "name": "library-stale-read-erases-save",
+        "outcome": "detected",
+        "tests": 22,
+        "failedTests": 1
+      },
+      {
+        "name": "document-stale-details-overwrite-selection",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "summary-reload-discards-confirmed-result",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "document-selection-leaks-prepared-url",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      },
+      {
+        "name": "download-rejects-exact-limit",
+        "outcome": "detected",
+        "tests": 38,
+        "failedTests": 1
+      }
+    ]
+  },
+  {
+    "directory": "round-4-2026-11-08T23-53-09.593Z",
+    "type": "selected-faults",
+    "scope": "Five hand-selected seeded regressions in isolated source/test copies; not existing defects or a repository-wide mutation score.",
+    "runs": [
+      {
+        "name": "control",
+        "outcome": "passed",
+        "tests": 462,
+        "failedTests": 0
+      },
+      {
+        "name": "upload-rejects-exact-limit",
+        "outcome": "detected",
+        "tests": 462,
+        "failedTests": 1
+      },
+      {
+        "name": "question-lossy-utf8",
+        "outcome": "detected",
+        "tests": 462,
+        "failedTests": 4
+      },
+      {
+        "name": "generation-retries-network-failure",
+        "outcome": "detected",
+        "tests": 462,
+        "failedTests": 29
+      },
+      {
+        "name": "summary-source-budget-plus-one",
+        "outcome": "detected",
+        "tests": 462,
+        "failedTests": 5
+      },
+      {
+        "name": "summary-demands-envelope",
+        "outcome": "detected",
+        "tests": 462,
+        "failedTests": 12
+      }
+    ]
+  }
+]

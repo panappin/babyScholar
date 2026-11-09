@@ -1,8 +1,9 @@
 # HW2 baseline and guided test improvements
 
-The initial assessment, two required guided rounds, and a further workflow
-improvement round are retained here. Source stayed unchanged through round 2;
-round 3 confirms and fixes one narrow save-reconciliation bug. Existing
+The initial assessment, two required guided rounds, and two additional workflow
+and backend improvement rounds are retained here. Source stayed unchanged through round 2;
+round 3 confirms and fixes one narrow save-reconciliation bug; round 4 adds
+provider/SQL orchestration tests and fixes two local probe defects. Existing
 integration/browser checks remain separate from combined Node/jsdom coverage.
 
 - [Six-section editable report](report.md), [PDF](report.pdf), and [handoff checklist](final-pdf-checklist.md)
@@ -11,6 +12,8 @@ integration/browser checks remain separate from combined Node/jsdom coverage.
 - [Round 1: inputs and output contracts](rounds/round-1/assessment.md)
 - [Round 2: recovery, source budgets, and UTF-8 fault feedback](rounds/round-2/assessment.md)
 - [Round 3: React workflows, deterministic arXiv service, and browser diagnosis](rounds/round-3/assessment.md)
+- [Round 4: provider contracts and document-generation orchestration](rounds/round-4/assessment.md)
+- [Final backend comparison](backend-comparison.json) and [all-file CSV](backend-per-file-comparison.csv)
 - [Workflow comparison including the configuration bridge](workflow-comparison.json) and [all-file CSV](workflow-per-file-comparison.csv)
 - [Machine-readable comparison](comparison.json) and [all-file coverage comparison](per-file-comparison.csv)
 
@@ -20,7 +23,9 @@ whose complete selected evidence and exact snapshots are in `rounds/`.
 
 ## Reproduce
 
-Node >=22.12; use `npm.cmd` instead of `npm` in Windows PowerShell.
+Node 24.11.1 is the verified runtime for the final suite, including its built-in
+SQLite tests. The app manifest allows older versions, but those were not
+validated for these new tests. Use `npm.cmd` instead of `npm` in PowerShell.
 
 ```sh
 npm ci
@@ -29,6 +34,7 @@ npm run baseline
 npm test
 npm run test:coverage
 npm run test:workflows:types
+npm run test:providers:types
 npm run profile
 ```
 
@@ -104,9 +110,9 @@ The round-2 suite is seven files / 163 tests in `tests/baseline/`. The initial
 57, selected after inspecting round 1's results and surviving seeded faults.
 
 Round 3 adds 97 cases: 37 arXiv service tests, 22 App workflows and 38 document
-workflows. The final suite has 260 tests in 10 files (200 Node, 60 jsdom).
+workflows. That round's suite has 260 tests in 10 files (200 Node, 60 jsdom).
 The unchanged 163-test suite was measured under the new TSX/DOM configuration
-before these additions, reproducing its prior counts exactly. Overall final
+before these additions, reproducing its prior counts exactly. Round-3
 line coverage is 55.64% (1360/2444), with all untested source still included.
 Statement/function denominators increase by one because of the documented
 App fix. The old comparison files remain unchanged; use the workflow
@@ -114,10 +120,21 @@ comparison for the extension.
 
 Eight selected new workflow faults improved from 7/8 to 8/8 detections after
 adding a missing download boundary pair. The original five seeds also remain
-detected in the current 260-test suite. These are selected probes, not an
+detected in the round-3 260-test suite. These are selected probes, not an
 exhaustive mutation score or existing bugs. Browser preview mode passed the
 complete workflow verifier; intermittent development-server readiness stalls
 remain a separate limitation. See the report for the final baseline outcome.
+
+Round 4 adds 202 tests: 24 probe, 98 provider adapter and 80 generation-handler
+cases. The final 462-test suite measures 2053/2445 lines (83.96%) with identical
+Vitest configuration and dependency lock. The narrow probe fixes add one line,
+two statements and three branches. The handlers execute real migration schemas
+and SQL under a small D1-shaped adapter over Node in-memory SQLite; this is not
+Cloudflare D1 emulation. A selected lossy provider decoder fault survived the
+first provider tests and failed four assertions after a fixture correction,
+with unchanged coverage. Two confirmed probe defects are distinct from that
+artificial fault and the earlier App bug. The arXiv seam suggestion came from
+**dot**; historical archives retain the original attribution and bytes.
 
 Each `rounds/<phase>/evidence/` directory contains `results.json`, all stage
 logs, per-file CSV, raw coverage JSON, LCOV, CPU profile, structured verifier
@@ -129,9 +146,11 @@ exempted from the ordinary generated-coverage ignore rule.
 ```sh
 node scripts/baseline/compare-hw2.mjs
 node scripts/baseline/compare-workflows.mjs
+node scripts/baseline/compare-backends.mjs
 # Optional selected fault probes in disposable copies; no working source edits:
-node scripts/baseline/fault-probes.mjs round-3
+node scripts/baseline/fault-probes.mjs round-4
 node scripts/baseline/workflow-fault-probes.mjs refined
+node scripts/baseline/provider-utf8-probe.mjs
 # Separate built-app browser mode (normal baseline still uses the dev server):
 npm run build:frontend
 node scripts/baseline/browser-experiment.mjs preview

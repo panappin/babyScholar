@@ -1,0 +1,238 @@
+{
+  "label": "round-4",
+  "timestamp": "2026-11-08T23:53:09.594Z",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "scope": "Five hand-selected seeded regressions in isolated source/test copies; not existing defects or a repository-wide mutation score.",
+  "runs": [
+    {
+      "name": "control",
+      "mutation": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\control",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\control\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\control.tests.json"
+      ],
+      "exitCode": 0,
+      "outcome": "passed",
+      "tests": 462,
+      "failedTests": 0,
+      "failedAssertions": []
+    },
+    {
+      "name": "upload-rejects-exact-limit",
+      "mutation": {
+        "name": "upload-rejects-exact-limit",
+        "file": "src/worker/document-validation.ts",
+        "before": "if (file.size > DOCUMENT_FILE_BYTES)",
+        "after": "if (file.size >= DOCUMENT_FILE_BYTES)",
+        "requirement": "An exactly 10 MiB PDF is accepted."
+      },
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\upload-rejects-exact-limit",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\upload-rejects-exact-limit\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\upload-rejects-exact-limit.tests.json"
+      ],
+      "exitCode": 1,
+      "outcome": "detected",
+      "tests": 462,
+      "failedTests": 1,
+      "failedAssertions": [
+        "PDF multipart contract (round 1) accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body"
+      ]
+    },
+    {
+      "name": "question-lossy-utf8",
+      "mutation": {
+        "name": "question-lossy-utf8",
+        "file": "src/worker/question-request.ts",
+        "before": "fatal: true, ignoreBOM: false",
+        "after": "fatal: false, ignoreBOM: false",
+        "requirement": "Ill-formed UTF-8 inside otherwise valid JSON is rejected."
+      },
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\question-lossy-utf8",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\question-lossy-utf8\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\question-lossy-utf8.tests.json"
+      ],
+      "exitCode": 1,
+      "outcome": "detected",
+      "tests": 462,
+      "failedTests": 4,
+      "failedAssertions": [
+        "question UTF-8 integrity (round 2 survivor feedback) rejects invalid leading byte inside otherwise valid JSON",
+        "question UTF-8 integrity (round 2 survivor feedback) rejects invalid continuation inside otherwise valid JSON",
+        "question UTF-8 integrity (round 2 survivor feedback) rejects encoded surrogate inside otherwise valid JSON",
+        "question UTF-8 integrity (round 2 survivor feedback) rejects incomplete four-byte sequence inside otherwise valid JSON"
+      ]
+    },
+    {
+      "name": "generation-retries-network-failure",
+      "mutation": {
+        "name": "generation-retries-network-failure",
+        "file": "src/worker/generation-recovery.ts",
+        "before": "if (!recoverable) throw error;",
+        "after": "if (!recoverable && attempt === 2) throw error;",
+        "requirement": "Transport/provider failures do not trigger a corrective attempt."
+      },
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\generation-retries-network-failure",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\generation-retries-network-failure\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\generation-retries-network-failure.tests.json"
+      ],
+      "exitCode": 1,
+      "outcome": "detected",
+      "tests": 462,
+      "failedTests": 29,
+      "failedAssertions": [
+        "metadata generation orchestration with SQLite storage maps upstream HTTP 401 to caller HTTP 502 and releases only its claim",
+        "metadata generation orchestration with SQLite storage maps upstream HTTP 429 to caller HTTP 429 and releases only its claim",
+        "metadata generation orchestration with SQLite storage maps upstream HTTP 403 to caller HTTP 502 and releases only its claim",
+        "metadata generation orchestration with SQLite storage maps upstream HTTP 503 to caller HTTP 502 and releases only its claim",
+        "metadata generation orchestration with SQLite storage maps provider completion failure 0 without retrying",
+        "metadata generation orchestration with SQLite storage maps provider completion failure 1 without retrying",
+        "metadata generation orchestration with SQLite storage maps transport failure and leaves source data available for explicit retry",
+        "metadata generation orchestration with SQLite storage preserves the provider failure classification if best-effort claim cleanup also fails",
+        "summary generation orchestration with SQLite storage maps upstream HTTP 401 to caller HTTP 502 and releases only its claim",
+        "summary generation orchestration with SQLite storage maps upstream HTTP 429 to caller HTTP 429 and releases only its claim",
+        "summary generation orchestration with SQLite storage maps upstream HTTP 403 to caller HTTP 502 and releases only its claim",
+        "summary generation orchestration with SQLite storage maps upstream HTTP 503 to caller HTTP 502 and releases only its claim",
+        "summary generation orchestration with SQLite storage maps provider completion failure 0 without retrying",
+        "summary generation orchestration with SQLite storage maps provider completion failure 1 without retrying",
+        "summary generation orchestration with SQLite storage maps transport failure and leaves source data available for explicit retry",
+        "summary generation orchestration with SQLite storage preserves the provider failure classification if best-effort claim cleanup also fails",
+        "generation recovery and ownership (round 2) never retries authentication",
+        "generation recovery and ownership (round 2) never retries quota_or_rate_limit",
+        "generation recovery and ownership (round 2) never retries model_access",
+        "generation recovery and ownership (round 2) never retries network_failure",
+        "generation recovery and ownership (round 2) never retries timeout",
+        "generation recovery and ownership (round 2) never retries upstream_error",
+        "generation recovery and ownership (round 2) never retries refusal",
+        "generation recovery and ownership (round 2) never retries incomplete_response",
+        "generation recovery and ownership (round 2) never retries missing_configuration",
+        "generation recovery and ownership (round 2) does not retry malformed upstream HTTP failures (400)",
+        "generation recovery and ownership (round 2) does not retry malformed upstream HTTP failures (503)",
+        "generation recovery and ownership (round 2) does not misclassify an unrelated error as a summary correction",
+        "generation recovery and ownership (round 2) does not misclassify an unrelated error as a summary correction"
+      ]
+    },
+    {
+      "name": "summary-source-budget-plus-one",
+      "mutation": {
+        "name": "summary-source-budget-plus-one",
+        "file": "src/worker/summary-source.ts",
+        "before": "let remaining = SUMMARY_MAX_TEXT_BYTES;",
+        "after": "let remaining = SUMMARY_MAX_TEXT_BYTES + 1;",
+        "requirement": "Selected summary text never exceeds 98304 UTF-8 bytes."
+      },
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\summary-source-budget-plus-one",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\summary-source-budget-plus-one\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\summary-source-budget-plus-one.tests.json"
+      ],
+      "exitCode": 1,
+      "outcome": "detected",
+      "tests": 462,
+      "failedTests": 5,
+      "failedAssertions": [
+        "summary source budget (round 2) clips one-byte overflow at exactly the documented limit",
+        "summary source budget (round 2) does not include later pages when an earlier page fills the budget",
+        "summary source budget (round 2) retains a complete Unicode prefix with 3 byte(s) left for a four-byte character",
+        "summary source budget (round 2) does not mutate persisted extraction pages while selecting a partial final page",
+        "different source policies (round 2) reports partial summary coverage with the original total page count"
+      ]
+    },
+    {
+      "name": "summary-demands-envelope",
+      "mutation": {
+        "name": "summary-demands-envelope",
+        "file": "src/worker/summary-validation.ts",
+        "before": "const text = boundedText(output, MAX_SUMMARY_PROSE_BYTES, \"text\");",
+        "after": "invalid(\"Seeded fault: a JSON envelope is required.\");\n    const text = boundedText(output, MAX_SUMMARY_PROSE_BYTES, \"text\");",
+        "requirement": "Ordinary summary prose is accepted without an envelope or citations."
+      },
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\summary-demands-envelope",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\summary-demands-envelope\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-fault-probes\\round-4-2026-11-08T23-53-09.593Z\\summary-demands-envelope.tests.json"
+      ],
+      "exitCode": 1,
+      "outcome": "detected",
+      "tests": 462,
+      "failedTests": 12,
+      "failedAssertions": [
+        "summary generation orchestration with SQLite storage persists source provenance and readable output, then reuses saved results without a key",
+        "summary generation orchestration with SQLite storage maps transport failure and leaves source data available for explicit retry",
+        "summary generation orchestration with SQLite storage prevents a duplicate concurrent provider request while a claim is held",
+        "summary generation orchestration with SQLite storage rejects corrupt saved JSON safely instead of calling the provider during a read",
+        "summary generation orchestration with SQLite storage does not persist when deletion begins during generation",
+        "summary generation orchestration with SQLite storage rolls back failed persistence, returns a safe error and releases its claim",
+        "summary corrective generation corrects one invalid result under the same claim, then persists only the valid output",
+        "summary output contract (round 1) accepts plain prose without a JSON envelope or evidence",
+        "summary output contract (round 1) decodes a legacy envelope, preserves text and warnings, and omits unverified quotes",
+        "summary output contract (round 1) keeps non-envelope text as prose: {unfinished prose",
+        "summary output contract (round 1) keeps non-envelope text as prose: {\"note\":\"ordinary text, no overview\"}",
+        "summary output contract (round 1) accepts exactly 12000 UTF-8 bytes and rejects one byte more"
+      ]
+    }
+  ],
+  "testFiles": {
+    "app-workflows.test.tsx": "95dc9aa13af666bb98d1b0711c2df1389b5bcdccef46cf773153ce4b46526b67",
+    "arxiv-service.test.ts": "0ab7846dbefd8b370138987e8820786242f006125086fbd12e4105d58bf27233",
+    "document-generation.test.ts": "f8ec1af704b89e7d56f125f68d8acd61ac7d1915dd8cc2834314916b286eb5e6",
+    "document-workspace.test.tsx": "99c1b3b9461a2674b4484ad513bc16e4388eb9021c1f6cb313863e9f0b9124f3",
+    "generation-recovery.test.ts": "1355f00b7257dc705f5d689a11b116d8a64707ffeef274f8be976cbe79fe5b16",
+    "helpers/browser.ts": "94ab85d01fe30aa76d2e00971973ee758bb41e85abf71ea892aa6878ab97c173",
+    "helpers/document-fixtures.ts": "6aa4116c5d2642d1586e2f23160d654fdbee2b89aba9a3a32bb5620774c29682",
+    "helpers/sqlite-d1.ts": "5d6665e96e5999bd8b907480d46b23178ffc844aa561ea20a19d49f296890ae3",
+    "identity.test.ts": "0835b5915988a8d10f5412a132fbba14a8ce5543ee0f9264ed24e0aa5fa27c49",
+    "openai-probe.test.ts": "4e4ff3da206b8556bc493ebcebf5f82daa909e27d9a75154410c61ecf5edd136",
+    "output-validation.test.ts": "a82f7f75fbd853556dcd2bb9c6c1cdf3d5a321d4b4ead967d4536f984e6124ca",
+    "provider-adapters.test.ts": "ce5315eb2764992397efbbe520daeaeb13413dd6f26a0a501fc2d5b8d32f7c21",
+    "question-request.test.ts": "06768c8acc357a3a917785d296cdab488c18e4facc308728ec87e6a6b7b0c808",
+    "request-streams.test.ts": "67b3b8e8b094fdad3acd63f9e4e7a420051769524762e83464643f77fbef8df4",
+    "source-selection.test.ts": "8f344f178a8289e873f1ced3ef1219406ce2130110c9aeaba9c0cf4dd8fcf160",
+    "utf8-integrity.test.ts": "63f5c3cd5a77d1d4de1d97e5d0ac6e69a33b55ddd428a9312df3f30132b1ca7a"
+  }
+}

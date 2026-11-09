@@ -1,0 +1,392 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/summary-demands-envelope
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 7501ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 607ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 477ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 566ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 527ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 302ms
+ ❯ tests/baseline/document-generation.test.ts (80 tests | 7 failed) 419ms
+   ✓ metadata generation orchestration with SQLite storage (25)
+     ✓ rejects invalid-id before provider work 26ms
+     ✓ rejects missing-storage before provider work 5ms
+     ✓ rejects missing-document before provider work 4ms
+     ✓ rejects missing-extraction before provider work 5ms
+     ✓ rejects deleting-document before provider work 4ms
+     ✓ GET reports absence without implicitly generating 4ms
+     ✓ rejects unsupported methods with Allow and no generation 5ms
+     ✓ fails missing configuration before taking a generation claim 4ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 12ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 6ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 5ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps provider completion failure 0 without retrying 5ms
+     ✓ maps provider completion failure 1 without retrying 5ms
+     ✓ maps transport failure and leaves source data available for explicit retry 6ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 5ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 8ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 7ms
+     ✓ does not persist or delete a replacement owner after losing its lease 5ms
+     ✓ checks ownership before dispatch and preserves a replacement claim 5ms
+     ✓ preserves the provider failure classification if best-effort claim cleanup also fails 5ms
+     ✓ rejects corrupt saved JSON safely instead of calling the provider during a read 5ms
+     ✓ does not persist when deletion begins during generation 5ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 5ms
+   ❯ summary generation orchestration with SQLite storage (25)
+     ✓ rejects invalid-id before provider work 4ms
+     ✓ rejects missing-storage before provider work 4ms
+     ✓ rejects missing-document before provider work 5ms
+     ✓ rejects missing-extraction before provider work 4ms
+     ✓ rejects deleting-document before provider work 4ms
+     ✓ GET reports absence without implicitly generating 4ms
+     ✓ rejects unsupported methods with Allow and no generation 4ms
+     ✓ fails missing configuration before taking a generation claim 4ms
+     × persists source provenance and readable output, then reuses saved results without a key 8ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 4ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 5ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 4ms
+     ✓ maps provider completion failure 0 without retrying 4ms
+     ✓ maps provider completion failure 1 without retrying 5ms
+     × maps transport failure and leaves source data available for explicit retry 5ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 4ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 5ms
+     × prevents a duplicate concurrent provider request while a claim is held 5ms
+     ✓ does not persist or delete a replacement owner after losing its lease 5ms
+     ✓ checks ownership before dispatch and preserves a replacement claim 4ms
+     ✓ preserves the provider failure classification if best-effort claim cleanup also fails 4ms
+     × rejects corrupt saved JSON safely instead of calling the provider during a read 5ms
+     × does not persist when deletion begins during generation 6ms
+     × rolls back failed persistence, returns a safe error and releases its claim 5ms
+   ✓ question generation orchestration with SQLite storage (25)
+     ✓ rejects invalid-id before provider work 4ms
+     ✓ rejects missing-storage before provider work 4ms
+     ✓ rejects missing-document before provider work 3ms
+     ✓ rejects missing-extraction before provider work 4ms
+     ✓ rejects deleting-document before provider work 4ms
+     ✓ GET reports absence without implicitly generating 4ms
+     ✓ rejects unsupported methods with Allow and no generation 4ms
+     ✓ fails missing configuration before taking a generation claim 6ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 9ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 6ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps provider completion failure 0 without retrying 4ms
+     ✓ maps provider completion failure 1 without retrying 5ms
+     ✓ maps transport failure and leaves source data available for explicit retry 5ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 4ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 4ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 6ms
+     ✓ does not persist or delete a replacement owner after losing its lease 5ms
+     ✓ checks ownership before dispatch and preserves a replacement claim 4ms
+     ✓ preserves the provider failure classification if best-effort claim cleanup also fails 4ms
+     ✓ rejects corrupt saved JSON safely instead of calling the provider during a read 5ms
+     ✓ does not persist when deletion begins during generation 4ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 5ms
+   ✓ metadata corrective generation (2)
+     ✓ corrects one invalid result under the same claim, then persists only the valid output 5ms
+     ✓ rejects a nonempty POST body before claiming or calling the provider 4ms
+   ❯ summary corrective generation (2)
+     × corrects one invalid result under the same claim, then persists only the valid output 5ms
+     ✓ rejects a nonempty POST body before claiming or calling the provider 4ms
+   ✓ question cache identity (1)
+     ✓ normalizes whitespace and invalidates cache when extraction provenance changes 8ms
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 77ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 7325ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 467ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 382ms
+     ✓ handles application failure with useful feedback and no fabricated result 335ms
+     ✓ handles malformed success with useful feedback and no fabricated result 311ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 355ms
+     ✓ handles network failure with useful feedback and no fabricated result 341ms
+     ✓ retains the authoritative duplicate record when saved and reopened 484ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 478ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 468ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 448ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 483ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 445ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 363ms
+     ✓ does not let an older library read erase a successful save 469ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 602ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 41ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 93ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 18ms
+ ❯ tests/baseline/output-validation.test.ts (48 tests | 5 failed) 17ms
+   ✓ metadata output contract (round 1) (17)
+     ✓ allows nullable bibliographic fields without citations 2ms
+     ✓ retains supplied fields, filters warnings, and discards unverified new quotes 0ms
+     ✓ rejects invalid metadata case 0 0ms
+     ✓ rejects invalid metadata case 1 0ms
+     ✓ rejects invalid metadata case 2 0ms
+     ✓ rejects invalid metadata case 3 0ms
+     ✓ rejects invalid metadata case 4 0ms
+     ✓ rejects invalid metadata case 5 0ms
+     ✓ rejects invalid metadata case 6 0ms
+     ✓ rejects invalid metadata case 7 0ms
+     ✓ rejects invalid metadata case 8 0ms
+     ✓ rejects invalid metadata case 9 0ms
+     ✓ rejects invalid metadata case 10 0ms
+     ✓ rejects invalid metadata case 11 0ms
+     ✓ rejects invalid metadata case 12 0ms
+     ✓ rejects invalid metadata case 13 0ms
+     ✓ accepts exact UTF-8 field limits and bounded author count 0ms
+   ❯ summary output contract (round 1) (16)
+     × accepts plain prose without a JSON envelope or evidence 4ms
+     × decodes a legacy envelope, preserves text and warnings, and omits unverified quotes 0ms
+     × keeps non-envelope text as prose: {unfinished prose 0ms
+     × keeps non-envelope text as prose: {"note":"ordinary text, no overview"} 0ms
+     × accepts exactly 12000 UTF-8 bytes and rejects one byte more 0ms
+     ✓ enforces the aggregate prose budget across sections 0ms
+     ✓ rejects invalid summary case 0 0ms
+     ✓ rejects invalid summary case 1 0ms
+     ✓ rejects invalid summary case 2 0ms
+     ✓ rejects invalid summary case 3 0ms
+     ✓ rejects invalid summary case 4 0ms
+     ✓ rejects invalid summary case 5 0ms
+     ✓ rejects invalid summary case 6 0ms
+     ✓ rejects invalid summary case 7 0ms
+     ✓ rejects invalid summary case 8 0ms
+     ✓ rejects invalid summary case 9 0ms
+   ✓ question answer contract (round 1) (15)
+     ✓ accepts ordinary answers and does not impose a hard 300-word validation rule 1ms
+     ✓ accepts a legacy answer envelope and strips even malformed optional evidence 0ms
+     ✓ preserves a usable insufficient-source explanation 0ms
+     ✓ accepts exactly 16000 UTF-8 bytes and rejects one extra byte 1ms
+     ✓ counts separators in the combined answer budget 1ms
+     ✓ rejects unusable answer case 0 0ms
+     ✓ rejects unusable answer case 1 0ms
+     ✓ rejects unusable answer case 2 0ms
+     ✓ rejects unusable answer case 3 0ms
+     ✓ rejects unusable answer case 4 0ms
+     ✓ rejects unusable answer case 5 0ms
+     ✓ rejects unusable answer case 6 0ms
+     ✓ rejects unusable answer case 7 0ms
+     ✓ rejects unusable answer case 8 0ms
+     ✓ rejects unusable answer case 9 0ms
+ ✓ tests/baseline/openai-probe.test.ts (24 tests) 38ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 214ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 28ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 5ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 28ms
+
+ Test Files  2 failed | 11 passed (13)
+      Tests  12 failed | 450 passed (462)
+   Start at  18:54:59
+   Duration  21.23s (tests 81%, environment 12%, import 5%, transform 2%)
+
+    Isolate  13 workers spawned · ~295ms startup each (spawn + environment, per file)
+             at least ~3.54s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/summary-demands-envelope.tests.json
+(node:125656) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > persists source provenance and readable output, then reuses saved results without a key
+AssertionError: expected 502 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 502
+
+ ❯ tests/baseline/document-generation.test.ts:104:26
+    102|     fetcher.mockImplementation(async () => validResponse(stage.output)…
+    103|     const first = await invoke(stage);
+    104|     expect(first.status).toBe(201);
+       |                          ^
+    105|     const created = await first.json() as Record<string, unknown>;
+    106|     expect(created.created).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps transport failure and leaves source data available for explicit retry
+AssertionError: expected 502 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 502
+
+ ❯ tests/baseline/document-generation.test.ts:154:42
+    152|     expect(rows(stage.claims)).toEqual([]);
+    153|     fetcher.mockImplementation(async () => validResponse(stage.output)…
+    154|     expect((await invoke(stage)).status).toBe(201);
+       |                                          ^
+    155|     expect(fetcher).toHaveBeenCalledTimes(2);
+    156|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > prevents a duplicate concurrent provider request while a claim is held
+AssertionError: expected 502 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 502
+
+ ❯ tests/baseline/document-generation.test.ts:193:34
+    191|       expect(rows(stage.claims)).toHaveLength(1);
+    192|     } finally { response.resolve(validResponse(stage.output)); }
+    193|     expect((await first).status).toBe(201);
+       |                                  ^
+    194|     expect(rows(stage.table)).toHaveLength(1);
+    195|     expect(rows(stage.claims)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > rejects corrupt saved JSON safely instead of calling the provider during a read
+AssertionError: expected 502 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 502
+
+ ❯ tests/baseline/document-generation.test.ts:231:42
+    229|   it('rejects corrupt saved JSON safely instead of calling the provide…
+    230|     fetcher.mockImplementation(async () => validResponse(stage.output)…
+    231|     expect((await invoke(stage)).status).toBe(201);
+       |                                          ^
+    232|     const column = stage.name === 'metadata' ? 'evidence_json' : stage…
+    233|     db.sqlite.prepare(`UPDATE ${stage.table} SET ${column} = ?`).run('…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > does not persist when deletion begins during generation
+AssertionError: expected { error: { …(2) } } to match object { Object (error) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "error": {
+-     "kind": "summary_in_progress",
++     "kind": "document_deleting",
+    },
+  }
+
+ ❯ expectError tests/baseline/document-generation.test.ts:36:16
+     34|   expect(response.headers.get('cache-control')).toBe('no-store');
+     35|   const body = await response.json();
+     36|   expect(body).toMatchObject({ error: { kind } });
+       |                ^
+     37|   expect(JSON.stringify(body)).not.toContain('PRIVATE_FIXTURE_DETAIL');
+     38| }
+ ❯ tests/baseline/document-generation.test.ts:243:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > rolls back failed persistence, returns a safe error and releases its claim
+AssertionError: expected 502 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 502
+
+ ❯ expectError tests/baseline/document-generation.test.ts:33:27
+     31| const invoke = (stage: Stage, request = post(stage), settings = env, d…
+     32| async function expectError(response: Response, status: number, kind: s…
+     33|   expect(response.status).toBe(status);
+       |                           ^
+     34|   expect(response.headers.get('cache-control')).toBe('no-store');
+     35|   const body = await response.json();
+ ❯ tests/baseline/document-generation.test.ts:251:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary corrective generation > corrects one invalid result under the same claim, then persists only the valid output
+AssertionError: expected 502 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 502
+
+ ❯ tests/baseline/document-generation.test.ts:265:42
+    263|       return owners.length === 1 ? validResponse(stage.name === 'metad…
+    264|     });
+    265|     expect((await invoke(stage)).status).toBe(201);
+       |                                          ^
+    266|     expect(fetcher).toHaveBeenCalledTimes(2);
+    267|     expect(owners[0]).toBeTruthy();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > accepts plain prose without a JSON envelope or evidence
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:50:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > decodes a legacy envelope, preserves text and warnings, and omits unverified quotes
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:58:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > keeps non-envelope text as prose: {unfinished prose
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > keeps non-envelope text as prose: {"note":"ordinary text, no overview"}
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:64:59
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  tests/baseline/output-validation.test.ts > summary output contract (round 1) > accepts exactly 12000 UTF-8 bytes and rejects one byte more
+DocumentError: Seeded fault: a JSON envelope is required.
+ ❯ invalid src/worker/summary-validation.ts:21:9
+     19|
+     20| function invalid(message: string): never {
+     21|   throw new DocumentError("summary_invalid_response", 502, message);
+       |         ^
+     22| }
+     23|
+ ❯ validateDocumentSummaryOutput src/worker/summary-validation.ts:59:5
+ ❯ summary tests/baseline/output-validation.test.ts:12:37
+ ❯ tests/baseline/output-validation.test.ts:68:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+

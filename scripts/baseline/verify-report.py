@@ -44,7 +44,7 @@ all_text = "\n".join(page.extract_text() for page in reader.pages)
 for section in ["1. Test Generation Approach", "2. Initial Test Evaluation", "3. Iterative Test Improvement",
                 "4. Final Evaluation", "5. Reflection", "6. GitHub Repository"]:
     assert section in all_text, f"Missing section: {section}"
-for required in ["260", "55.64%", "3.51%", "hw2/initial-baseline", "852eb2c", "2c83268"]:
+for required in ["462", "83.96%", "55.64%", "3.51%", "hw2/initial-baseline", "852eb2c", "5285152", "89afbd3"]:
     assert required in all_text, f"Missing final report evidence: {required}"
 assert not outside, f"Text outside page bounds: {outside}"
 assert len(links) >= 10, "Expected report evidence/repository hyperlinks"

@@ -1,0 +1,28 @@
+{
+  "label": "r4-orchestration-first",
+  "startedAt": "2026-11-08T23:42:04.515Z",
+  "timeoutMs": 60000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "test",
+    "--",
+    "tests/baseline/document-generation.test.ts",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-extension\\2026-11-08T23-42-04.443Z-r4-orchestration-first\\test-results.json"
+  ],
+  "baseCommit": "528515263a53233944f9ff6cfe7d126f193734e4",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "workingTree": "?? babyScholar-phase-0b2-hosting-changes.zip\n?? babyScholar-phase-0b2-hosting-changes/\n?? docs/hw2/report.zip\n?? docs/hw2/rounds/round-4/instructions.md\n?? docs/hw2/rounds/round-4/prior-delivery-verification.json\n?? docs/hw2/rounds/round-4/prior-pdf-verification.json\n?? docs/hw2/rounds/round-4/prior-report.md\n?? docs/hw2/rounds/round-4/prior-report.pdf\n?? docs/hw2/rounds/round-4/session.json\n?? docs/hw2/rounds/round-4/user-request.txt\n?? tests/baseline/document-generation.test.ts\n?? tests/baseline/helpers/sqlite-d1.ts\n?? tests/baseline/openai-probe.test.ts\n?? tests/baseline/provider-adapters.test.ts",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-08T23-42-04.443Z-r4-orchestration-first",
+  "exitCode": 1,
+  "signal": null,
+  "finishedAt": "2026-11-08T23:42:10.905Z"
+}

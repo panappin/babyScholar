@@ -1,0 +1,186 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-45-35.339Z-provider-utf8/corrected-mutant
+
+ ❯ tests/baseline/provider-adapters.test.ts (98 tests | 4 failed) 91ms
+   ✓ metadata provider boundary (29)
+     ✓ returns validated transport output and sends explicit non-stored source context 22ms
+     ✓ accepts REST output content and skips irrelevant non-text parts 1ms
+     ✓ rejects blank configuration without contacting the provider 1ms
+     ✓ uses a sentinel credential for allowed loopback URL http://127.0.0.1:1234/responses 1ms
+     ✓ uses a sentinel credential for allowed loopback URL http://localhost:1234/responses 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://[::1]:1234/responses 0ms
+     ✓ does not forward credentials to an invalid local override https://localhost:1234/responses 0ms
+     ✓ does not forward credentials to an invalid local override http://localhost.attacker.invalid/responses 0ms
+     ✓ does not forward credentials to an invalid local override not a URL 0ms
+     ✓ classifies HTTP 401 without retrying or leaking provider data 1ms
+     ✓ classifies HTTP 429 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 403 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 403 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 400 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 404 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 503 without retrying or leaking provider data 1ms
+     ✓ rejects unusable success envelope 0 with a classified error 0ms
+     ✓ rejects unusable success envelope 1 with a classified error 0ms
+     ✓ rejects unusable success envelope 2 with a classified error 0ms
+     ✓ rejects unusable success envelope 3 with a classified error 0ms
+     ✓ rejects unusable success envelope 4 with a classified error 0ms
+     ✓ classifies missing or non-JSON body 0 0ms
+     ✓ classifies missing or non-JSON body 1 0ms
+     ✓ reads a multibyte code point split across streamed chunks without corruption 1ms
+     ✓ accepts exactly the byte limit, including multibyte text and JSON whitespace 1ms
+     ✓ rejects one excess byte despite a dishonest Content-Length, cancels and releases the reader 1ms
+     ✓ sanitizes a transport rejection and clears its timer 0ms
+     ✓ aborts a stalled headers stage and releases resources 1ms
+     ✓ aborts a stalled body stage and releases resources 1ms
+   ✓ summary provider boundary (29)
+     ✓ returns validated transport output and sends explicit non-stored source context 1ms
+     ✓ accepts REST output content and skips irrelevant non-text parts 1ms
+     ✓ rejects blank configuration without contacting the provider 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://127.0.0.1:1234/responses 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://localhost:1234/responses 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://[::1]:1234/responses 0ms
+     ✓ does not forward credentials to an invalid local override https://localhost:1234/responses 0ms
+     ✓ does not forward credentials to an invalid local override http://localhost.attacker.invalid/responses 0ms
+     ✓ does not forward credentials to an invalid local override not a URL 0ms
+     ✓ classifies HTTP 401 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 429 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 403 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 403 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 400 without retrying or leaking provider data 1ms
+     ✓ classifies HTTP 404 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 503 without retrying or leaking provider data 0ms
+     ✓ rejects unusable success envelope 0 with a classified error 0ms
+     ✓ rejects unusable success envelope 1 with a classified error 0ms
+     ✓ rejects unusable success envelope 2 with a classified error 0ms
+     ✓ rejects unusable success envelope 3 with a classified error 0ms
+     ✓ rejects unusable success envelope 4 with a classified error 0ms
+     ✓ classifies missing or non-JSON body 0 0ms
+     ✓ classifies missing or non-JSON body 1 0ms
+     ✓ reads a multibyte code point split across streamed chunks without corruption 0ms
+     ✓ accepts exactly the byte limit, including multibyte text and JSON whitespace 1ms
+     ✓ rejects one excess byte despite a dishonest Content-Length, cancels and releases the reader 1ms
+     ✓ sanitizes a transport rejection and clears its timer 0ms
+     ✓ aborts a stalled headers stage and releases resources 3ms
+     ✓ aborts a stalled body stage and releases resources 0ms
+   ✓ question provider boundary (29)
+     ✓ returns validated transport output and sends explicit non-stored source context 1ms
+     ✓ accepts REST output content and skips irrelevant non-text parts 0ms
+     ✓ rejects blank configuration without contacting the provider 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://127.0.0.1:1234/responses 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://localhost:1234/responses 0ms
+     ✓ uses a sentinel credential for allowed loopback URL http://[::1]:1234/responses 0ms
+     ✓ does not forward credentials to an invalid local override https://localhost:1234/responses 0ms
+     ✓ does not forward credentials to an invalid local override http://localhost.attacker.invalid/responses 0ms
+     ✓ does not forward credentials to an invalid local override not a URL 0ms
+     ✓ classifies HTTP 401 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 429 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 403 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 403 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 400 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 404 without retrying or leaking provider data 0ms
+     ✓ classifies HTTP 503 without retrying or leaking provider data 0ms
+     ✓ rejects unusable success envelope 0 with a classified error 0ms
+     ✓ rejects unusable success envelope 1 with a classified error 0ms
+     ✓ rejects unusable success envelope 2 with a classified error 0ms
+     ✓ rejects unusable success envelope 3 with a classified error 0ms
+     ✓ rejects unusable success envelope 4 with a classified error 0ms
+     ✓ classifies missing or non-JSON body 0 0ms
+     ✓ classifies missing or non-JSON body 1 0ms
+     ✓ reads a multibyte code point split across streamed chunks without corruption 0ms
+     ✓ accepts exactly the byte limit, including multibyte text and JSON whitespace 1ms
+     ✓ rejects one excess byte despite a dishonest Content-Length, cancels and releases the reader 2ms
+     ✓ sanitizes a transport rejection and clears its timer 2ms
+     ✓ aborts a stalled headers stage and releases resources 2ms
+     ✓ aborts a stalled body stage and releases resources 2ms
+   ❯ provider-specific contracts (11)
+     ✓ metadata rejects malformed inner JSON even when the HTTP envelope is valid 2ms
+     ✓ question prompts describe only available truncated page ranges 2ms
+     × question rejects invalid UTF-8 leading byte inside otherwise valid JSON and logs only its stage 10ms
+     × question rejects invalid UTF-8 continuation inside otherwise valid JSON and logs only its stage 2ms
+     × question rejects invalid UTF-8 surrogate inside otherwise valid JSON and logs only its stage 1ms
+     × question rejects invalid UTF-8 truncated code point inside otherwise valid JSON and logs only its stage 1ms
+     ✓ question accepts a correctly encoded replacement character as actual text 1ms
+     ✓ question rejects invalid REST envelope 0 with a safe stage diagnostic 1ms
+     ✓ question rejects invalid REST envelope 1 with a safe stage diagnostic 0ms
+     ✓ question rejects invalid REST envelope 2 with a safe stage diagnostic 0ms
+     ✓ question rejects invalid REST envelope 3 with a safe stage diagnostic 0ms
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 94 passed (98)
+   Start at  18:45:38
+   Duration  340ms (tests 48%, transform 39%, import 10%, worker 2%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-45-35.339Z-provider-utf8/corrected-mutant.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/provider-adapters.test.ts > provider-specific contracts > question rejects invalid UTF-8 leading byte inside otherwise valid JSON and logs only its stage
+ FAIL  tests/baseline/provider-adapters.test.ts > provider-specific contracts > question rejects invalid UTF-8 truncated code point inside otherwise valid JSON and logs only its stage
+AssertionError: promise resolved "{ model: 'gpt-6-luna', …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "model": "gpt-6-luna",
++   "output": "before � after",
+  }
+
+ ❯ tests/baseline/provider-adapters.test.ts:218:98
+    216|       expect(JSON.parse(lossy)).toMatchObject({ status: 'completed', o…
+    217|       const { response, body } = streamResponse(chunks);
+    218|       await expect(requestDocumentQuestion(env, 'private question', so…
+       |                                                                                                  ^
+    219|         .rejects.toMatchObject({ kind: 'malformed_response', upstreamS…
+    220|       expect(console.warn).toHaveBeenCalledExactlyOnceWith(JSON.string…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/baseline/provider-adapters.test.ts > provider-specific contracts > question rejects invalid UTF-8 continuation inside otherwise valid JSON and logs only its stage
+AssertionError: promise resolved "{ model: 'gpt-6-luna', …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "model": "gpt-6-luna",
++   "output": "before �( after",
+  }
+
+ ❯ tests/baseline/provider-adapters.test.ts:218:98
+    216|       expect(JSON.parse(lossy)).toMatchObject({ status: 'completed', o…
+    217|       const { response, body } = streamResponse(chunks);
+    218|       await expect(requestDocumentQuestion(env, 'private question', so…
+       |                                                                                                  ^
+    219|         .rejects.toMatchObject({ kind: 'malformed_response', upstreamS…
+    220|       expect(console.warn).toHaveBeenCalledExactlyOnceWith(JSON.string…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/baseline/provider-adapters.test.ts > provider-specific contracts > question rejects invalid UTF-8 surrogate inside otherwise valid JSON and logs only its stage
+AssertionError: promise resolved "{ model: 'gpt-6-luna', …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "model": "gpt-6-luna",
++   "output": "before ��� after",
+  }
+
+ ❯ tests/baseline/provider-adapters.test.ts:218:98
+    216|       expect(JSON.parse(lossy)).toMatchObject({ status: 'completed', o…
+    217|       const { response, body } = streamResponse(chunks);
+    218|       await expect(requestDocumentQuestion(env, 'private question', so…
+       |                                                                                                  ^
+    219|         .rejects.toMatchObject({ kind: 'malformed_response', upstreamS…
+    220|       expect(console.warn).toHaveBeenCalledExactlyOnceWith(JSON.string…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+

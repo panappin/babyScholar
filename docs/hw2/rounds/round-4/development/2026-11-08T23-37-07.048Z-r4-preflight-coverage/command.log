@@ -1,0 +1,93 @@
+
+> ai-research-assistant@0.1.0 test:coverage
+> vitest run --coverage --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T23-37-07.048Z-r4-preflight-coverage\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+      Coverage enabled with v8
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 8659ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 699ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 514ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 594ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 586ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 391ms
+     ✓ requires deletion confirmation and keeps a record until a matching success response 372ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 7881ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 565ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 420ms
+     ✓ handles application failure with useful feedback and no fabricated result 350ms
+     ✓ handles malformed success with useful feedback and no fabricated result 363ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 340ms
+     ✓ handles network failure with useful feedback and no fabricated result 359ms
+     ✓ retains the authoritative duplicate record when saved and reopened 539ms
+     ✓ recognizes a previously saved base ID when search returns another version 301ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 496ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 485ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 505ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 501ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 480ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 399ms
+     ✓ does not let an older library read erase a successful save 500ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 571ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 45ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 98ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 19ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 15ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 273ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 23ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 6ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 26ms
+
+ Test Files  10 passed (10)
+      Tests  260 passed (260)
+   Start at  18:37:08
+   Duration  22.46s (tests 82%, environment 11%, import 5%, transform 2%, worker 1%)
+
+    Isolate  10 workers spawned · ~350ms startup each (spawn + environment, per file)
+             at least ~3.15s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T23-37-07.048Z-r4-preflight-coverage/test-results.json
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   53.09 |    51.44 |   57.11 |   55.64 |                   
+ src               |   84.47 |    78.97 |   80.35 |   92.96 |                   
+  App.tsx          |   89.27 |    81.16 |      90 |   98.23 | 117,129,284,298   
+  ...Workspace.tsx |   82.96 |    78.09 |   76.39 |   91.55 | ...1310,1312-1313 
+  main.tsx         |       0 |        0 |     100 |       0 | 6-12              
+  ...r-identity.ts |    87.5 |       90 |     100 |   92.85 | 22                
+ src/worker        |   36.17 |    30.76 |   40.32 |   36.62 |                   
+  ...v-identity.ts |   83.33 |    90.62 |     100 |   91.66 | 21,33             
+  arxiv.ts         |   93.95 |    89.69 |      90 |   96.72 | ...09,289-293,421 
+  ...t-metadata.ts |       0 |        0 |       0 |       0 | 38-285            
+  ...-questions.ts |       0 |        0 |       0 |       0 | 46-345            
+  ...nt-summary.ts |       0 |        0 |       0 |       0 | 47-319            
+  ...validation.ts |   97.75 |    94.23 |     100 |   98.66 | 141               
+  documents.ts     |       0 |        0 |       0 |       0 | 20-207            
+  extractions.ts   |       0 |        0 |       0 |       0 | 28-197            
+  ...n-recovery.ts |   95.65 |      100 |     100 |   94.44 | 39                
+  index.ts         |       0 |        0 |       0 |       0 | 12-117            
+  ...ion-errors.ts |   28.57 |        0 |   33.33 |   36.36 | 25-43             
+  ...validation.ts |   85.71 |    66.07 |     100 |   87.69 | ...37-39,44,54,63 
+  library.ts       |       0 |        0 |       0 |       0 | 19-88             
+  ...ata-openai.ts |       0 |        0 |       0 |       0 | 5-213             
+  ...validation.ts |   96.87 |    95.23 |     100 |     100 | 26,40             
+  openai.ts        |       0 |        0 |       0 |       0 | 4-124             
+  pdf-text.ts      |       0 |        0 |       0 |       0 | 5-114             
+  ...ion-openai.ts |       0 |        0 |       0 |       0 | 5-225             
+  ...on-request.ts |   98.27 |    93.93 |     100 |     100 | 62,93             
+  storage.ts       |       0 |        0 |       0 |       0 | 28-93             
+  ...ary-openai.ts |       0 |        0 |       0 |       0 | 5-185             
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 53.09% ( 1572/2961 )
+Branches     : 51.44% ( 1335/2595 )
+Functions    : 57.11% ( 305/534 )
+Lines        : 55.64% ( 1360/2444 )
+================================================================================

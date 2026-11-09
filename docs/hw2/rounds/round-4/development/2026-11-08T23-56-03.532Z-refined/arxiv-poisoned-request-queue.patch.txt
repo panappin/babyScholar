@@ -1,0 +1,3 @@
+src/worker/arxiv.ts
+- requestQueue = scheduled.then(() => undefined, () => undefined);
++ requestQueue = scheduled.then(() => undefined);

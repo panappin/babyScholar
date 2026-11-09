@@ -1,0 +1,3 @@
+src/DocumentWorkspace.tsx
+- if (!mounted.current || controller.signal.aborted || revision !== detailRevision.current) return results;
++ // Seed: omit the completed detail response ownership check.

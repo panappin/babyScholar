@@ -1,0 +1,107 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/openai-probe.test.ts --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T23-38-14.457Z-r4-probe-before\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ❯ tests/baseline/openai-probe.test.ts (24 tests | 3 failed) 39ms
+   ❯ OpenAI connectivity probe contracts (24)
+     ✓ rejects missing configuration before fetch (undefined) 4ms
+     ✓ rejects missing configuration before fetch () 0ms
+     ✓ rejects missing configuration before fetch (   ) 0ms
+     ✓ makes one non-stored request and returns trimmed direct text 14ms
+     ✓ joins usable REST text parts and keeps custom model parameters portable 1ms
+     ✓ classifies HTTP 401 safely without retry 1ms
+     ✓ classifies HTTP 429 safely without retry 0ms
+     ✓ classifies HTTP 403 safely without retry 0ms
+     ✓ classifies HTTP 403 safely without retry 1ms
+     ✓ classifies HTTP 400 safely without retry 1ms
+     ✓ classifies HTTP 404 safely without retry 0ms
+     ✓ classifies HTTP 500 safely without retry 0ms
+     × rejects unusable successful payload 0 as a classified error 7ms
+     ✓ rejects unusable successful payload 1 as a classified error 0ms
+     ✓ rejects unusable successful payload 2 as a classified error 0ms
+     ✓ rejects unusable successful payload 3 as a classified error 0ms
+     ✓ rejects unusable successful payload 4 as a classified error 0ms
+     ✓ rejects unusable successful payload 5 as a classified error 0ms
+     ✓ rejects unusable successful payload 6 as a classified error 0ms
+     × propagates null JSON to the caller as malformed response, not network failure 1ms
+     ✓ classifies invalid JSON without exposing its contents 0ms
+     ✓ classifies transport failures and clears the deadline 0ms
+     ✓ aborts a request that stalls before response headers 2ms
+     × keeps the deadline active while consuming a stalled response body 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/openai-probe.test.ts > OpenAI connectivity probe contracts > rejects unusable successful payload 0 as a classified error
+AssertionError: expected TypeError: Cannot read properties of null… to match object { name: 'IntegrationError', …(1) }
+
+- Expected
++ Received
+
+- {
+-   "kind": "malformed_response",
+-   "name": "IntegrationError",
++ TypeError {
++   "message": "Cannot read properties of null (reading 'status')",
+  }
+
+ ❯ tests/baseline/openai-probe.test.ts:62:70
+     60|     { status: 'completed', output: [{ content: [{ type: 'refusal', ref…
+     61|     { status: 'completed', output_text: ' ' }])('rejects unusable succ…
+     62|     await expect(probeOpenAi(env, async () => Response.json(payload)))
+       |                                                                      ^
+     63|       .rejects.toMatchObject({ name: 'IntegrationError', kind: 'malfor…
+     64|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/baseline/openai-probe.test.ts > OpenAI connectivity probe contracts > propagates null JSON to the caller as malformed response, not network failure
+AssertionError: expected { kind: 'network_failure', …(1) } to match object { kind: 'malformed_response' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "kind": "malformed_response",
++   "kind": "network_failure",
+  }
+
+ ❯ tests/baseline/openai-probe.test.ts:68:20
+     66|   it('propagates null JSON to the caller as malformed response, not ne…
+     67|     const result = await probeOpenAi(env, async () => Response.json(nu…
+     68|     expect(result).toMatchObject({ kind: 'malformed_response' });
+       |                    ^
+     69|   });
+     70|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/baseline/openai-probe.test.ts > OpenAI connectivity probe contracts > keeps the deadline active while consuming a stalled response body
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/baseline/openai-probe.test.ts:106:30
+    104|     try {
+    105|       await vi.advanceTimersByTimeAsync(20);
+    106|       expect(signal.aborted).toBe(true);
+       |                              ^
+    107|       const result = await outcome;
+    108|       expect(result).toMatchObject({ error: { name: 'IntegrationError'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 21 passed (24)
+   Start at  18:38:15
+   Duration  254ms (transform 40%, tests 39%, import 15%, worker 5%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T23-38-14.457Z-r4-probe-before/test-results.json

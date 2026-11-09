@@ -1,0 +1,308 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/generation-retries-network-failure
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 7710ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 574ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 492ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 567ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 586ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 304ms
+ ❯ tests/baseline/document-generation.test.ts (80 tests | 16 failed) 462ms
+   ❯ metadata generation orchestration with SQLite storage (25)
+     ✓ rejects invalid-id before provider work 24ms
+     ✓ rejects missing-storage before provider work 6ms
+     ✓ rejects missing-document before provider work 5ms
+     ✓ rejects missing-extraction before provider work 5ms
+     ✓ rejects deleting-document before provider work 5ms
+     ✓ GET reports absence without implicitly generating 5ms
+     ✓ rejects unsupported methods with Allow and no generation 4ms
+     ✓ fails missing configuration before taking a generation claim 4ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 12ms
+     × maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 8ms
+     × maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 6ms
+     × maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 7ms
+     × maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 5ms
+     × maps provider completion failure 0 without retrying 6ms
+     × maps provider completion failure 1 without retrying 5ms
+     × maps transport failure and leaves source data available for explicit retry 5ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 5ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 7ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 7ms
+     ✓ does not persist or delete a replacement owner after losing its lease 6ms
+     ✓ checks ownership before dispatch and preserves a replacement claim 5ms
+     × preserves the provider failure classification if best-effort claim cleanup also fails 6ms
+     ✓ rejects corrupt saved JSON safely instead of calling the provider during a read 5ms
+     ✓ does not persist when deletion begins during generation 5ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 4ms
+   ❯ summary generation orchestration with SQLite storage (25)
+     ✓ rejects invalid-id before provider work 5ms
+     ✓ rejects missing-storage before provider work 8ms
+     ✓ rejects missing-document before provider work 4ms
+     ✓ rejects missing-extraction before provider work 3ms
+     ✓ rejects deleting-document before provider work 6ms
+     ✓ GET reports absence without implicitly generating 4ms
+     ✓ rejects unsupported methods with Allow and no generation 4ms
+     ✓ fails missing configuration before taking a generation claim 11ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 7ms
+     × maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 5ms
+     × maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 4ms
+     × maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 6ms
+     × maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 5ms
+     × maps provider completion failure 0 without retrying 4ms
+     × maps provider completion failure 1 without retrying 4ms
+     × maps transport failure and leaves source data available for explicit retry 4ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 4ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 5ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 5ms
+     ✓ does not persist or delete a replacement owner after losing its lease 4ms
+     ✓ checks ownership before dispatch and preserves a replacement claim 5ms
+     × preserves the provider failure classification if best-effort claim cleanup also fails 5ms
+     ✓ rejects corrupt saved JSON safely instead of calling the provider during a read 4ms
+     ✓ does not persist when deletion begins during generation 4ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 5ms
+   ✓ question generation orchestration with SQLite storage (25)
+     ✓ rejects invalid-id before provider work 4ms
+     ✓ rejects missing-storage before provider work 4ms
+     ✓ rejects missing-document before provider work 4ms
+     ✓ rejects missing-extraction before provider work 4ms
+     ✓ rejects deleting-document before provider work 5ms
+     ✓ GET reports absence without implicitly generating 4ms
+     ✓ rejects unsupported methods with Allow and no generation 5ms
+     ✓ fails missing configuration before taking a generation claim 7ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 7ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 5ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 4ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 5ms
+     ✓ maps provider completion failure 0 without retrying 5ms
+     ✓ maps provider completion failure 1 without retrying 4ms
+     ✓ maps transport failure and leaves source data available for explicit retry 5ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 5ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 5ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 6ms
+     ✓ does not persist or delete a replacement owner after losing its lease 5ms
+     ✓ checks ownership before dispatch and preserves a replacement claim 5ms
+     ✓ preserves the provider failure classification if best-effort claim cleanup also fails 4ms
+     ✓ rejects corrupt saved JSON safely instead of calling the provider during a read 4ms
+     ✓ does not persist when deletion begins during generation 4ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 6ms
+   ✓ metadata corrective generation (2)
+     ✓ corrects one invalid result under the same claim, then persists only the valid output 11ms
+     ✓ rejects a nonempty POST body before claiming or calling the provider 9ms
+   ✓ summary corrective generation (2)
+     ✓ corrects one invalid result under the same claim, then persists only the valid output 10ms
+     ✓ rejects a nonempty POST body before claiming or calling the provider 7ms
+   ✓ question cache identity (1)
+     ✓ normalizes whitespace and invalidates cache when extraction provenance changes 8ms
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 81ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 7447ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 496ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 399ms
+     ✓ handles application failure with useful feedback and no fabricated result 321ms
+     ✓ handles malformed success with useful feedback and no fabricated result 349ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 326ms
+     ✓ handles network failure with useful feedback and no fabricated result 325ms
+     ✓ retains the authoritative duplicate record when saved and reopened 487ms
+     ✓ recognizes a previously saved base ID when search returns another version 333ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 490ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 460ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 466ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 480ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 453ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 393ms
+     ✓ does not let an older library read erase a successful save 469ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 586ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 43ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 102ms
+ ❯ tests/baseline/generation-recovery.test.ts (27 tests | 13 failed) 28ms
+   ❯ generation recovery and ownership (round 2) (27)
+     ✓ validates one successful response and supplies the default 25-second budget 5ms
+     ✓ corrects one invalid metadata output within the same budget 2ms
+     ✓ corrects one invalid summary output within the same budget 1ms
+     ✓ corrects one invalid question output within the same budget 1ms
+     ✓ corrects malformed successful provider data (status undefined) 1ms
+     ✓ corrects malformed successful provider data (status 200) 0ms
+     × never retries authentication 4ms
+     × never retries quota_or_rate_limit 1ms
+     × never retries model_access 1ms
+     × never retries network_failure 1ms
+     × never retries timeout 1ms
+     × never retries upstream_error 0ms
+     × never retries refusal 0ms
+     × never retries incomplete_response 0ms
+     × never retries missing_configuration 1ms
+     × does not retry malformed upstream HTTP failures (400) 2ms
+     × does not retry malformed upstream HTTP failures (503) 1ms
+     × does not misclassify an unrelated error as a summary correction 1ms
+     × does not misclassify an unrelated error as a summary correction 0ms
+     ✓ stops after two invalid metadata attempts without echoing provider content 1ms
+     ✓ stops after two invalid summary attempts without echoing provider content 0ms
+     ✓ stops after two invalid question attempts without echoing provider content 0ms
+     ✓ does not request generation if ownership is already lost 1ms
+     ✓ rechecks ownership before the corrective attempt 0ms
+     ✓ includes ownership-check time in the overall budget 0ms
+     ✓ rejects a valid response arriving at the deadline 0ms
+     ✓ does not grant a fresh budget after a recoverable failure uses the deadline 0ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 9ms
+ ✓ tests/baseline/openai-probe.test.ts (24 tests) 35ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 210ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 27ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 4ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 23ms
+
+ Test Files  2 failed | 11 passed (13)
+      Tests  29 failed | 433 passed (462)
+   Start at  18:54:15
+   Duration  21.85s (tests 80%, environment 12%, import 5%, transform 2%)
+
+    Isolate  13 workers spawned · ~301ms startup each (spawn + environment, per file)
+             at least ~3.61s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/generation-retries-network-failure.tests.json
+(node:120532) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 29 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps upstream HTTP 401 to caller HTTP 502 and releases only its claim
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps upstream HTTP 429 to caller HTTP 429 and releases only its claim
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps upstream HTTP 403 to caller HTTP 502 and releases only its claim
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps upstream HTTP 503 to caller HTTP 502 and releases only its claim
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:130:23
+    128|       fetcher.mockImplementation(async () => Response.json({ error: { …
+    129|       await expectError(await invoke(stage), Number(status), `${stage.…
+    130|       expect(fetcher).toHaveBeenCalledOnce();
+       |                       ^
+    131|       expect(rows(stage.table)).toEqual([]);
+    132|       expect(rows(stage.claims)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/29]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps provider completion failure 0 without retrying
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps provider completion failure 1 without retrying
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:143:21
+    141|     fetcher.mockImplementation(async () => Response.json(payload));
+    142|     await expectError(await invoke(stage), Number(status), `${stage.na…
+    143|     expect(fetcher).toHaveBeenCalledOnce();
+       |                     ^
+    144|     expect(rows(stage.claims)).toEqual([]);
+    145|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/29]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > maps transport failure and leaves source data available for explicit retry
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:150:21
+    148|     fetcher.mockRejectedValue(new Error('PRIVATE_FIXTURE_DETAIL'));
+    149|     await expectError(await invoke(stage), 502, `${stage.name}_provide…
+    150|     expect(fetcher).toHaveBeenCalledOnce();
+       |                     ^
+    151|     expect(rows(stage.table)).toEqual([]);
+    152|     expect(rows(stage.claims)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/29]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > metadata generation orchestration with SQLite storage > preserves the provider failure classification if best-effort claim cleanup also fails
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > preserves the provider failure classification if best-effort claim cleanup also fails
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:226:21
+    224|     expect(rows(stage.table)).toEqual([]);
+    225|     expect(rows(stage.claims)).toHaveLength(1); // Lease expiry remain…
+    226|     expect(fetcher).toHaveBeenCalledOnce();
+       |                     ^
+    227|   });
+    228|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/29]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps upstream HTTP 401 to caller HTTP 502 and releases only its claim
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps upstream HTTP 429 to caller HTTP 429 and releases only its claim
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps upstream HTTP 403 to caller HTTP 502 and releases only its claim
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps upstream HTTP 503 to caller HTTP 502 and releases only its claim
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:130:23
+    128|       fetcher.mockImplementation(async () => Response.json({ error: { …
+    129|       await expectError(await invoke(stage), Number(status), `${stage.…
+    130|       expect(fetcher).toHaveBeenCalledOnce();
+       |                       ^
+    131|       expect(rows(stage.table)).toEqual([]);
+    132|       expect(rows(stage.claims)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/29]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps provider completion failure 0 without retrying
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps provider completion failure 1 without retrying
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:143:21
+    141|     fetcher.mockImplementation(async () => Response.json(payload));
+    142|     await expectError(await invoke(stage), Number(status), `${stage.na…
+    143|     expect(fetcher).toHaveBeenCalledOnce();
+       |                     ^
+    144|     expect(rows(stage.claims)).toEqual([]);
+    145|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/29]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > summary generation orchestration with SQLite storage > maps transport failure and leaves source data available for explicit retry
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/document-generation.test.ts:150:21
+    148|     fetcher.mockRejectedValue(new Error('PRIVATE_FIXTURE_DETAIL'));
+    149|     await expectError(await invoke(stage), 502, `${stage.name}_provide…
+    150|     expect(fetcher).toHaveBeenCalledOnce();
+       |                     ^
+    151|     expect(rows(stage.table)).toEqual([]);
+    152|     expect(rows(stage.claims)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/29]⎯
+
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries authentication
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries quota_or_rate_limit
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries model_access
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries network_failure
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries timeout
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries upstream_error
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries refusal
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries incomplete_response
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > never retries missing_configuration
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/generation-recovery.test.ts:64:21
+     62|     const validate = vi.fn();
+     63|     await expect(generateWithRecovery('question', request, validate, a…
+     64|     expect(request).toHaveBeenCalledOnce();
+       |                     ^
+     65|     expect(validate).not.toHaveBeenCalled();
+     66|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/29]⎯
+
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not retry malformed upstream HTTP failures (400)
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not retry malformed upstream HTTP failures (503)
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/generation-recovery.test.ts:72:21
+     70|     const request = vi.fn().mockRejectedValue(failure);
+     71|     await expect(generateWithRecovery('metadata', request, value => va…
+     72|     expect(request).toHaveBeenCalledOnce();
+       |                     ^
+     73|   });
+     74|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/29]⎯
+
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not misclassify an unrelated error as a summary correction
+ FAIL  tests/baseline/generation-recovery.test.ts > generation recovery and ownership (round 2) > does not misclassify an unrelated error as a summary correction
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ tests/baseline/generation-recovery.test.ts:79:21
+     77|     const request = vi.fn().mockRejectedValue(failure);
+     78|     await expect(generateWithRecovery('summary', request, value => val…
+     79|     expect(request).toHaveBeenCalledOnce();
+       |                     ^
+     80|   });
+     81|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/29]⎯
+

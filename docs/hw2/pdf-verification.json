@@ -1,47 +1,54 @@
 {
   "result": "passed",
   "pdf": "docs\\hw2\\report.pdf",
-  "sha256": "aad03fdd6baaa9a9f801be6bbab34b739139fbee336572e3c30b63d5a2f8b694",
+  "sha256": "1e389d0b8dc19bfe8a3a27d0d3a8f122cbbaf09a26d0a2c225beafdef3b5a6ea",
   "pages": [
     {
       "page": 1,
-      "characters": 2669,
+      "characters": 2634,
       "image": "page-01.png",
       "width": 594.9599609375,
       "height": 841.9199829101562
     },
     {
       "page": 2,
-      "characters": 3342,
+      "characters": 3470,
       "image": "page-02.png",
       "width": 594.9599609375,
       "height": 841.9199829101562
     },
     {
       "page": 3,
-      "characters": 3682,
+      "characters": 4305,
       "image": "page-03.png",
       "width": 594.9599609375,
       "height": 841.9199829101562
     },
     {
       "page": 4,
-      "characters": 3362,
+      "characters": 2183,
       "image": "page-04.png",
       "width": 594.9599609375,
       "height": 841.9199829101562
     },
     {
       "page": 5,
-      "characters": 2996,
+      "characters": 3517,
       "image": "page-05.png",
       "width": 594.9599609375,
       "height": 841.9199829101562
     },
     {
       "page": 6,
-      "characters": 1056,
+      "characters": 2806,
       "image": "page-06.png",
+      "width": 594.9599609375,
+      "height": 841.9199829101562
+    },
+    {
+      "page": 7,
+      "characters": 1119,
+      "image": "page-07.png",
       "width": 594.9599609375,
       "height": 841.9199829101562
     }
@@ -64,6 +71,10 @@
       "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/user-request.txt"
     },
     {
+      "page": 1,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/user-request.txt"
+    },
+    {
       "page": 2,
       "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/initial/assessment.md"
     },
@@ -76,59 +87,75 @@
       "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-2/instructions.md"
     },
     {
+      "page": 2,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/utf8-integrity.test.ts"
+    },
+    {
       "page": 3,
       "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/instructions.md"
     },
     {
       "page": 3,
-      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/development-notes.md"
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md"
+    },
+    {
+      "page": 3,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md"
+    },
+    {
+      "page": 3,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/development-notes.md"
     },
     {
       "page": 4,
-      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/workflow-per-file-comparison.csv"
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-per-file-comparison.csv"
     },
     {
       "page": 4,
-      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/workflow-per-file-comparison.csv"
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-comparison.json"
     },
     {
-      "page": 4,
-      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/workflow-comparison.json"
-    },
-    {
-      "page": 4,
+      "page": 5,
       "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/product-bug.md"
     },
     {
       "page": 5,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/probe-bugs.md"
+    },
+    {
+      "page": 6,
       "uri": "https://github.com/panappin/babyScholar"
     },
     {
-      "page": 5,
+      "page": 6,
       "uri": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline"
     },
     {
-      "page": 5,
+      "page": 6,
       "uri": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/tests/baseline"
     },
     {
-      "page": 5,
+      "page": 6,
       "uri": "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds"
     },
     {
-      "page": 5,
-      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/assessment.md"
+      "page": 6,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/assessment.md"
+    },
+    {
+      "page": 7,
+      "uri": "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/final-pdf-checklist.md"
     }
   ],
   "outsidePageWords": [],
   "pypdf": "6.7.3",
   "pymupdf": "2.1",
-  "note": "Text extraction, six rubric sections, portable hyperlinks, page bounds, source hash and all six rendered pages verified.",
+  "note": "Text extraction, six rubric sections, final metrics, 23 portable hyperlinks and page bounds passed; all seven rendered pages were visually inspected.",
   "editableSource": "docs/hw2/report.md",
-  "editableSourceSha256": "3bdcd0a2ed44b7b27ce49b44decf3eae632f10bf883c946025c93efa275326a0",
+  "editableSourceSha256": "02b26c538ece3b50b730a211fef595772c471a9e75e353d6245340d8f9749e9f",
   "render": {
-    "startedAt": "2026-11-08T23:00:44.944Z",
-    "finishedAt": "2026-11-08T23:00:45.835Z",
+    "startedAt": "2026-11-08T23:59:12.784Z",
+    "finishedAt": "2026-11-08T23:59:13.703Z",
     "input": "docs\\hw2\\report.md",
     "output": "docs\\hw2\\report.pdf",
     "browser": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -140,44 +167,50 @@
       "--disable-sync",
       "--no-first-run",
       "--no-default-browser-check",
-      "--user-data-dir=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-report\\2026-11-08T23-00-44.919Z\\browser-90aadb4a-e0a5-40c6-8bd3-c1d8e52f38c7",
+      "--user-data-dir=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-report\\2026-11-08T23-59-12.765Z\\browser-a193034c-24fe-470c-af2a-e0d7f99f2e20",
       "--no-pdf-header-footer",
       "--print-to-pdf=C:\\Users\\panap\\PycharmProjects\\babyScholar\\docs\\hw2\\report.pdf",
-      "file:///C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-report/2026-11-08T23-00-44.919Z/report.html"
+      "file:///C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-report/2026-11-08T23-59-12.765Z/report.html"
     ],
     "exitCode": 0,
-    "bytes": 150009,
+    "bytes": 169526,
     "links": [
       "https://github.com/panappin/babyScholar",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/initial-prompt.md",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/improvement-request.md",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/user-request.txt",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/user-request.txt",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/initial/assessment.md",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-1/instructions.md",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-2/instructions.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/tests/baseline/utf8-integrity.test.ts",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/instructions.md",
-      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/development-notes.md",
-      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/workflow-per-file-comparison.csv",
-      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/workflow-comparison.json",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/instructions.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/development-notes.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-per-file-comparison.csv",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/backend-comparison.json",
       "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/product-bug.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/probe-bugs.md",
       "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline",
       "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/tests/baseline",
       "https://github.com/panappin/babyScholar/tree/hw2/initial-baseline/docs/hw2/rounds",
-      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-3/assessment.md"
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/rounds/round-4/assessment.md",
+      "https://github.com/panappin/babyScholar/blob/hw2/initial-baseline/docs/hw2/final-pdf-checklist.md"
     ],
     "note": "Rendering succeeded; text, links and visual layout require verification."
   },
   "visualReview": {
     "reviewer": "coding agent",
-    "reviewedAt": "2026-11-08T23:03:10.714Z",
+    "reviewedAt": "2026-11-09T00:00:04.182245+00:00",
     "pages": [
       1,
       2,
       3,
       4,
       5,
-      6
+      6,
+      7
     ],
-    "notes": "Every rendered page inspected: legible tables, code and Unicode; no clipped text or overlaps; sequential page numbers. Tables stay intact across page breaks. Local link targets were checked by the renderer; branch publication is verified separately."
+    "notes": "All seven page PNGs visually inspected. Tables, code examples, Unicode and page numbers are legible; no overlap or clipping. Three tables and code blocks remain intact. Local link targets exist and PDF annotations use portable HTTPS URLs."
   }
 }

@@ -1,0 +1,3 @@
+src/worker/question-openai.ts
+- fatal: true, ignoreBOM: false
++ fatal: false, ignoreBOM: false

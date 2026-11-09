@@ -1,0 +1,29 @@
+
+> ai-research-assistant@0.1.0 test:providers:types
+> tsc --project tsconfig.provider-tests.json
+
+tests/baseline/document-generation.test.ts(106,12): error TS18046: 'created' is of type 'unknown'.
+tests/baseline/document-generation.test.ts(107,20): error TS18046: 'created' is of type 'unknown'.
+tests/baseline/helpers/sqlite-d1.ts(12,36): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(path: PathLike, options?: { encoding: BufferEncoding | null; withFileTypes?: false | undefined; recursive?: boolean | undefined; } | BufferEncoding | null | undefined): string[]', gave the following error.
+    Argument of type 'URL' is not assignable to parameter of type 'PathLike'.
+      Type 'URL' is not assignable to type 'import("url").URL'.
+        The types returned by 'searchParams.entries()' are incompatible between these types.
+          Type 'IterableIterator<[key: string, value: string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+  Overload 2 of 5, '(path: PathLike, options?: BufferEncoding | (ObjectEncodingOptions & { withFileTypes?: false | undefined; recursive?: boolean | undefined; }) | null | undefined): string[] | NonSharedBuffer[]', gave the following error.
+    Argument of type 'URL' is not assignable to parameter of type 'PathLike'.
+      Type 'URL' is not assignable to type 'import("url").URL'.
+        The types returned by 'searchParams.entries()' are incompatible between these types.
+          Type 'IterableIterator<[key: string, value: string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+tests/baseline/helpers/sqlite-d1.ts(13,24): error TS2345: Argument of type 'Buffer<ArrayBufferLike>' is not assignable to parameter of type 'string'.
+tests/baseline/helpers/sqlite-d1.ts(13,37): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type 'URL' is not assignable to parameter of type 'PathOrFileDescriptor'.
+      Type 'URL' is not assignable to type 'import("url").URL'.
+        The types returned by 'searchParams.entries()' are incompatible between these types.
+          Type 'IterableIterator<[key: string, value: string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+tests/baseline/provider-adapters.test.ts(209,95): error TS2345: Argument of type '(insertion: number) => Promise<void>' is not assignable to parameter of type '(...args: [number] | [number, number] | [number, number, number]) => Awaitable<void>'.
+  Types of parameters 'insertion' and 'args' are incompatible.
+    Type '[number] | [number, number] | [number, number, number]' is not assignable to type '[insertion: number]'.
+      Type '[number, number]' is not assignable to type '[insertion: number]'.
+        Source has 2 element(s) but target allows only 1.

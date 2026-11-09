@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.worker.json",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "types": ["node"],
+    "rootDir": ".",
+    "noEmit": true
+  },
+  "include": [
+    "tests/baseline/openai-probe.test.ts",
+    "tests/baseline/provider-adapters.test.ts",
+    "tests/baseline/document-generation.test.ts",
+    "tests/baseline/helpers/sqlite-d1.ts",
+    "worker-configuration.d.ts"
+  ]
+}

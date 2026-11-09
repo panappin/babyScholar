@@ -1,0 +1,108 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/upload-rejects-exact-limit
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 7425ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 621ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 475ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 568ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 559ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ prepares a PDF with a safe filename and revokes its link on selection change and unmount 304ms
+ ✓ tests/baseline/document-generation.test.ts (80 tests) 428ms
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 80ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 7322ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 513ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 424ms
+     ✓ handles malformed success with useful feedback and no fabricated result 345ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 341ms
+     ✓ handles network failure with useful feedback and no fabricated result 312ms
+     ✓ retains the authoritative duplicate record when saved and reopened 467ms
+     ✓ recognizes a previously saved base ID when search returns another version 312ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 456ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 466ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 466ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 481ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 409ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 391ms
+     ✓ does not let an older library read erase a successful save 449ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 586ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 40ms
+ ❯ tests/baseline/request-streams.test.ts (34 tests | 1 failed) 64ms
+   ✓ library request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 17ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 6ms
+     ✓ maps a broken transport to invalid_request and releases the reader 1ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 3ms
+   ✓ question request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 1ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 0ms
+     ✓ maps a broken transport to invalid_request and releases the reader 0ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 2ms
+   ✓ upload request stream (round 1) (4)
+     ✓ requires an uncompressed body of the supported media type 1ms
+     ✓ measures actual bytes despite a dishonest Content-Length and cancels overflow 0ms
+     ✓ maps a broken transport to invalid_request and releases the reader 0ms
+     ✓ expires at 10 seconds even when stream cancellation never settles 1ms
+   ✓ library JSON decoding (round 1) (5)
+     ✓ decodes multibyte code points split across single-byte chunks and clears the timer 1ms
+     ✓ accepts exactly the wrapper byte budget, independent of Content-Length 2ms
+     ✓ rejects invalid JSON with an explicit client error 0ms
+     ✓ rejects invalid UTF-8 with an explicit client error 0ms
+     ✓ rejects incomplete UTF-8 with an explicit client error 0ms
+   ✓ question JSON decoding (round 1) (5)
+     ✓ decodes multibyte code points split across single-byte chunks and clears the timer 1ms
+     ✓ accepts exactly the wrapper byte budget, independent of Content-Length 0ms
+     ✓ rejects invalid JSON with an explicit client error 0ms
+     ✓ rejects invalid UTF-8 with an explicit client error 0ms
+     ✓ rejects incomplete UTF-8 with an explicit client error 0ms
+   ❯ PDF multipart contract (round 1) (12)
+     ✓ retains original bytes and a known SHA-256; MIME and extension are not the oracle 4ms
+     ✓ rejects no file 0ms
+     ✓ rejects text field instead of a file 1ms
+     ✓ rejects duplicate files 1ms
+     ✓ rejects additional field 1ms
+     ✓ rejects empty file 1ms
+     ✓ rejects wrong signature with PDF MIME 1ms
+     ✓ rejects short signature 0ms
+     ✓ rejects 256 code point name 1ms
+     ✓ accepts 255 Unicode code points, rather than counting UTF-16 units 1ms
+     × accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body 15ms
+     ✓ rejects an unparseable multipart envelope 0ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 15ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 10ms
+ ✓ tests/baseline/openai-probe.test.ts (24 tests) 32ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 202ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 22ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 4ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 25ms
+
+ Test Files  1 failed | 12 passed (13)
+      Tests  1 failed | 461 passed (462)
+   Start at  18:53:32
+   Duration  20.92s (tests 81%, environment 11%, import 5%, transform 2%)
+
+    Isolate  13 workers spawned · ~278ms startup each (spawn + environment, per file)
+             at least ~3.33s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-fault-probes/round-4-2026-11-08T23-53-09.593Z/upload-rejects-exact-limit.tests.json
+(node:113488) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/request-streams.test.ts > PDF multipart contract (round 1) > accepts an exact 10 MiB file and rejects one extra byte inside a valid multipart body
+DocumentError: The PDF file must not exceed 10485760 bytes.
+ ❯ tooLarge src/worker/document-validation.ts:29:9
+     27|
+     28| function tooLarge(message: string): never {
+     29|   throw new DocumentError("body_too_large", 413, message);
+       |         ^
+     30| }
+     31|
+ ❯ readUploadedDocument src/worker/document-validation.ts:134:5
+ ❯ tests/baseline/request-streams.test.ts:146:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

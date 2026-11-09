@@ -1,0 +1,3 @@
+src/worker/document-validation.ts
+- if (file.size > DOCUMENT_FILE_BYTES)
++ if (file.size >= DOCUMENT_FILE_BYTES)

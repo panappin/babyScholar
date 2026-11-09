@@ -1,0 +1,15 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/provider-adapters.test.ts --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T23-39-50.905Z-r4-provider-first\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 82ms
+
+ Test Files  1 passed (1)
+      Tests  98 passed (98)
+   Start at  18:39:51
+   Duration  313ms (tests 45%, transform 38%, import 13%, worker 3%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T23-39-50.905Z-r4-provider-first/test-results.json

@@ -1,0 +1,102 @@
+{
+  "startedAt": "2026-11-08T23:45:35.341Z",
+  "scope": "One selected artificial lossy-decoding fault, before/after correcting the four provider UTF-8 fixtures. Not an existing defect or broad mutation score.",
+  "mutation": {
+    "file": "src/worker/question-openai.ts",
+    "before": "fatal: true, ignoreBOM: false",
+    "after": "fatal: false, ignoreBOM: false"
+  },
+  "sourceHash": "59ee4aa6d109fed0bf5421e77375e752da8cf82541ec1efc7d7fdf7dd1550fd5",
+  "runs": [
+    {
+      "name": "first-control",
+      "testSource": "docs/hw2/rounds/round-4/development/2026-11-08T23-39-50.905Z-r4-provider-first/snapshot/tests/baseline/provider-adapters.test.ts",
+      "testSha256": "4629deb57e510d13c32ea0a082ee54d437e1e104bb1f2909e93d5aab3ec19c3c",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\first-control",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\first-control\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\first-control.tests.json"
+      ],
+      "outcome": "passed",
+      "tests": 98,
+      "failedTests": 0,
+      "failedAssertions": []
+    },
+    {
+      "name": "first-mutant",
+      "testSource": "docs/hw2/rounds/round-4/development/2026-11-08T23-39-50.905Z-r4-provider-first/snapshot/tests/baseline/provider-adapters.test.ts",
+      "testSha256": "4629deb57e510d13c32ea0a082ee54d437e1e104bb1f2909e93d5aab3ec19c3c",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\first-mutant",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\first-mutant\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\first-mutant.tests.json"
+      ],
+      "outcome": "survived",
+      "tests": 98,
+      "failedTests": 0,
+      "failedAssertions": []
+    },
+    {
+      "name": "corrected-control",
+      "testSource": "tests/baseline/provider-adapters.test.ts",
+      "testSha256": "ce5315eb2764992397efbbe520daeaeb13413dd6f26a0a501fc2d5b8d32f7c21",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\corrected-control",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\corrected-control\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\corrected-control.tests.json"
+      ],
+      "outcome": "passed",
+      "tests": 98,
+      "failedTests": 0,
+      "failedAssertions": []
+    },
+    {
+      "name": "corrected-mutant",
+      "testSource": "tests/baseline/provider-adapters.test.ts",
+      "testSha256": "ce5315eb2764992397efbbe520daeaeb13413dd6f26a0a501fc2d5b8d32f7c21",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--root",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\corrected-mutant",
+        "--config",
+        "C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\corrected-mutant\\vitest.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-workflow-faults\\2026-11-08T23-45-35.339Z-provider-utf8\\corrected-mutant.tests.json"
+      ],
+      "outcome": "detected",
+      "tests": 98,
+      "failedTests": 4,
+      "failedAssertions": [
+        "provider-specific contracts question rejects invalid UTF-8 leading byte inside otherwise valid JSON and logs only its stage",
+        "provider-specific contracts question rejects invalid UTF-8 continuation inside otherwise valid JSON and logs only its stage",
+        "provider-specific contracts question rejects invalid UTF-8 surrogate inside otherwise valid JSON and logs only its stage",
+        "provider-specific contracts question rejects invalid UTF-8 truncated code point inside otherwise valid JSON and logs only its stage"
+      ]
+    }
+  ],
+  "finishedAt": "2026-11-08T23:45:38.524Z"
+}

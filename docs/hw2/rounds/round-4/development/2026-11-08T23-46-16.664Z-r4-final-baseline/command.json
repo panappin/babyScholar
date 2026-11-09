@@ -1,0 +1,23 @@
+{
+  "label": "r4-final-baseline",
+  "startedAt": "2026-11-08T23:46:16.776Z",
+  "timeoutMs": 720000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "baseline"
+  ],
+  "baseCommit": "89afbd3715867b2b2a875d23e78202a9793462dc",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "a4debbe9bb7d35edf18fae6cb2864bd42d60cd39",
+  "workingTree": "?? babyScholar-phase-0b2-hosting-changes.zip\n?? babyScholar-phase-0b2-hosting-changes/\n?? docs/hw2/report.zip\n?? docs/hw2/rounds/round-4/development-notes.md\n?? docs/hw2/rounds/round-4/development/\n?? docs/hw2/rounds/round-4/instructions.md\n?? docs/hw2/rounds/round-4/prior-delivery-verification.json\n?? docs/hw2/rounds/round-4/prior-pdf-verification.json\n?? docs/hw2/rounds/round-4/prior-report.md\n?? docs/hw2/rounds/round-4/prior-report.pdf\n?? docs/hw2/rounds/round-4/session.json\n?? docs/hw2/rounds/round-4/user-request.txt",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-08T23-46-16.664Z-r4-final-baseline",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-11-08T23:52:22.695Z"
+}

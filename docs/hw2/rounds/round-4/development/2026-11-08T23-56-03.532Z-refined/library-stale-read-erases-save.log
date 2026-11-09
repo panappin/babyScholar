@@ -1,0 +1,590 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-56-03.532Z-refined/library-stale-read-erases-save
+
+ ❯ tests/baseline/app-workflows.test.tsx (22 tests | 1 failed) 7433ms
+   ❯ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 560ms
+     ✓ rejects invalid input "" without a search request 80ms
+     ✓ rejects invalid input "?!" without a search request 139ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 371ms
+     ✓ handles application failure with useful feedback and no fabricated result 350ms
+     ✓ handles malformed success with useful feedback and no fabricated result 325ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 343ms
+     ✓ handles network failure with useful feedback and no fabricated result 342ms
+     ✓ prevents duplicate searches while pending and releases the control after the real timeout 39ms
+     ✓ retains the authoritative duplicate record when saved and reopened 507ms
+     ✓ recognizes a previously saved base ID when search returns another version 331ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 454ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 448ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 483ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 448ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 425ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 374ms
+     × does not let an older library read erase a successful save 472ms
+     ✓ retains saved records when a library reload returns malformed 137ms
+     ✓ retains saved records when a library reload returns application error 137ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 598ms
+     ✓ opens PDFs through the actual tab and uses GET only on selection of the view 69ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 21 passed (22)
+   Start at  18:56:28
+   Duration  9.24s (tests 82%, environment 12%, import 4%, transform 2%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-56-03.532Z-refined/library-stale-read-erases-save.tests.json
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/app-workflows.test.tsx > Search and library observable workflows > does not let an older library read erase a successful save
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Saved"
+
+Here are the accessible roles:
+
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"app-shell"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "AI Research Assistant":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"app-title"[39m
+    [33mclass[39m=[32m"welcome"[39m
+  [36m/>[39m
+
+  Name "1 paper for “graph learning”":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"search-results-title"[39m
+    [33mclass[39m=[32m"results-panel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"search-help"[39m
+    [33mid[39m=[32m"paper-search-help"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"provider"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"results-note"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "AI Research Assistant":
+  [36m<h1[39m
+    [33mid[39m=[32m"app-title"[39m
+  [36m/>[39m
+
+  Name "Search research papers":
+  [36m<h2[39m
+    [33mid[39m=[32m"paper-search-title"[39m
+  [36m/>[39m
+
+  Name "1 paper for “graph learning”":
+  [36m<h2[39m
+    [33mid[39m=[32m"search-results-title"[39m
+  [36m/>[39m
+
+  Name "Learning from graphs":
+  [36m<h3 />[39m
+
+  Name "Abstract":
+  [36m<h4 />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33maria-live[39m=[32m"polite"[39m
+    [33mclass[39m=[32m"statuses"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "Research workspace views":
+  [36m<div[39m
+    [33maria-label[39m=[32m"Research workspace views"[39m
+    [33mclass[39m=[32m"workspace-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "Search":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"search-view"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"search-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Library":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"library-view"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"library-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "PDFs":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"pdfs-view"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"pdfs-tab"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "Search Search research papers":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"search-tab paper-search-title"[39m
+    [33mclass[39m=[32m"search-panel"[39m
+    [33mid[39m=[32m"search-view"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "Research topic or keywords":
+  [36m<input[39m
+    [33maria-describedby[39m=[32m"paper-search-help"[39m
+    [33mautocomplete[39m=[32m"off"[39m
+    [33mid[39m=[32m"paper-search-query"[39m
+    [33mmaxlength[39m=[32m"200"[39m
+    [33mname[39m=[32m"q"[39m
+    [33mplaceholder[39m=[32m"e.g. graph neural networks"[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m"graph learning"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Search":
+  [36m<button[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  Name "Save to library":
+  [36m<button[39m
+    [33mclass[39m=[32m"save-button"[39m
+    [33mdata-save-paper[39m=[32m"2401.01234v3"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"paper-list"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------
+  article:
+
+  Name "":
+  [36m<article[39m
+    [33mclass[39m=[32m"paper-card"[39m
+    [33mdata-paper-identity[39m=[32m"arxiv:2401.01234"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+  code:
+
+  Name "":
+  [36m<code />[39m
+
+  --------------------------------------------------
+  link:
+
+  Name "View paper on arXiv (opens in a new tab)":
+  [36m<a[39m
+    [33mclass[39m=[32m"paper-link"[39m
+    [33mhref[39m=[32m"https://arxiv.org/abs/2401.01234v3"[39m
+    [33mrel[39m=[32m"noopener noreferrer"[39m
+    [33mtarget[39m=[32m"_blank"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"app-content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"app-title"[39m
+          [33mclass[39m=[32m"welcome"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mResearch workspace[0m
+          [36m</p>[39m
+          [36m<h1[39m
+            [33mid[39m=[32m"app-title"[39m
+          [36m>[39m
+            [0mAI Research Assistant[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33maria-live[39m=[32m"polite"[39m
+            [33mclass[39m=[32m"statuses"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--connected"[39m
+              [36m/>[39m
+              [0mBackend connected[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--connected"[39m
+              [36m/>[39m
+              [0mD1[0m
+              [0m [0m
+              [0mconnected[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"status"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"status-dot status-dot--connected"[39m
+              [36m/>[39m
+              [0mR2[0m
+              [0m [0m
+              [0mconnected[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Research workspace views"[39m
+          [33mclass[39m=[32m"workspace-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"search-view"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"search-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mSearch[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"library-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"library-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mLibrary[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"pdfs-view"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"pdfs-tab"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mPDFs[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"search-tab paper-search-title"[39m
+          [33mclass[39m=[32m"search-panel"[39m
+          [33mid[39m=[32m"search-view"[39m
+          [33mrole[39m=[32m"tabpanel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"search-introduction"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0marXiv paper search[0m
+              [36m</p>[39m
+              [36m<h2[39m
+                [33mid[39m=[32m"paper-search-title"[39m
+              [36m>[39m
+                [0mSearch research papers[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0mFind arXiv metadata by research topic or keywords.[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"search-form"[39m
+            [33mnovalidate[39m=[32m""[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"paper-search-query"[39m
+            [36m>[39m
+              [0mResearch topic or keywords[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"search-controls"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-describedby[39m=[32m"paper-search-help"[39m
+                [33mautocomplete[39m=[32m"off"[39m
+                [33mid[39m=[32m"paper-search-query"[39m
+                [33mmaxlength[39m=[32m"200"[39m
+                [33mname[39m=[32m"q"[39m
+                [33mplaceholder[39m=[32m"e.g. graph neural networks"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m"graph learning"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mSearch[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"search-help"[39m
+              [33mid[39m=[32m"paper-search-help"[39m
+            [36m>[39m
+              [0mPlain-text topics or keywords only, up to 200 characters.[0m
+            [36m</p>[39m
+          [36m</form>[39m
+        [36m</section>[39m
+        [36m<section[39m
+          [33maria-labelledby[39m=[32m"search-results-title"[39m
+          [33mclass[39m=[32m"results-panel"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"results-heading"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"eyebrow"[39m
+              [36m>[39m
+                [0mSearch results[0m
+              [36m</p>[39m
+              [36m<h2[39m
+                [33mid[39m=[32m"search-results-title"[39m
+              [36m>[39m
+                [0m1[0m
+                [0m [0m
+                [0mpaper[0m
+                [0m for [0m
+                [0m [0m
+                [0m“[0m
+                [0mgraph learning[0m
+                [0m”[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"provider"[39m
+            [36m>[39m
+              [0mProvider: [0m
+              [0marxiv[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"results-note"[39m
+          [36m>[39m
+            [0mYears reflect each paper's first arXiv submission.[0m
+          [36m</p>[39m
+          [36m<ol[39m
+            [33mclass[39m=[32m"paper-list"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"paper-card"[39m
+                [33mdata-paper-identity[39m=[32m"arxiv:2401.01234"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0mLearning from graphs[0m
+                [36m</h3>[39m
+                [36m<dl[39m
+                  [33mclass[39m=[32m"paper-metadata"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0mAuthors[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0mAda Author[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0mFirst submitted[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [0m2024[0m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<dt>[39m
+                      [0marXiv ID[0m
+                    [36m</dt>[39m
+                    [36m<dd>[39m
+                      [36m<code>[39m
+                        [0m2401.01234v3[0m
+                      [36m</code>[39m
+                    [36m</dd>[39m
+                  [36m</div>[39m
+                [36m</dl>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"paper-abstract"[39m
+                [36m>[39m
+                  [36m<h4>[39m
+                    [0mAbstract[0m
+                  [36m</h4>[39m
+                  [36m<p>[39m
+                    [0mA complete abstract about graph learning.[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"paper-link"[39m
+                  [33mhref[39m=[32m"https://arxiv.org/abs/2401.01234v3"[39m
+                  [33mrel[39m=[32m"noopener noreferrer"[39m
+                  [33mtarget[39m=[32m"_blank"[39m
+                [36m>[39m
+                  [0mView paper on arXiv [0m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"visually-hidden"[39m
+                  [36m>[39m
+                    [0m(opens in a new tab)[0m
+                  [36m</span>[39m
+                [36m</a>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"save-area"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"save-button"[39m
+                    [33mdata-save-paper[39m=[32m"2401.01234v3"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [0mSave to library[0m
+                  [36m</button>[39m
+                [36m</div>[39m
+              [36m</article>[39m
+            [36m</li>[39m
+          [36m</ol>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError ../../../../node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../../../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../../../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../../../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/baseline/app-workflows.test.tsx:174:19
+    172|     await screen.findByRole('button', { name: 'Saved' });
+    173|     await act(async () => stale.resolve(json({ papers: [] })));
+    174|     expect(screen.getByRole('button', { name: 'Saved' })).toBeDisabled…
+       |                   ^
+    175|     await user.click(screen.getByRole('tab', { name: 'Library (1)' }));
+    176|     expect(screen.getByRole('heading', { name: saved.title })).toBeVis…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

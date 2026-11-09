@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"]
+  },
+  "include": ["tests/baseline/app-workflows.test.tsx", "tests/baseline/document-workspace.test.tsx", "tests/baseline/arxiv-service.test.ts", "tests/baseline/helpers/**/*.ts"],
+  "exclude": []
+}

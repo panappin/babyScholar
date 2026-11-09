@@ -1,0 +1,11 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-45-35.339Z-provider-utf8/corrected-control
+
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 84ms
+
+ Test Files  1 passed (1)
+      Tests  98 passed (98)
+   Start at  18:45:37
+   Duration  314ms (tests 45%, transform 40%, import 12%, worker 3%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-45-35.339Z-provider-utf8/corrected-control.tests.json

@@ -1,0 +1,28 @@
+{
+  "label": "r4-provider-first",
+  "startedAt": "2026-11-08T23:39:50.971Z",
+  "timeoutMs": 60000,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "test",
+    "--",
+    "tests/baseline/provider-adapters.test.ts",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=C:\\Users\\panap\\PycharmProjects\\babyScholar\\artifacts\\hw2-extension\\2026-11-08T23-39-50.905Z-r4-provider-first\\test-results.json"
+  ],
+  "baseCommit": "69c2eff430e259958ae378a238ad28760e10b99a",
+  "branch": "hw2/initial-baseline",
+  "sourceTree": "0ea6df465799f6defbb240b16b0e8abab7c906d8",
+  "workingTree": "M src/worker/openai.ts\n?? babyScholar-phase-0b2-hosting-changes.zip\n?? babyScholar-phase-0b2-hosting-changes/\n?? docs/hw2/report.zip\n?? docs/hw2/rounds/round-4/\n?? tests/baseline/openai-probe.test.ts\n?? tests/baseline/provider-adapters.test.ts",
+  "node": "v24.11.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "timedOut": false,
+  "output": "artifacts/hw2-extension/2026-11-08T23-39-50.905Z-r4-provider-first",
+  "exitCode": 0,
+  "signal": null,
+  "finishedAt": "2026-11-08T23:39:52.038Z"
+}

@@ -1,0 +1,27 @@
+Please do one final, time-boxed improvement pass on BabyScholar HW2. We have about three hours before submission. Prioritize meaningful testing and a strong, accurate report over an arbitrary coverage target. Leave at least 45 minutes for final review and submission.
+
+First inspect the current checkout, branch, working tree, existing HW2 report and evidence. Continue on hw2/initial-baseline; preserve existing work and do not merge into main or submit on my behalf. The last reported result is commit 69c2eff: 260/260 tests, 19/19 baseline checks, and 55.64% line coverage. Verify rather than assume.
+
+1. Target the important backend gaps (about 75–90 minutes).
+
+The existing per-file report shows four OpenAI provider modules at 0% measured line coverage: metadata-openai.ts, question-openai.ts, summary-openai.ts and openai.ts. Document-generation orchestration also has substantial uncovered code. Verify the current gaps, then prioritize the most important and feasible paths; do not try to cover everything at the expense of finishing.
+
+Add deterministic, meaningful tests using injected fetch and fake responses, without real API calls, credentials, or paid requests. As appropriate to the actual contracts, test successful responses, authentication and rate-limit errors, malformed/incomplete/refusal responses, timeouts, response size and UTF-8 boundaries, cleanup, request shape, and propagation of failures to the caller. Avoid duplicate tests and assertions that merely execute lines.
+
+Investigate these two source-derived hypotheses, but do not treat them as established bugs: probeOpenAi may clear its timeout before consuming the response body, and null JSON may reach a status access without a null guard. Check the intended contract, reproduce with focused tests, and report what the evidence actually establishes. If a genuine bug is confirmed and a fix is small and safe, fix it separately from test changes and document before/after behavior. Do not make broad product changes.
+
+Preserve the earlier rounds, prompts, tests, coverage reports, failures, seeded-fault results and bug evidence. Record the actual prompts and feedback for this round. Do not fabricate user interactions or bugs.
+
+2. Evaluate and update the report (about 30 minutes).
+
+Run relevant tests and coverage, followed by the full baseline if time allows. Clearly distinguish confirmed product bugs, test defects, environmental issues and artificial seeded faults. Compare coverage only where scope and denominators support it; disclose any changes in product code or instrumentation.
+
+Update the six required report sections with this round and actual results. Add concise, accurate examples drawn from the evidence: one showing the weak UTF-8 test/oracle and how it was improved, and one showing the real save-feedback bug’s failing assertion and fix. Do not invent snippets or claims. Keep the browser-stall limitation and the seeded-fault caveat.
+
+Correct the attribution of the arXiv testing-seam suggestion: dot suggested it, not me. The reflection is agent-authored: flag the parts requiring my own account, including my decision to push beyond the initial low-coverage result. Replace draft instructions addressed to “the student” with appropriate final-report wording while retaining accurate AI disclosure. Add my name and course details only if verified from existing sources; otherwise flag them for me.
+
+3. Finalize with a hard submission buffer.
+
+Stop exploratory work in time to leave at least 45 minutes before submission. Rerun the appropriate suite and coverage, record any failures honestly, regenerate the report PDF, visually inspect every page and check links. Review the diff for secrets, unrelated edits and generated clutter; commit and push the final relevant changes to hw2/initial-baseline. Do not merge or submit.
+
+Tell me the final test counts, coverage and scope, confirmed bugs versus hypotheses, remaining failures, commit and branch, report/PDF paths, and exactly what I must review and submit. If a step cannot be completed or verified, say so. If you cannot reliably track the deadline, ask me for the exact cutoff rather than assuming you can time it.

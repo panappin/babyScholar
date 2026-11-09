@@ -1,0 +1,52 @@
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-56-03.532Z-refined/control
+
+ ✓ tests/baseline/document-workspace.test.tsx (38 tests) 7606ms
+   ✓ Explicit summary and question actions with reconciliation (14)
+     ✓ asks once, accepts prose without quotes, and retains the answer after a failed history reload 624ms
+     ✓ reconciles an interrupted question using normalized identity without automatically asking again 503ms
+     ✓ handles gateway HTTP 401 without exposing HTML or offering a POST retry 583ms
+     ✓ handles gateway HTTP 403 without exposing HTML or offering a POST retry 572ms
+   ✓ Upload, download and deletion intent (13)
+     ✓ requires deletion confirmation and keeps a record until a matching success response 300ms
+ ✓ tests/baseline/document-generation.test.ts (80 tests) 454ms
+ ✓ tests/baseline/provider-adapters.test.ts (98 tests) 83ms
+ ✓ tests/baseline/app-workflows.test.tsx (22 tests) 7245ms
+   ✓ Search and library observable workflows (22)
+     ✓ loads status and library without starting a search, then normalizes an explicit query 463ms
+     ✓ shows empty results distinctly from errors and permits a new explicit search 401ms
+     ✓ handles application failure with useful feedback and no fabricated result 304ms
+     ✓ handles malformed success with useful feedback and no fabricated result 336ms
+     ✓ handles gateway HTML with useful feedback and no fabricated result 325ms
+     ✓ handles network failure with useful feedback and no fabricated result 340ms
+     ✓ retains the authoritative duplicate record when saved and reopened 486ms
+     ✓ recognizes a previously saved base ID when search returns another version 322ms
+     ✓ reconciles lost response with GET and shows a confirmed save without a contradictory error 430ms
+     ✓ reconciles malformed success with GET and shows a confirmed save without a contradictory error 467ms
+     ✓ reconciles wrong paper with GET and shows a confirmed save without a contradictory error 449ms
+     ✓ reconciles non-application error with GET and shows a confirmed save without a contradictory error 476ms
+     ✓ leaves an unknown save disabled until an explicit library reload confirms it 459ms
+     ✓ does not confirm an uncertain save when GET contains only a different paper 345ms
+     ✓ does not let an older library read erase a successful save 451ms
+     ✓ retains an unconfirmed removal and only removes the record after explicit successful retry 567ms
+ ✓ tests/baseline/arxiv-service.test.ts (37 tests) 45ms
+ ✓ tests/baseline/request-streams.test.ts (34 tests) 114ms
+ ✓ tests/baseline/generation-recovery.test.ts (27 tests) 15ms
+ ✓ tests/baseline/output-validation.test.ts (48 tests) 10ms
+ ✓ tests/baseline/openai-probe.test.ts (24 tests) 28ms
+ ✓ tests/baseline/source-selection.test.ts (20 tests) 204ms
+ ✓ tests/baseline/utf8-integrity.test.ts (10 tests) 23ms
+ ✓ tests/baseline/identity.test.ts (13 tests) 4ms
+ ✓ tests/baseline/question-request.test.ts (11 tests) 24ms
+
+ Test Files  13 passed (13)
+      Tests  462 passed (462)
+   Start at  18:56:04
+   Duration  21.26s (tests 81%, environment 11%, import 5%, transform 3%)
+
+    Isolate  13 workers spawned · ~289ms startup each (spawn + environment, per file)
+             at least ~3.47s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-workflow-faults/2026-11-08T23-56-03.532Z-refined/control.tests.json
+(node:123400) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

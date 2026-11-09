@@ -1,0 +1,129 @@
+
+> ai-research-assistant@0.1.0 test
+> vitest run tests/baseline/document-generation.test.ts --reporter=default --reporter=json --outputFile=C:\Users\panap\PycharmProjects\babyScholar\artifacts\hw2-extension\2026-11-08T23-42-04.443Z-r4-orchestration-first\test-results.json
+
+
+ RUN  v5.1.0 C:/Users/panap/PycharmProjects/babyScholar
+
+(node:120360) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/baseline/document-generation.test.ts (71 tests | 2 failed) 5295ms
+   ✓ metadata generation orchestration with SQLite storage (22)
+     ✓ rejects invalid-id before provider work 26ms
+     ✓ rejects missing-storage before provider work 4ms
+     ✓ rejects missing-document before provider work 4ms
+     ✓ rejects missing-extraction before provider work 4ms
+     ✓ rejects deleting-document before provider work 3ms
+     ✓ GET reports absence without implicitly generating 4ms
+     ✓ rejects unsupported methods with Allow and no generation 3ms
+     ✓ fails missing configuration before taking a generation claim 3ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 12ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 4ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 4ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 3ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 3ms
+     ✓ maps provider completion failure 0 without retrying 3ms
+     ✓ maps provider completion failure 1 without retrying 3ms
+     ✓ maps transport failure and leaves source data available for explicit retry 4ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 3ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 5ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 6ms
+     ✓ does not persist or delete a replacement owner after losing its lease 4ms
+     ✓ does not persist when deletion begins during generation 3ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 4ms
+   ✓ summary generation orchestration with SQLite storage (22)
+     ✓ rejects invalid-id before provider work 3ms
+     ✓ rejects missing-storage before provider work 3ms
+     ✓ rejects missing-document before provider work 3ms
+     ✓ rejects missing-extraction before provider work 3ms
+     ✓ rejects deleting-document before provider work 3ms
+     ✓ GET reports absence without implicitly generating 3ms
+     ✓ rejects unsupported methods with Allow and no generation 3ms
+     ✓ fails missing configuration before taking a generation claim 3ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 5ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 3ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 4ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 3ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 3ms
+     ✓ maps provider completion failure 0 without retrying 3ms
+     ✓ maps provider completion failure 1 without retrying 3ms
+     ✓ maps transport failure and leaves source data available for explicit retry 4ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 4ms
+     ✓ maps a stalled response body to caller timeout and releases its claim 3ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 4ms
+     ✓ does not persist or delete a replacement owner after losing its lease 3ms
+     ✓ does not persist when deletion begins during generation 4ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 3ms
+   ❯ question generation orchestration with SQLite storage (22)
+     ✓ rejects invalid-id before provider work 3ms
+     ✓ rejects missing-storage before provider work 2ms
+     ✓ rejects missing-document before provider work 3ms
+     ✓ rejects missing-extraction before provider work 3ms
+     ✓ rejects deleting-document before provider work 3ms
+     ✓ GET reports absence without implicitly generating 3ms
+     ✓ rejects unsupported methods with Allow and no generation 2ms
+     ✓ fails missing configuration before taking a generation claim 5ms
+     ✓ persists source provenance and readable output, then reuses saved results without a key 6ms
+     ✓ maps upstream HTTP 401 to caller HTTP 502 and releases only its claim 3ms
+     ✓ maps upstream HTTP 429 to caller HTTP 429 and releases only its claim 3ms
+     ✓ maps upstream HTTP 403 to caller HTTP 502 and releases only its claim 4ms
+     ✓ maps upstream HTTP 503 to caller HTTP 502 and releases only its claim 4ms
+     ✓ maps provider completion failure 0 without retrying 3ms
+     ✓ maps provider completion failure 1 without retrying 3ms
+     ✓ maps transport failure and leaves source data available for explicit retry 4ms
+     ✓ bounds malformed-response recovery and cleans up an exhausted attempt 4ms
+     × maps a stalled response body to caller timeout and releases its claim 5019ms
+     ✓ prevents a duplicate concurrent provider request while a claim is held 4ms
+     ✓ does not persist or delete a replacement owner after losing its lease 4ms
+     ✓ does not persist when deletion begins during generation 3ms
+     ✓ rolls back failed persistence, returns a safe error and releases its claim 3ms
+   ✓ metadata corrective generation (2)
+     ✓ corrects one invalid result under the same claim, then persists only the valid output 3ms
+     ✓ rejects a nonempty POST body before claiming or calling the provider 2ms
+   ✓ summary corrective generation (2)
+     ✓ corrects one invalid result under the same claim, then persists only the valid output 3ms
+     ✓ rejects a nonempty POST body before claiming or calling the provider 2ms
+   ❯ question cache identity (1)
+     × normalizes whitespace and invalidates cache when extraction provenance changes 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > question generation orchestration with SQLite storage > maps a stalled response body to caller timeout and releases its claim
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/baseline/document-generation.test.ts:166:3
+    164|   });
+    165|
+    166|   it('maps a stalled response body to caller timeout and releases its …
+       |   ^
+    167|     fetcher.mockImplementation(async (_url, init) => new Response(new …
+    168|       init!.signal!.addEventListener('abort', () => controller.error(i…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/baseline/document-generation.test.ts > question cache identity > normalizes whitespace and invalidates cache when extraction provenance changes
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ tests/baseline/document-generation.test.ts:253:85
+    251|   it('normalizes whitespace and invalidates cache when extraction prov…
+    252|     fetcher.mockImplementation(async () => validResponse(stage.output)…
+    253|     expect((await invoke(stage, post(stage, '  What   is the finding? …
+       |                                                                                     ^
+    254|     expect((await invoke(stage, post(stage, 'What is the finding?'))).…
+    255|     expect(fetcher).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 69 passed (71)
+   Start at  18:42:05
+   Duration  5.61s (tests 97%, transform 2%, import 1%)
+
+JSON report written to C:/Users/panap/PycharmProjects/babyScholar/artifacts/hw2-extension/2026-11-08T23-42-04.443Z-r4-orchestration-first/test-results.json

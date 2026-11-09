@@ -1,25 +1,27 @@
 {
-  "checkedAt": "2026-11-08T23:06:26.860777+00:00",
+  "checkedAt": "2026-11-09T00:01:59.473134+00:00",
   "branch": "hw2/initial-baseline",
-  "evaluatedTestCommit": "2c83268",
+  "startCommit": "69c2eff430e259958ae378a238ad28760e10b99a",
+  "evaluatedTestCommit": "89afbd3715867b2b2a875d23e78202a9793462dc",
+  "productFixCommit": "5285152",
   "checks": {
-    "archiveFilesAgainstFilesystemSha256": 2088,
-    "archiveAndPdfSourceFilesAgainstStagedGitBlobs": 2090,
-    "uniqueStagedBlobsVerified": 407,
-    "localMarkdownLinksVerified": 49,
-    "pdfPagesVisuallyReviewed": 6,
-    "portablePdfHyperlinkAnnotations": 18,
-    "newDevelopmentArchives": 33,
-    "changedFilesScanned": 2009,
-    "credentialPatternMatches": 0,
-    "generatedRuntimeClutterMatches": 0,
-    "originalThreeRoundsAndComparisonUnchanged": true
+    "stagedArchiveAndPdfFilesVerified": 3630,
+    "uniqueBlobsVerified": 561,
+    "archiveManifests": 58,
+    "changedFilesReviewed": 1594,
+    "localMarkdownLinks": 53,
+    "secretPatternMatches": 0,
+    "generatedClutter": 0,
+    "pdfPagesVisuallyReviewed": 7,
+    "pdfHyperlinkAnnotations": 23
   },
   "notes": [
-    "Credential checks scan private-key headers and common GitHub, OpenAI and AWS token patterns without printing candidate values; they are not a universal secret detector.",
-    "The three report Markdown trailing-space pairs are intentional CommonMark hard line breaks. Raw archives retain original bytes.",
-    "The editable report is marked -text so its recorded SHA-256 remains stable across Git checkout newline settings.",
-    "Coverage comparison normalizes historical absolute source paths so a different checkout location produces the same per-file names.",
-    "Git publication is verified after the delivery commit; this record avoids a self-referential commit hash."
+    "All original rounds, round-3 archives and prior comparisons remain byte-identical. The prior report/PDF and verification records are preserved under round-4/prior-*.",
+    "The report source uses preserved CRLF bytes. Git whitespace review treats CR as an end-of-line marker; the exact staged source hash matches the PDF verification record.",
+    "Credential checks scan private-key headers and common GitHub/OpenAI/AWS token patterns without printing candidates; this is not a universal secret detector.",
+    "No node_modules, runtime artifacts, local environment files or unrelated ZIPs are included. Reviewed timestamped evidence is intentionally committed.",
+    "The final 462-test coverage and 19-stage baseline use evaluated test commit 89afbd3. Both test typechecks passed. All 13 earlier selected faults remain detected; one additional provider oracle probe is separately documented.",
+    "Local Markdown link targets and staged PDF blob targets are verified; Git publication is verified after this delivery record is committed.",
+    "Exact live account usage is not visible to the agent. No remaining quota or token-consumption estimate is claimed."
   ]
 }
